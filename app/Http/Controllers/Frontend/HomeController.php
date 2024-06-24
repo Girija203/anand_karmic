@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use Illuminate\Support\Facades\Auth;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
 use App\Mail\ContactFormMail;
 use App\Mail\ContactReplyMail;
@@ -25,6 +26,7 @@ use App\Models\Coupon;
 use App\Models\ProductShowCase;
 use App\Models\ShowCaseProduct;
 use Illuminate\Support\Carbon;
+
 
 use Illuminate\Support\Facades\Cookie;
 class HomeController extends Controller
@@ -596,6 +598,40 @@ foreach ($shippingRules as $rule) {
         //   dd($address);
         return view('frontend.myaccount', compact('cart', 'order', 'address', 'user'));
     }
+
+    //personal information
+
+  
+    public function userupdate(Request $request)
+    {
+      
+    
+        $request->validate([
+            'name' => 'required',         
+            'email' => 'required',
+            'phone' => 'required',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+   
+       $user = Auth::user();
+       $user->name = $request->name;
+      
+       $user->email = $request->email;
+  
+       $user->phone = $request->phone;
+         if ($request->hasFile('image')) {        
+          $imagePath = $request->file('image')->store('profileimages', 'public');
+          $user->image = $imagePath;
+      }
+     
+        $user->save();
+ 
+        return redirect()->back()->with('success', 'Profile updated successfully.');
+    }
+  
+
+
+
     public function update(Request $request)
     {
         $request->validate([
@@ -719,5 +755,26 @@ public function buyNow($productId, Request $request)
     return redirect()->route('checkout')->with('success', 'Product added to cart successfully');
 }
 
+
+public function changePassword(Request $request)
+{
+    $request->validate([
+        'old_password' => 'required',
+        'new_password' => 'required|confirmed',
+    ]);
+
+    $user = Auth::user();
+
+    // Check if old password matches
+    if (!Hash::check($request->old_password, $user->password)) {
+        return back()->withErrors(['old_password' => 'The provided password does not match your current password.']);
+    }
+
+    // Update password
+    $user->password = Hash::make($request->new_password);
+    $user->save();
+
+    return redirect()->back()->with('success', 'Password changed successfully!');
+}
 
 }

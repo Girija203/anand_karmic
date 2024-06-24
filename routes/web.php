@@ -446,8 +446,13 @@ Route::put('/update-address', [HomeController::class, 'update'])->name('update.a
 Route::post('/user/coupons', [HomeController::class, 'applyCouponCode'])->name('coupons.apply');
 Route::post('/set-country', [HomeController::class, 'setCountry'])->name('setCountry');
 
+
 Route::post('/buy-now/{productId}', [HomeController::class, 'buyNow'])->name('buy.now');
 
+Route::post('/user-profile/update', [HomeController::class, 'userupdate'])->name('profile.update');
+//change password
+// routes/web.php or routes/api.php
+Route::post('/change-password', [HomeController::class, 'changePassword'])->name('account.changepassword');
 
 
 // cart
