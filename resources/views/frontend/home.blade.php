@@ -216,27 +216,22 @@
   </section>
   <!-- About end -->
 
+  @if (!empty($ProductShowCases))
   <!-- product start -->
   <section class="product-section section-space-ptb">
       <div class="container">
 
           <!-- Section Title Area Start -->
-
           <div class="section-title-area text-center">
-
               <h2 class="section-title">{{ $ProductShowCases->title ?? '' }}</h2>
               <p>{{ $ProductShowCases->description ?? '' }}</p>
-
           </div>
-
           <!-- Section Title Area End -->
 
           <div class="row">
               @foreach ($showCaseProducts as $showCaseProduct)
               <div class="col-lg-4 col-md-6 mb-15 ">
                   <div class="card position-relative box-shad" style="overflow: hidden">
-
-
                       <div class="position-absolute display-none vedio_back" style="display: none">
                           <img class="img-hov position-relative" src="" alt="" srcset="">
                           <div class="position-absolute bottom-footer" style="display: none;">
@@ -249,12 +244,9 @@
                           <div class="">
                               <img class="card-img-top " src="{{ asset('storage/' . $showCaseProduct->product->image) }}" alt="Card image cap object-fit-cover" width="75%" />
                           </div>
-
                       </div>
-
                       <div class="card-body">
                           <h6 class="card-title">{{ $showCaseProduct->product->title }}</h6>
-
                           <div class="d-flex justify-content-between align-items-center my-2">
                               <div>
                                   <a href="{{ route('single.product', $showCaseProduct->id) }}">
@@ -263,9 +255,9 @@
                               </div>
                               <div class="d-flex flex-column align-items-end">
                                   <span>Rs. {{ $showCaseProduct->product->offer_price }}</span>
-
                                   <span class="product-card-old-price fw-600">M.R.P :
                                       <del>{{ $showCaseProduct->product->price }}</del></span>
+                                      
                               </div>
                           </div>
                       </div>
@@ -276,6 +268,7 @@
       </div>
   </section>
   <!-- product end -->
+@endif
 
   <!-- product start -->
   <section class="product-section section-space-ptb back-black">

@@ -31,6 +31,7 @@ class Product extends Model
         'is_featured',
         'is_specification',
         'is_sold',
+        'is_shareable',
         'status'
 
     ];

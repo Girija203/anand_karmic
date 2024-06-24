@@ -37,6 +37,7 @@ return new class extends Migration
             $table->boolean('is_featured', [0, 1])->default(0);
             $table->boolean('is_specification', [0, 1])->default(1);
             $table->boolean('is_sold', [0, 1])->default(0);
+            $table->boolean('is_shareable', [0, 1])->default(1);
             $table->boolean('status', [0, 1])->default(1);         
             $table->timestamps();
            
