@@ -32,4 +32,19 @@ class ShowCaseProduct extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
+
+     public function getPriceInSelectedCurrency()
+{
+    $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
+    $priceInSelectedCurrency = $this->price * $exchangeRate;
+    return $priceInSelectedCurrency;
+}
+
+public function getOfferPriceInSelectedCurrency()
+{
+    $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
+    $offerPriceInSelectedCurrency = $this->offer_price * $exchangeRate;
+    return $offerPriceInSelectedCurrency;
+}
+
 }

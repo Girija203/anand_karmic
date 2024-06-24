@@ -32,4 +32,10 @@ class Order extends Model
         'cash_on_delivery'
 
     ];
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+   
 }

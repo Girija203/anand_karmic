@@ -28,10 +28,10 @@
 
 
                        <div class="col-md-6">
-                           <div class="row ">
-                               <div class="col-md-6 my-4">
-                                   <div class="col-md-12 mb-5">
-                                       <img src="{{ asset('frontend/assets/images/products/pano (1).jpeg') }}" alt=""
+                           <div class="">
+                               <div class="my-4">
+                                   <div class="mb-5 about-image">
+                                       <img src="{{ asset('https://img.freepik.com/free-photo/close-up-shoemaker-cutting-leather_171337-12266.jpg?t=st=1719238264~exp=1719241864~hmac=e1d64e9bec7e7d460ab4bfd727b9890a7ee4666f2f1631030024614d7790d5d5&w=900') }}" alt=""
                                            srcset="" class="w-100">
                                    </div>
                                   

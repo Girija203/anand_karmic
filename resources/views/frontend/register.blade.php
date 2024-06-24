@@ -168,7 +168,11 @@
             @endforeach
         @endif 
                       </div>
-                      <p class="mt-3 text-center">
+                      <div class="g-recaptcha" data-sitekey="6Ldx8f8pAAAAAOap18arw95iuqWYlfEJehyYJ56o"></div>
+  @if($errors->has('g-recaptcha-response'))
+    <span class="error text-danger">{{ $errors->first('g-recaptcha-response') }}</span>
+  @endif
+                      <!-- <p class="mt-3 text-center">
                         Your personal data will be used to support your
                         experience throughout this website, to manage access
                         to your account, and for other purposes described in
@@ -179,7 +183,7 @@
                           target="_blank"
                           >privacy policy</a
                         >.
-                      </p>
+                      </p> -->
                       <div class="button-box mt-4">
                         <button
                           type="submit"
@@ -198,6 +202,6 @@
       </div>
     </section>
   </main>
-
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
   
 @endsection

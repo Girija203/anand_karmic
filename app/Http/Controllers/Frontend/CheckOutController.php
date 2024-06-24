@@ -133,9 +133,7 @@ if ($newSelectedShippingAddress) {
     $shippingAddress->save();
 }
 
-
-
-      
+     
 
  $cartItems = Cart::with('product')->get();
     $cart = $cartItems->map(function($item) {
@@ -176,15 +174,8 @@ $couponDiscount = floatval($couponDiscount);   // Ensure $couponDiscount is a fl
 
 $grandTotal = $itemAmount + $shippingFee - $couponDiscount;
     // $grandTotal = ($itemAmount - $discountAmounts) + $shippingFee - $couponDiscount;
-    
-    
-
-   
-    
+     
     // dd($grandTotal );
-
-
-
 
     // Create order
     $order = new Order();
@@ -228,6 +219,15 @@ $grandTotal = $itemAmount + $shippingFee - $couponDiscount;
     $payment->save();
 }
 
+$exchangeRate = session('exchange_rate', 1);
+$currencySymbol = session('currency_symbol', '$');
+
+
+$orderItems = $order->orderItems()->with('product')->get();
+Mail::send('Admin.mail.order_confirmation', ['user' => $user, 'order' => $order, 'orderItems' => $orderItems, 'exchangeRate'=> $exchangeRate, 'currencySymbol'=> $currencySymbol], function ($message) use ($user) {
+    $message->to($user->email);
+    $message->subject('Order Confirmation');
+});
 
 // Delete all cart items
 foreach ($cartItems as $item) {

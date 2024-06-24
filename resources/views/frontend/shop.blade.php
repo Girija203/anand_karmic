@@ -124,9 +124,10 @@
                                         <h6 class="card-title">{{ $product->title }}</h6>
                                         <span> 2colors </span>
                                         <div class="d-flex justify-content-between align-items-center my-2">
-                                            <a href="{{route('single.product',$product->id)}}">
-                                                <button class="btn btn-black">Buy Now</button>
-                                            </a>
+                                             <form action="{{ route('buy.now', $product->id) }}" method="POST">
+                                @csrf
+                                <button class="btn btn-black">Buy Now</button>
+                            </form>
 
                                            <div class="d-flex flex-column">
                                            <span class="product-card-old-price"><del>{{ $currencySymbol }}{{ number_format($product->getPriceInSelectedCurrency(), 2) }}</del></span>
