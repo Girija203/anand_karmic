@@ -135,6 +135,8 @@ Route::post('contact_message-store', [ContactMessageController::class, 'store'])
 Route::get('contact_message-edit/{id}', [ContactMessageController::class, 'edit'])->name('contact_messages.edit');
 Route::post('contact_message-update/{id}', [ContactMessageController::class, 'update'])->name('contact_messages.update');
 Route::get('contact_message-delete/{id}', [ContactMessageController::class, 'delete'])->name('contact_messages.delete');
+Route::get('contact_message_read_one/{id}', [ContactMessageController::class, 'read_one'])->name('contact_messages.read.one');
+Route::post('contact_message_read_all', [ContactMessageController::class, 'read_all'])->name('contact_messages.read.all');
 
 //Meta Type
 Route::get('meta_type-list', [MetaTypeController::class, 'index'])->name('meta_types.index');
