@@ -261,6 +261,9 @@
                                   <li>
                                     <a href="{{ route('show_case_products.index') }}">Show Case Product</a>
                                 </li> 
+                                 <li>
+                                    <a href="{{ route('product_sml_shares.index') }}">Product SML Share</a>
+                                </li> 
                             </ul>
                         </div>
                     </li>
@@ -575,7 +578,6 @@
 
 
 <script>
-
 $(document).ready(function() {
             @if (session('success'))
                 toastr.success('{{ session('success') }}');

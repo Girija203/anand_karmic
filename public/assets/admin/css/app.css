@@ -21682,3 +21682,8 @@ table.dataTable tbody td {
     border-color: #ddd;
     cursor: not-allowed;
   }
+
+  .mandatory::after {
+      content: " *";
+      color: red;
+  }

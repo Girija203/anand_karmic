@@ -55,6 +55,7 @@ class LoginRegisterController extends Controller
         'name' => 'required|max:255',
         'email' => 'required|email|unique:users',
         'password' => 'required|min:6|',
+         'g-recaptcha-response' => 'required|recaptcha',
        
     ]);
     // dd($validated);
