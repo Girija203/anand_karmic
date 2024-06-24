@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\Events\ContactNotificationEvent;
 use Illuminate\Support\Facades\Auth;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Hash;
@@ -25,10 +26,13 @@ use App\Models\Shipping;
 use App\Models\Coupon;
 use App\Models\ProductShowCase;
 use App\Models\ShowCaseProduct;
+use App\Models\User;
+use App\Notifications\ContactNotification;
 use Illuminate\Support\Carbon;
 
 
 use Illuminate\Support\Facades\Cookie;
+
 class HomeController extends Controller
 {
     public function home()
@@ -57,141 +61,141 @@ class HomeController extends Controller
         return view('frontend.contact', compact('cart', 'contactpage'));
     }
 
-  public function shop(Request $request)
-{
-    // Define how many products you want per page
-    $perPage = 12;
+    public function shop(Request $request)
+    {
+        // Define how many products you want per page
+        $perPage = 12;
 
-    // Fetch all products with pagination
-    $products = Product::paginate($perPage);
-    $totalProducts = Product::count();
+        // Fetch all products with pagination
+        $products = Product::paginate($perPage);
+        $totalProducts = Product::count();
 
-    $cart = Cart::get();
-    $categories = Category::all();
-    $specifications = ProductSpecification::where('product_specification_key_id', 2)->get();
+        $cart = Cart::get();
+        $categories = Category::all();
+        $specifications = ProductSpecification::where('product_specification_key_id', 2)->get();
 
-    $cartItems = Cart::with('product')->get();
-    $cart = $cartItems->map(function ($item) {
-        $product = $item->product;
-        $discount = 0;
+        $cartItems = Cart::with('product')->get();
+        $cart = $cartItems->map(function ($item) {
+            $product = $item->product;
+            $discount = 0;
 
-        if ($product->offer_price && $product->price > $product->offer_price) {
-            $discount = $product->price - $product->offer_price;
+            if ($product->offer_price && $product->price > $product->offer_price) {
+                $discount = $product->price - $product->offer_price;
+            }
+
+            $item->discount = $discount;
+            return $item;
+        });
+
+        // Calculate the total amount and discount amount
+        $totalAmount = 0;
+        $discountAmount = 0;
+
+        foreach ($cart as $item) {
+            $itemAmount = $item->quantity * $item->price;
+            $totalAmount += $itemAmount;
+            $discountAmount += $item->discount;
         }
 
-        $item->discount = $discount;
-        return $item;
-    });
+        $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
+        $currencySymbol = session('currency_symbol', '$'); // Default to $ if not set
 
-    // Calculate the total amount and discount amount
-    $totalAmount = 0;
-    $discountAmount = 0;
-
-    foreach ($cart as $item) {
-        $itemAmount = $item->quantity * $item->price;
-        $totalAmount += $itemAmount;
-        $discountAmount += $item->discount;
+        return view('frontend.shop', compact('products', 'categories', 'specifications', 'cart', 'cartItems', 'exchangeRate', 'currencySymbol', 'totalProducts'));
     }
 
-    $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
-    $currencySymbol = session('currency_symbol', '$'); // Default to $ if not set
 
-    return view('frontend.shop', compact('products', 'categories', 'specifications', 'cart', 'cartItems', 'exchangeRate', 'currencySymbol', 'totalProducts'));
-}
+    public function filter(Request $request)
+    {
+        $orderBy = $request->input('orderby');
+        $perPage = 12;
 
+        $products = Product::query();
 
- public function filter(Request $request)
-{
-    $orderBy = $request->input('orderby');
-    $perPage = 12;
+        switch ($orderBy) {
+            case 'price-asc':
+                $products->orderBy('price', 'asc');
+                break;
+            case 'price-desc':
+                $products->orderBy('price', 'desc');
+                break;
+            case 'date':
+                $products->latest(); // Assuming there's a 'created_at' timestamp field in your products table
+                break;
+            default:
+                // Default sorting or any other handling you want to implement
+                break;
+        }
 
-    $products = Product::query();
+        $products = $products->paginate($perPage);
+        $totalProducts = Product::count();
+        $categories = Category::all();
+        $specifications = ProductSpecification::where('product_specification_key_id', 2)->get();
 
-    switch ($orderBy) {
-        case 'price-asc':
-            $products->orderBy('price', 'asc');
-            break;
-        case 'price-desc':
-            $products->orderBy('price', 'desc');
-            break;
-        case 'date':
-            $products->latest(); // Assuming there's a 'created_at' timestamp field in your products table
-            break;
-        default:
-            // Default sorting or any other handling you want to implement
-            break;
+        $cart = Cart::all();
+
+        $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
+        $currencySymbol = session('currency_symbol', '$');
+
+        return view('frontend.shop', compact('products', 'categories', 'specifications', 'cart', 'exchangeRate', 'currencySymbol', 'totalProducts'));
     }
-
-    $products = $products->paginate($perPage);
-    $totalProducts = Product::count();
-    $categories = Category::all();
-    $specifications = ProductSpecification::where('product_specification_key_id', 2)->get();
-
-    $cart = Cart::all();
-
-    $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
-    $currencySymbol = session('currency_symbol', '$');
-
-    return view('frontend.shop', compact('products', 'categories', 'specifications', 'cart', 'exchangeRate', 'currencySymbol', 'totalProducts'));
-}
 
 
 
 
 
     public function filterByPrice(Request $request)
-{
-    $minPrice = $request->input('min_price', 0);
-    $maxPrice = $request->input('max_price', 10000);
-    $perPage = 12;
+    {
+        $minPrice = $request->input('min_price', 0);
+        $maxPrice = $request->input('max_price', 10000);
+        $perPage = 12;
 
-    $products = Product::whereBetween('offer_price', [$minPrice, $maxPrice])->paginate($perPage);
-    $totalProducts = Product::count();
-    $categories = Category::all();
-    $specifications = ProductSpecification::where('product_specification_key_id', 2)->get();
+        $products = Product::whereBetween('offer_price', [$minPrice, $maxPrice])->paginate($perPage);
+        $totalProducts = Product::count();
+        $categories = Category::all();
+        $specifications = ProductSpecification::where('product_specification_key_id', 2)->get();
 
-    $cart = Cart::all();
+        $cart = Cart::all();
 
-    $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
-    $currencySymbol = session('currency_symbol', '$');
+        $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
+        $currencySymbol = session('currency_symbol', '$');
 
-    return view('frontend.shop', compact('products', 'categories', 'specifications', 'cart', 'exchangeRate', 'currencySymbol', 'totalProducts'));
-}
-
-public function filterByCategory($id)
-{
-    $perPage = 12;
-
-    $categories = Category::all();
-    $products = Product::where('category_id', $id)->paginate($perPage);
-    $totalProducts = Product::count();
-    $specifications = ProductSpecification::where('product_specification_key_id', 2)->get();
-
-    $cart = Cart::all();
-
-    return view('frontend.shop', compact('categories', 'products', 'specifications', 'cart', 'totalProducts'));
-}
-
-   public function filterBySpecifications(Request $request)
-{
-    $selectedSpecs = $request->input('specifications', []);
-    $perPage = 12;
-
-    if (!empty($selectedSpecs)) {
-        $products = Product::whereHas('specifications', function ($query) use ($selectedSpecs) {
-            $query->whereIn('specification', $selectedSpecs);
-        })->paginate($perPage);
-    } else {
-        $products = Product::paginate($perPage);
+        return view('frontend.shop', compact('products', 'categories', 'specifications', 'cart', 'exchangeRate', 'currencySymbol', 'totalProducts'));
     }
 
-    $specifications = ProductSpecification::where('product_specification_key_id', 2)->get();
-    $categories = Category::all();
-    $totalProducts = Product::count();
-    $cart = Cart::all();
+    public function filterByCategory($id)
+    {
+        $perPage = 12;
 
-    return view('frontend.shop', compact('products', 'specifications', 'categories', 'cart', 'totalProducts'));
-}
+        $categories = Category::all();
+        $products = Product::where('category_id', $id)->paginate($perPage);
+        $totalProducts = Product::count();
+        $specifications = ProductSpecification::where('product_specification_key_id', 2)->get();
+
+        $cart = Cart::all();
+
+        return view('frontend.shop', compact('categories', 'products', 'specifications', 'cart', 'totalProducts'));
+    }
+
+    public function filterBySpecifications(Request $request)
+    {
+        $selectedSpecs = $request->input('specifications', []);
+        $perPage = 12;
+
+        if (!empty($selectedSpecs)) {
+            $products = Product::whereHas('specifications', function ($query) use ($selectedSpecs) {
+                $query->whereIn('specification', $selectedSpecs);
+            })->paginate($perPage);
+        } else {
+            $products = Product::paginate($perPage);
+        }
+
+        $specifications = ProductSpecification::where('product_specification_key_id', 2)->get();
+        $categories = Category::all();
+        $totalProducts = Product::count();
+        $cart = Cart::all();
+
+        return view('frontend.shop', compact('products', 'specifications', 'categories', 'cart', 'totalProducts'));
+    }
 
     public function singleProduct($id)
     {
@@ -223,19 +227,20 @@ public function filterByCategory($id)
         
 
         //   dd($relatedProducts);
-         $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
-         $currencySymbol = session('currency_symbol', '$');
+        $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
+        $currencySymbol = session('currency_symbol', '$');
+
 
         return view('frontend.single_product', compact('products', 'specifications', 'relatedProducts', 'reviews', 'cart','product_sml_share','exchangeRate','currencySymbol'));
     }
 
-        public function wishlist()
-        {
-            $cart = Cart::get();
-          $wishlist = Wishlist::with('product')->get();
-            return view('frontend.wishlist', compact('cart','wishlist'));
-        }
-        public function addToCart(Request $request)
+    public function wishlist()
+    {
+        $cart = Cart::get();
+        $wishlist = Wishlist::with('product')->get();
+        return view('frontend.wishlist', compact('cart', 'wishlist'));
+    }
+    public function addToCart(Request $request)
     {
         $product = Product::find($request->product_id);
         if ($product) {
@@ -254,35 +259,35 @@ public function filterByCategory($id)
 
 
     public function addToWishlist(Request $request)
-{
-    $productId = $request->input('product_id');
-   
+    {
+        $productId = $request->input('product_id');
 
-    // Check if the product is already in the wishlist
-    $wishlistItem = Wishlist::where('product_id', $productId)
-                            ->first();
 
-    if (!$wishlistItem) {
-        Wishlist::create([
-            'product_id' => $productId,
-        ]);
+        // Check if the product is already in the wishlist
+        $wishlistItem = Wishlist::where('product_id', $productId)
+            ->first();
 
-        return response()->json(['message' => 'Product added to wishlist'], 200);
-    } else {
-        return response()->json(['message' => 'Product is already in your wishlist'], 400);
-    }
-}
+        if (!$wishlistItem) {
+            Wishlist::create([
+                'product_id' => $productId,
+            ]);
 
-public function wishlistDelete($id)
-{
-    $wishlist = Wishlist::find($id);
-
-    if ($wishlist) {
-        $wishlist->delete();
+            return response()->json(['message' => 'Product added to wishlist'], 200);
+        } else {
+            return response()->json(['message' => 'Product is already in your wishlist'], 400);
+        }
     }
 
-    return redirect()->route('wishlist')->with('success', 'Wishlist item deleted successfully');
-}
+    public function wishlistDelete($id)
+    {
+        $wishlist = Wishlist::find($id);
+
+        if ($wishlist) {
+            $wishlist->delete();
+        }
+
+        return redirect()->route('wishlist')->with('success', 'Wishlist item deleted successfully');
+    }
 
 
     public function cart(Request $request)
@@ -301,35 +306,35 @@ public function wishlistDelete($id)
         }
         // dd($totalAmount );
 
-$exchangeRate = session('exchange_rate', 1);
-$currencySymbol = session('currency_symbol', '$');
+        $exchangeRate = session('exchange_rate', 1);
+        $currencySymbol = session('currency_symbol', '$');
 
-// Convert totalAmount to country-based currency
-$totalAmountInCountryCurrency = $totalAmount * $exchangeRate;
+        // Convert totalAmount to country-based currency
+        $totalAmountInCountryCurrency = $totalAmount * $exchangeRate;
 
 
-// dd($totalAmountInCountryCurrency);
+        // dd($totalAmountInCountryCurrency);
 
-// Fetch shipping rules
-$shippingRules = Shipping::all();
+        // Fetch shipping rules
+        $shippingRules = Shipping::all();
 
-// Determine the applicable shipping fee
-$shippingFee = 0;
-foreach ($shippingRules as $rule) {
+        // Determine the applicable shipping fee
+        $shippingFee = 0;
+        foreach ($shippingRules as $rule) {
 
-    $conditionFromInCountryCurrency = $rule->condition_from * $exchangeRate;
-    $conditionToInCountryCurrency = $rule->condition_to * $exchangeRate;
-// dd( $conditionFromInCountryCurrency);
-    // dd( $conditionToInCountryCurrency);
+            $conditionFromInCountryCurrency = $rule->condition_from * $exchangeRate;
+            $conditionToInCountryCurrency = $rule->condition_to * $exchangeRate;
+            // dd( $conditionFromInCountryCurrency);
+            // dd( $conditionToInCountryCurrency);
 
-    if ($totalAmountInCountryCurrency >= $conditionFromInCountryCurrency && $totalAmountInCountryCurrency <= $conditionToInCountryCurrency) {
-        $shippingFee = $rule->shipping_fee * $exchangeRate;
-        break;
-    }
-}
-       
+            if ($totalAmountInCountryCurrency >= $conditionFromInCountryCurrency && $totalAmountInCountryCurrency <= $conditionToInCountryCurrency) {
+                $shippingFee = $rule->shipping_fee * $exchangeRate;
+                break;
+            }
+        }
+
         //  dd($shippingFee);
-   
+
 
         // Initialize coupon discount
         $couponDiscount = 0;
@@ -337,78 +342,75 @@ foreach ($shippingRules as $rule) {
         $appliedCoupon = null;
         $res_coupon = "";
 
-$exchangeRate = session('exchange_rate', 1);
-$currencySymbol = session('currency_symbol', '$');
+        $exchangeRate = session('exchange_rate', 1);
+        $currencySymbol = session('currency_symbol', '$');
 
 
-$totalAmountConverted = $totalAmount * $exchangeRate;
+        $totalAmountConverted = $totalAmount * $exchangeRate;
 
-// dd($totalAmountConverted);
+        // dd($totalAmountConverted);
 
-// Check for coupon code in the request
-if ($couponCode) {
-    $coupon = Coupon::where('code', $couponCode)
-        ->where('status', 1)
-        ->where('start_date', '<=', now())
-        ->where('end_date', '>=', now())
-        ->first();
+        // Check for coupon code in the request
+        if ($couponCode) {
+            $coupon = Coupon::where('code', $couponCode)
+                ->where('status', 1)
+                ->where('start_date', '<=', now())
+                ->where('end_date', '>=', now())
+                ->first();
 
-        // dd($coupon);
-    
-    if ($coupon) {
-        // Convert coupon's minimum_purchase_price and discount_value to the target currency
-        $mini_price_converted = $coupon->minimum_purchase_price * $exchangeRate;
-        $discount_value_converted = $coupon->discount_value * $exchangeRate;
+            // dd($coupon);
 
-        // dd($mini_price_converted);
-        // dd($discount_value_converted);
+            if ($coupon) {
+                // Convert coupon's minimum_purchase_price and discount_value to the target currency
+                $mini_price_converted = $coupon->minimum_purchase_price * $exchangeRate;
+                $discount_value_converted = $coupon->discount_value * $exchangeRate;
 
-        if ($totalAmountConverted <= $mini_price_converted) {
-            $res_coupon = "Not Applied";
-        } else {
-            if ($coupon->discount_type == 'percentage') {
-                $discount = ($totalAmountConverted * $coupon->discount_value) / 100;
-                $totalAmountConverted -= $discount;
-                $res_coupon = $discount;
-             
-            } 
-            elseif ($coupon->discount_type == 'fixed') {
-                $totalAmountConverted -= $discount_value_converted;
-                $res_coupon = $discount_value_converted;
-                 
+                // dd($mini_price_converted);
+                // dd($discount_value_converted);
+
+                if ($totalAmountConverted <= $mini_price_converted) {
+                    $res_coupon = "Not Applied";
+                } else {
+                    if ($coupon->discount_type == 'percentage') {
+                        $discount = ($totalAmountConverted * $coupon->discount_value) / 100;
+                        $totalAmountConverted -= $discount;
+                        $res_coupon = $discount;
+                    } elseif ($coupon->discount_type == 'fixed') {
+                        $totalAmountConverted -= $discount_value_converted;
+                        $res_coupon = $discount_value_converted;
+                    }
+                    //    dd($discount_value_converted);
+
+                }
             }
-        //    dd($discount_value_converted);
-          
         }
-    }
-}
 
-// dd($res_coupon);
-// Convert the final totalAmount back to the original currency for further use
-$totalAmount = $totalAmountConverted / $exchangeRate;
+        // dd($res_coupon);
+        // Convert the final totalAmount back to the original currency for further use
+        $totalAmount = $totalAmountConverted / $exchangeRate;
 
 
-session(['res_coupon' => $res_coupon]);
+        session(['res_coupon' => $res_coupon]);
 
 
-                 $exchangeRate = session('exchange_rate', 1); 
-         $currencySymbol = session('currency_symbol', '$');
+        $exchangeRate = session('exchange_rate', 1);
+        $currencySymbol = session('currency_symbol', '$');
 
         $finalTotalAmount = $totalAmount  + $shippingFee;
 
 
-    // Convert individual item prices to selected currency
-    foreach ($cart as $item) {
-        $item->price *= $exchangeRate;
+        // Convert individual item prices to selected currency
+        foreach ($cart as $item) {
+            $item->price *= $exchangeRate;
+        }
+
+
+
+        return view('frontend.cart', compact('cart', 'totalAmount', 'shippingFee', 'couponDiscount', 'appliedCoupon', 'res_coupon', 'finalTotalAmount', 'cartcount', 'exchangeRate', 'currencySymbol'));
     }
 
 
 
-        return view('frontend.cart', compact('cart', 'totalAmount', 'shippingFee', 'couponDiscount', 'appliedCoupon', 'res_coupon', 'finalTotalAmount', 'cartcount','exchangeRate','currencySymbol'));
-    }
-
-
-           
 
     public function checkout(Request $request)
     {
@@ -425,32 +427,32 @@ session(['res_coupon' => $res_coupon]);
 
         $user = auth()->user();
 
-$exchangeRate = session('exchange_rate', 1);
-$currencySymbol = session('currency_symbol', '$');
+        $exchangeRate = session('exchange_rate', 1);
+        $currencySymbol = session('currency_symbol', '$');
 
-// Convert totalAmount to country-based currency
-$totalAmountInCountryCurrency = $totalAmount * $exchangeRate;
+        // Convert totalAmount to country-based currency
+        $totalAmountInCountryCurrency = $totalAmount * $exchangeRate;
 
 
-// dd($totalAmountInCountryCurrency);
+        // dd($totalAmountInCountryCurrency);
 
-// Fetch shipping rules
-$shippingRules = Shipping::all();
+        // Fetch shipping rules
+        $shippingRules = Shipping::all();
 
-// Determine the applicable shipping fee
-$shippingFee = 0;
-foreach ($shippingRules as $rule) {
+        // Determine the applicable shipping fee
+        $shippingFee = 0;
+        foreach ($shippingRules as $rule) {
 
-    $conditionFromInCountryCurrency = $rule->condition_from * $exchangeRate;
-    $conditionToInCountryCurrency = $rule->condition_to * $exchangeRate;
-// dd( $conditionFromInCountryCurrency);
-    // dd( $conditionToInCountryCurrency);
+            $conditionFromInCountryCurrency = $rule->condition_from * $exchangeRate;
+            $conditionToInCountryCurrency = $rule->condition_to * $exchangeRate;
+            // dd( $conditionFromInCountryCurrency);
+            // dd( $conditionToInCountryCurrency);
 
-    if ($totalAmountInCountryCurrency >= $conditionFromInCountryCurrency && $totalAmountInCountryCurrency <= $conditionToInCountryCurrency) {
-        $shippingFee = $rule->shipping_fee * $exchangeRate;
-        break;
-    }
-}
+            if ($totalAmountInCountryCurrency >= $conditionFromInCountryCurrency && $totalAmountInCountryCurrency <= $conditionToInCountryCurrency) {
+                $shippingFee = $rule->shipping_fee * $exchangeRate;
+                break;
+            }
+        }
         $Address = null;
         if ($user != null) {
             $shippingAddress = Addresses::where('user_id', $user->id)
@@ -534,51 +536,49 @@ foreach ($shippingRules as $rule) {
                 ]);
             }
 
-        $shippingAddress = Addresses::where('user_id', $user->id)
-                                     ->where('type', 1) // Shipping address
-                                     ->get();
+            $shippingAddress = Addresses::where('user_id', $user->id)
+                ->where('type', 1) // Shipping address
+                ->get();
 
-                                      $Address = Addresses::where('user_id', $user->id)
-                                     ->where('type', 1) 
-                                     ->first();
-      
-                                     
+            $Address = Addresses::where('user_id', $user->id)
+                ->where('type', 1)
+                ->first();
 
-                                     $userHasShippingAddress = Addresses::where('user_id', $user->id)
-                                   ->where('type', 1) // Shipping address
-                                   ->exists();
 
-                                  
-        // If billing address exists, pre-fill the request with billing address data
-        if ($billingAddress) {
-            $request->merge([
-                'name' => $request->input('name', $billingAddress->name),
-                'email' => $request->input('email', $billingAddress->email),
-                'mobile' => $request->input('mobile', $billingAddress->mobile),
-                'country' => $request->input('country', $billingAddress->country),
-                'state' => $request->input('state', $billingAddress->state),
-                'city' => $request->input('city', $billingAddress->city),
-                'address' => $request->input('address', $billingAddress->address),
-                'pincode' => $request->input('pincode', $billingAddress->pincode),
-            ]);
+
+            $userHasShippingAddress = Addresses::where('user_id', $user->id)
+                ->where('type', 1) // Shipping address
+                ->exists();
+
+
+            // If billing address exists, pre-fill the request with billing address data
+            if ($billingAddress) {
+                $request->merge([
+                    'name' => $request->input('name', $billingAddress->name),
+                    'email' => $request->input('email', $billingAddress->email),
+                    'mobile' => $request->input('mobile', $billingAddress->mobile),
+                    'country' => $request->input('country', $billingAddress->country),
+                    'state' => $request->input('state', $billingAddress->state),
+                    'city' => $request->input('city', $billingAddress->city),
+                    'address' => $request->input('address', $billingAddress->address),
+                    'pincode' => $request->input('pincode', $billingAddress->pincode),
+                ]);
+            }
+
+
+            // dd($finalTotalAmount);
+
+            $exchangeRate = session('exchange_rate', 1);
+            $currencySymbol = session('currency_symbol', '$');
+
+
+            // dd($totalAmountInCountryCurrency);
+            // Convert individual item prices to selected currency
+            foreach ($cart as $item) {
+                $item->price *= $exchangeRate;
+            }
         }
-
-
-        // dd($finalTotalAmount);
-
-               $exchangeRate = session('exchange_rate', 1); 
-         $currencySymbol = session('currency_symbol', '$');
-
-
-// dd($totalAmountInCountryCurrency);
-    // Convert individual item prices to selected currency
-    foreach ($cart as $item) {
-        $item->price *= $exchangeRate;
-    }
-
-        }
-        return view('frontend.checkout', compact('cart', 'totalAmount', 'shippingFee', 'finalTotalAmount', 'res_coupon', 'billingAddress', 'shippingAddress', 'userHasShippingAddress', 'Address','exchangeRate','currencySymbol'));
-    
+        return view('frontend.checkout', compact('cart', 'totalAmount', 'shippingFee', 'finalTotalAmount', 'res_coupon', 'billingAddress', 'shippingAddress', 'userHasShippingAddress', 'Address', 'exchangeRate', 'currencySymbol'));
     }
 
     public function myaccount()
@@ -653,7 +653,7 @@ foreach ($shippingRules as $rule) {
     public function contactstore(Request $request)
     {
 
-        $request->validate([
+        $notifyData =  $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'message' => 'required|string'
@@ -669,8 +669,19 @@ foreach ($shippingRules as $rule) {
         $mailData = Contact::create($data);
         Mail::to('developer@itsk.in')->send(new ContactFormMail($mailData));
         Mail::to($request['email'])->send(new ContactReplyMail($mailData));
+
+        event(new ContactNotificationEvent($request->input('name')));
+
+        $admins = User::all();
+
+        foreach ($admins as $admin) {
+            $admin->notify(new ContactNotification($notifyData));
+        }
+
+
         return redirect()->back()->with('success', 'We recieved your message, Our team contact shortly Thank You!');
     }
+
 
  public function setCountry(Request $request)
     {
@@ -776,5 +787,4 @@ public function changePassword(Request $request)
 
     return redirect()->back()->with('success', 'Password changed successfully!');
 }
-
 }

@@ -28,7 +28,7 @@
 
     <!-- Icons css -->
     <link href="{{ asset('assets/admin/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
-  
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 </head>
 
@@ -86,21 +86,53 @@
                 <ul class="topbar-menu d-flex align-items-center gap-3">
 
 
+                    <li class="dropdown">
+                        @php
+                            $unreadCount = auth()->user()->unreadNotifications->count();
+                        @endphp
 
-
-
-                    <!--
-                        <li class="d-none d-sm-inline-block">
-                            <a class="nav-link" data-bs-toggle="offcanvas" href="#theme-settings-offcanvas">
-                                <i class="ri-settings-3-line fs-22"></i>
-                            </a>
-                        </li> -->
-
-                    <!-- <li class="d-none d-sm-inline-block">
-                            <div class="nav-link" id="light-dark-mode">
-                                <i class="ri-moon-line fs-22"></i>
+                        <a class="nav-link dropdown-toggle arrow-none nav-user" data-bs-toggle="dropdown" href="#"
+                            role="button" aria-haspopup="false" aria-expanded="false" style="position: relative">
+                            <div class="badge d-none d-sm-inline-block"
+                                style="position: absolute;top: 40px;right: -15px;">
+                                <span class="badge text-bg-primary float-end" style="font-size: 12px" id="notify_count"
+                                    @if ($unreadCount == 0) hidden @endif>{{ $unreadCount }}</span>
                             </div>
-                        </li> -->
+                            <span>
+                                <h5 class="my-0 fw-normal">
+                                    <i class="ri-notification-3-line d-none d-sm-inline-block align-middle"
+                                        style="font-size: 25px"></i>
+                                </h5>
+                            </span>
+                        </a>
+
+                        <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown">
+                            <div id="notification_list">
+                                @foreach (auth()->user()->notifications as $notification)
+                                    @if ($notification->unread() && $notification->read_at == null)
+                                        <a href="{{ route('contact_messages.read.one', ['id' => $notification->id]) }}"
+                                            class="dropdown-item">
+                                            <i class="ri-user-fill fs-18 align-middle me-1"></i>
+                                            <span><b>{{ $notification->data['name'] }}</b> </span>contacted 
+                                            <p>
+                                                <small
+                                                    style="color: #02a8b5">{{ $notification->created_at->diffForHumans() }}</small>
+                                            </p>
+                                        </a>
+                                    @endif
+                                @endforeach
+                            </div>
+                            @if ($unreadCount > 0)
+                                <form class="mx-2" action="{{ route('contact_messages.read.all') }}" method="POST">
+                                    @csrf
+                                    <button class="card widget-flat text-bg-primary" type="submit">Mark all as
+                                        Read</button>
+                                </form>
+                            @endif
+                        </div>
+                    </li>
+
+
 
                     <li class="dropdown">
                         <a class="nav-link dropdown-toggle arrow-none nav-user" data-bs-toggle="dropdown" href="#"
@@ -255,10 +287,10 @@
                                 {{-- <li>
                                     <a href="{{ route('productmeta.index') }}">Product Meta </a>
                                 </li> --}}
-                                   <li>
+                                <li>
                                     <a href="{{ route('product_show_cases.index') }}">Product Show Case </a>
-                                </li>   
-                                  <li>
+                                </li>
+                                <li>
                                     <a href="{{ route('show_case_products.index') }}">Show Case Product</a>
                                 </li> 
                                  <li>
@@ -374,8 +406,8 @@
                             <span> Setting </span>
                         </a>
                     </li>
-                    {{--website footer--}}
-                          <li class="side-nav-item">
+                    {{-- website footer --}}
+                    <li class="side-nav-item">
                         <a data-bs-toggle="collapse" href="#footerPages" aria-expanded="false"
                             aria-controls="footerPages" class="side-nav-link">
                             <i class="ri-pages-line"></i>
@@ -388,18 +420,18 @@
                                     <a href="{{ route('footers.index') }}">Footer</a>
                                 </li>
                                 <li>
-                                    <a href="{{route('footer_links.index')}}">First Column Link</a>
+                                    <a href="{{ route('footer_links.index') }}">First Column Link</a>
                                 </li>
                                 <li>
-                                    <a href="{{route('second_columns.index')}}">Second Column Link</a>
+                                    <a href="{{ route('second_columns.index') }}">Second Column Link</a>
                                 </li>
                                 <li>
-                                    <a href="{{route('third_columns.index')}}">Third Column Link</a>
+                                    <a href="{{ route('third_columns.index') }}">Third Column Link</a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('social_media_links.index')}}">Social Media Link</a>
+                                    <a href="{{ route('social_media_links.index') }}">Social Media Link</a>
                                 </li>
-                               
+
 
                             </ul>
                         </div>
@@ -486,15 +518,15 @@
                         </div>
 
 
-                        <li class="side-nav-item">
-                            <a href="{{ route('subscriber.index') }}" class="side-nav-link">
-                                <i class="ri-dashboard-3-line"></i>
-                                <span>Subscriber</span>
-                            </a>
-                        </li>
-                        
+                    <li class="side-nav-item">
+                        <a href="{{ route('subscriber.index') }}" class="side-nav-link">
+                            <i class="ri-dashboard-3-line"></i>
+                            <span>Subscriber</span>
+                        </a>
+                    </li>
 
-                       
+
+
                     </li>
 
 
@@ -507,14 +539,14 @@
                         </a>
                         <div class="collapse" id="managewebsite">
                             <ul class="side-nav-second-level">
-                                <li >
-                                    <a href="{{ route('contactpage.index') }}" >
-                                       
+                                <li>
+                                    <a href="{{ route('contactpage.index') }}">
+
                                         Contact Page
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{{route('terms.index')}}">Terms&Condition</a>
+                                    <a href="{{ route('terms.index') }}">Terms&Condition</a>
                                 </li>
                                 <li>
                                     <a href="{{ route('privacypolicy.index') }}">Privacy Policy</a>
@@ -573,8 +605,9 @@
     <script src="{{ asset('assets/admin/js/app.min.js') }}"></script>
 
     {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
-<!-- Toastr JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
 
 
 <script>
@@ -595,7 +628,54 @@ $(document).ready(function() {
                 toastr.warning('{{ session('warning') }}');
             @endif
         });
-</script>
+    </script>
+
+
+
+
+
+    {{-- Toater  --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+    <script>
+        Pusher.logToConsole = true;
+
+        var pusher = new Pusher('f6700b65ed665872ec5e', {
+            cluster: 'ap2'
+        });
+
+        var channel = pusher.subscribe('notification');
+        channel.bind('noify', function(data) {
+            if (data.name) {
+                let notifyCount = document.getElementById('notify_count');
+                let currentCount = notifyCount == null ? 0 : parseInt(notifyCount.textContent);
+                let newCount = notifyCount == null ? 1 : currentCount + 1;
+                if (notifyCount != null) {
+                    notifyCount.textContent = newCount;
+                    notifyCount.removeAttribute('hidden');
+                }
+
+                let notificationList = document.getElementById('notification_list');
+                let notificationTime = new Date();
+                let currentTime = new Date();
+                let diff = Math.floor((currentTime - notificationTime) / 60000);
+                let timeAgo = diff > 1 ? diff + ' mins ago' : 'just now';
+                let newNotification = `<a href="{{ route('contact_messages.index') }}" class="dropdown-item">
+                            <i class="ri-user-fill fs-18 align-middle me-1"></i>
+                            <span><b>${data.name}</b></span> contacted 
+                            <p>
+                                <small style="color: #02a8b5">${timeAgo}</small>
+                            </p>
+                        </a>`;
+                notificationList.insertAdjacentHTML('afterbegin', newNotification);
+            }
+        });
+    </script>
+
+
 
 </body>
 
