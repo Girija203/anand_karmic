@@ -217,18 +217,25 @@
                             <i class="icon-rt-heart2"></i><span>Add to wishlist</span>
                         </a>
                     </div>
-
+                    @if (!empty($product_sml_share))
                     <div class="social-share-wrap d-flex gap-1 mt-3">
+                          
                         <div class="social-share social-share-in-color d-flex gap-2">
-                            @foreach ($socialmedia as $items)
+                            <p>Share:</p>
+                            @foreach ($product_sml_share as $items)
                             <a class="social-share-link facebook" href="{{ $items->link }}" target="_blank" aria-label="facebook">
                                 <i class="{{ $items->icon }}"></i>
                             </a>
                             @endforeach
-
-
                         </div>
+                         
                     </div>
+
+ <a class="social-share-link copy-link" href="javascript:void(0);" onclick="copyToClipboard()" aria-label="copy link">
+                <i class="fas fa-copy"></i> 
+            </a>
+@endif
+
                 </div>
                 <div class="col-md-6">
                     <div class="swiper product-details-lg-active">
@@ -541,6 +548,31 @@
         })
     });
 </script>
+
+
+<script>
+    function copyToClipboard() {
+        var tempInput = document.createElement('input');
+        var productUrl = window.location.href;
+        tempInput.value = productUrl;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+
+        // Change the text of the icon to indicate the link has been copied
+        var copyLinkButton = document.querySelector('.social-share-link.copy-link i');
+        var originalText = copyLinkButton.className;
+        copyLinkButton.className = 'fas fa-check'; // Change to a check mark icon or any other indicator
+
+        // Optional: Revert the icon back to the original after a delay
+        setTimeout(function() {
+            copyLinkButton.className = originalText;
+        }, 2000);
+    }
+</script>
+Explanation:
+
 
 
 @endsection

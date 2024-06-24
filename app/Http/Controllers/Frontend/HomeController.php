@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Frontend;
 
 use Illuminate\Support\Facades\Auth;
+use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
 use App\Mail\ContactFormMail;
 use App\Mail\ContactReplyMail;
+use App\Models\ProductSMLShare;
 use App\Models\Contact;
 use App\Models\SocialMediaLink;
 use App\Models\Wishlist;
@@ -24,6 +27,7 @@ use App\Models\ProductShowCase;
 use App\Models\ShowCaseProduct;
 use Illuminate\Support\Carbon;
 
+
 use Illuminate\Support\Facades\Cookie;
 class HomeController extends Controller
 {
@@ -34,8 +38,10 @@ class HomeController extends Controller
         $cart = Cart::get();
         $showCaseProducts = ShowCaseProduct::with(['product', 'productShowCase'])->get();
         $ProductShowCases = ProductShowCase::first();
+             $exchangeRate = session('exchange_rate', 1); 
+         $currencySymbol = session('currency_symbol', '$');
         // dd( $showCaseProducts);
-        return view('frontend.home', compact('cart', 'showCaseProducts', 'ProductShowCases'));
+        return view('frontend.home', compact('cart', 'showCaseProducts', 'ProductShowCases','exchangeRate','currencySymbol'));
     }
 
     public function about()
@@ -207,13 +213,20 @@ public function filterByCategory($id)
         $reviews = $products->reviews()->where('status', 0)->get();
         $cart = Cart::get();
 
-        $socialmedia = SocialMediaLink::all();
+        $product_sml_share = [];
+
+    // Check if the product is shareable
+    if ($products->is_shareable) {
+        $product_sml_share = ProductSMLShare::all();
+    }
+
+        
 
         //   dd($relatedProducts);
          $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
          $currencySymbol = session('currency_symbol', '$');
 
-        return view('frontend.single_product', compact('products', 'specifications', 'relatedProducts', 'reviews', 'cart','socialmedia','exchangeRate','currencySymbol'));
+        return view('frontend.single_product', compact('products', 'specifications', 'relatedProducts', 'reviews', 'cart','product_sml_share','exchangeRate','currencySymbol'));
     }
 
         public function wishlist()
@@ -585,6 +598,40 @@ foreach ($shippingRules as $rule) {
         //   dd($address);
         return view('frontend.myaccount', compact('cart', 'order', 'address', 'user'));
     }
+
+    //personal information
+
+  
+    public function userupdate(Request $request)
+    {
+      
+    
+        $request->validate([
+            'name' => 'required',         
+            'email' => 'required',
+            'phone' => 'required',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+   
+       $user = Auth::user();
+       $user->name = $request->name;
+      
+       $user->email = $request->email;
+  
+       $user->phone = $request->phone;
+         if ($request->hasFile('image')) {        
+          $imagePath = $request->file('image')->store('profileimages', 'public');
+          $user->image = $imagePath;
+      }
+     
+        $user->save();
+ 
+        return redirect()->back()->with('success', 'Profile updated successfully.');
+    }
+  
+
+
+
     public function update(Request $request)
     {
         $request->validate([
@@ -625,32 +672,109 @@ foreach ($shippingRules as $rule) {
         return redirect()->back()->with('success', 'We recieved your message, Our team contact shortly Thank You!');
     }
 
-    public function setCountry(Request $request)
-{
-    $request->validate([
-        'country' => 'required|string'
-    ]);
+ public function setCountry(Request $request)
+    {
+        $request->validate([
+            'country' => 'required|string'
+        ]);
 
-    $country = $request->country;
-    session(['country' => $country]);
+        $country = $request->country;
+        session(['country' => $country]);
 
-    // Set exchange rate and currency symbol based on the country
-    switch ($country) {
-        case 'US':
-            session(['exchange_rate' => 1, 'currency_symbol' => '$']);
-            break;
-        case 'IN':
-            session(['exchange_rate' => 0.013, 'currency_symbol' => '₹']);
-            break;
-        case 'UK':
-            session(['exchange_rate' => 1.39, 'currency_symbol' => '£']);
-            break;
-        default:
-            session(['exchange_rate' => 1, 'currency_symbol' => '$']);
-            break;
+        $client = new Client();
+        $apiKey = '93426a64e4020f5d28396f59';
+        $apiUrl = 'https://v6.exchangerate-api.com/v6/' . $apiKey . '/latest/USD';
+
+        try {
+            $response = $client->get($apiUrl);
+            $data = json_decode($response->getBody(), true);
+            // Set exchange rate and currency symbol based on the country
+            switch ($country) {
+                case 'US':
+                    session(['exchange_rate' => 1, 'currency_symbol' => '$']);
+                    break;
+                case 'IN':
+                    $exchangeRate = $data['conversion_rates']['INR'] ?? 0.013;
+                    session(['exchange_rate' => $exchangeRate, 'currency_symbol' => '₹']);
+                    break;
+                case 'UK':
+                    $exchangeRate = $data['conversion_rates']['GBP'] ?? 1.39;
+                    session(['exchange_rate' => $exchangeRate, 'currency_symbol' => '£']);
+                    break;
+                default:
+                    session(['exchange_rate' => 1, 'currency_symbol' => '$']);
+                    break;
+            }
+        } catch (\Exception $e) {
+            // Handle exception if the API request fails
+            switch ($country) {
+                case 'US':
+                    session(['exchange_rate' => 1, 'currency_symbol' => '$']);
+                    break;
+                case 'IN':
+                    session(['exchange_rate' => 83.49, 'currency_symbol' => '₹']);
+                    break;
+                case 'UK':
+                    session(['exchange_rate' => 0.79, 'currency_symbol' => '£']);
+                    break;
+                default:
+                    session(['exchange_rate' => 1, 'currency_symbol' => '$']);
+                    break;
+            }
+        }
+
+        return redirect()->back();
     }
 
-    return redirect()->back();
+public function buyNow($productId, Request $request)
+{
+    // Add product to cart
+    $product = Product::findOrFail($productId);
+
+    $existingCartItem = Cart::where('product_id', $product->id)->first();
+
+    if ($existingCartItem) {
+        // If the product is already in the cart, update the quantity
+        $existingCartItem->quantity += 1;
+        $existingCartItem->save();
+    } else {
+        Cart::create([
+            'product_id' => $product->id,
+            'name' => $product->title,
+            'price' => $product->offer_price,
+            'image' => $product->image,
+            'quantity' => 1,
+        ]);
+    }
+
+    // Store the cart in a cookie
+    $cart = Cart::all();
+    Cookie::queue('cart', json_encode($cart), 60 * 24 * 30); // 30 days
+
+    // Redirect to the checkout page
+    return redirect()->route('checkout')->with('success', 'Product added to cart successfully');
+}
+
+
+public function changePassword(Request $request)
+{
+    $request->validate([
+        'old_password' => 'required',
+        'new_password' => 'required|confirmed',
+    ]);
+
+    $user = Auth::user();
+
+    // Check if old password matches
+    if (!Hash::check($request->old_password, $user->password)) {
+        return back()->withErrors(['old_password' => 'The provided password does not match your current password.']);
+    }
+
+    // Update password
+    $user->password = Hash::make($request->new_password);
+    $user->save();
+
+    return redirect()->back()->with('success', 'Password changed successfully!');
 }
 
 }

@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\UserManagement\PermissionController;
 use App\Http\Controllers\Admin\UserManagement\PermissionGroupController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\ContactMessageController;
+use App\Http\Controllers\Admin\ProductSMLShareController;
 use App\Http\Controllers\Admin\MetaTypeController;
 use App\Http\Controllers\Admin\MetaKeyController;
 use App\Http\Controllers\Admin\BlogTagController;
@@ -386,6 +387,18 @@ Route::post('third_column-store', [FooterLinkController::class, 'thirdColumnStor
 Route::get('third_column-edit/{id}', [FooterLinkController::class, 'thirdColumnEdit'])->name('third_columns.edit');
 Route::post('third_column-update/{id}', [FooterLinkController::class, 'thirdColumnUpdate'])->name('third_columns.update');
 Route::get('third_column-delete/{id}', [FooterLinkController::class, 'thirdColumnDelete'])->name('third_columns.delete');
+
+
+
+//Productsmlshare
+Route::get('product_sml_share', [ProductSMLShareController::class, 'index'])->name('product_sml_shares.index');
+Route::get('product_sml_share/data', [ProductSMLShareController::class, 'indexData'])->name('product_sml_shares.data');
+Route::get('product_sml_share/create', [ProductSMLShareController::class, 'create'])->name('product_sml_shares.create');
+Route::post('product_sml_share/store', [ProductSMLShareController::class, 'store'])->name('product_sml_shares.store');
+Route::get('product_sml_share/edit/{id}', [ProductSMLShareController::class, 'edit'])->name('product_sml_shares.edit');
+Route::post('product_sml_share/update/{id}', [ProductSMLShareController::class, 'update'])->name('product_sml_shares.update');
+Route::get('product_sml_share/delete/{id}', [ProductSMLShareController::class, 'delete'])->name('product_sml_shares.delete');
+
 //Order 
 
 Route::get('order-all', [OrderController::class, 'all'])->name('orders.all');
@@ -432,6 +445,14 @@ Route::put('/update-address', [HomeController::class, 'update'])->name('update.a
 
 Route::post('/user/coupons', [HomeController::class, 'applyCouponCode'])->name('coupons.apply');
 Route::post('/set-country', [HomeController::class, 'setCountry'])->name('setCountry');
+
+
+Route::post('/buy-now/{productId}', [HomeController::class, 'buyNow'])->name('buy.now');
+
+Route::post('/user-profile/update', [HomeController::class, 'userupdate'])->name('profile.update');
+//change password
+// routes/web.php or routes/api.php
+Route::post('/change-password', [HomeController::class, 'changePassword'])->name('account.changepassword');
 
 
 // cart
