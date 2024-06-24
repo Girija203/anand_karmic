@@ -4517,6 +4517,6 @@ font-weight: 600;
   }
 
 
-
-
-
+.about-image img{
+    border-radius: 15px 0px;
+}

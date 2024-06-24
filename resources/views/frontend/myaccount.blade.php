@@ -173,20 +173,30 @@
 
                            <form action="{{ route('account.changepassword') }}" method="POST">
                             @csrf
-                            <div>
-                                <label for="old_password">Old Password</label>
-                                <div style="position: relative;">
-                                    <input type="password" id="old_password" name="old_password" class="form-control">
-                                    <button type="button" class="btn" onclick="togglePasswordVisibility('old_password', 'toggleOldPasswordIcon')" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: none; background: none;">
-                                        <i id="toggleOldPasswordIcon" class="fas fa-eye"></i>
-                                    </button>
+                            <div class="row">
+                                <div class="col-lg-3">
+                                
+                                    <label for="old_password">Old Password</label>
                                 </div>
-                                @error('old_password')
+                                <div class="col-lg-9">
+                                    <div style="position: relative;">
+                                        <input type="password" id="old_password" name="old_password" class="form-control">
+                                        <button type="button" class="btn" onclick="togglePasswordVisibility('old_password', 'toggleOldPasswordIcon')" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: none; background: none;">
+                                            <i id="toggleOldPasswordIcon" class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    @error('old_password')
                                     <span class="error" style="color: red;">{{ $message }}</span>
                                 @enderror
+                                </div>
+                              
                             </div>
-                            <div>
-                                <label for="new_password">New Password</label>
+                            <div class="row mt-3">
+                                <div class="col-lg-3">
+
+                                    <label for="new_password">New Password</label>
+                                </div>
+                               <div class="col-lg-9">
                                 <div style="position: relative;">
                                     <input type="password" id="new_password" name="new_password" class="form-control">
                                     <button type="button" class="btn" onclick="togglePasswordVisibility('new_password', 'toggleNewPasswordIcon')" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: none; background: none;">
@@ -196,18 +206,26 @@
                                 @error('new_password')
                                     <span class="error" style="color: red;">{{ $message }}</span>
                                 @enderror
+                               </div>
+                                
                             </div>
-                            <div>
-                                <label for="new_password_confirmation">Confirm New Password</label>
-                                <div style="position: relative;">
-                                    <input type="password" id="new_password_confirmation" name="new_password_confirmation" class="form-control">
-                                    <button type="button" class="btn" onclick="togglePasswordVisibility('new_password_confirmation', 'toggleConfirmPasswordIcon')" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: none; background: none;">
-                                        <i id="toggleConfirmPasswordIcon" class="fas fa-eye"></i>
-                                    </button>
+                            <div class="row mt-3">
+                                <div class="col-lg-3">
+
+                                    <label for="new_password_confirmation">Confirm New Password</label>
                                 </div>
-                                @error('new_password_confirmation')
-                                    <span class="error" style="color: red;">{{ $message }}</span>
-                                @enderror
+                                <div class="col-lg-9">
+                                    <div style="position: relative;">
+                                        <input type="password" id="new_password_confirmation" name="new_password_confirmation" class="form-control">
+                                        <button type="button" class="btn" onclick="togglePasswordVisibility('new_password_confirmation', 'toggleConfirmPasswordIcon')" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: none; background: none;">
+                                            <i id="toggleConfirmPasswordIcon" class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    @error('new_password_confirmation')
+                                        <span class="error" style="color: red;">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                
                             </div>
                             <div class="row" style="margin-top:18px !important;">
                                 <div class="col-sm-3"></div>
