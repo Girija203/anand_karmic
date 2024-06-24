@@ -9,7 +9,7 @@
     <meta content="Techzaa" name="author" />
 
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{ asset('assets/admin/images/favicon.ico') }}">
+    <link rel="shortcut icon" href="{{ asset('assets/admin/images/favicon.png') }}">
 
     <!-- Daterangepicker css -->
     <link rel="stylesheet" href="{{ asset('assets/admin/vendor/daterangepicker/daterangepicker.css') }}">
@@ -113,7 +113,7 @@
                                         <a href="{{ route('contact_messages.read.one', ['id' => $notification->id]) }}"
                                             class="dropdown-item">
                                             <i class="ri-user-fill fs-18 align-middle me-1"></i>
-                                            <span><b>{{ $notification->data['name'] }}</b> </span>contacted 
+                                            <span><b>{{ $notification->data['name'] }}</b> </span>contacted
                                             <p>
                                                 <small
                                                     style="color: #02a8b5">{{ $notification->created_at->diffForHumans() }}</small>
@@ -292,10 +292,7 @@
                                 </li>
                                 <li>
                                     <a href="{{ route('show_case_products.index') }}">Show Case Product</a>
-                                </li> 
-                                 <li>
-                                    <a href="{{ route('product_sml_shares.index') }}">Product SML Share</a>
-                                </li> 
+                                </li>
                             </ul>
                         </div>
                     </li>
@@ -406,7 +403,7 @@
                             <span> Setting </span>
                         </a>
                     </li>
-                    {{-- website footer --}}
+                    {{-- Website footer --}}
                     <li class="side-nav-item">
                         <a data-bs-toggle="collapse" href="#footerPages" aria-expanded="false"
                             aria-controls="footerPages" class="side-nav-link">
@@ -443,47 +440,38 @@
                             <span> Contact Message </span>
                         </a>
                     </li>
-                    <li class="side-nav-item">
-                        <a href="{{ route('meta_types.index') }}" class="side-nav-link">
-                            <i class="ri-dashboard-3-line"></i>
-                            <span>Meta Type</span>
-                        </a>
-                    </li>
 
+                    {{-- Blogs --}}
                     <li class="side-nav-item">
-                        <a href="{{ route('meta_keys.index') }}" class="side-nav-link">
-                            <i class="ri-dashboard-3-line"></i>
-                            <span>Meta Key</span>
+                        <a data-bs-toggle="collapse" href="#footerPages" aria-expanded="false"
+                            aria-controls="footerPages" class="side-nav-link">
+                            <i class="ri-pages-line"></i>
+                            <span>Blogs</span>
+                            <span class="menu-arrow"></span>
                         </a>
-                    </li>
+                        <div class="collapse" id="footerPages">
+                            <ul class="side-nav-second-level">
+                                <li>
+                                    <a href="{{ route('blog_posts.index') }}">Blog Post</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('blog_categories.index') }}">Blog Category</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('blog_tags.index') }}">Blog Tag</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('blog_comments.index') }}">Blog Comment</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('meta_types.index') }}">Meta Type</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('meta_keys.index') }}">Meta Key</a>
+                                </li>
 
-
-                    <li class="side-nav-item">
-                        <a href="{{ route('blog_tags.index') }}" class="side-nav-link">
-                            <i class="ri-dashboard-3-line"></i>
-                            <span>Blog Tag</span>
-                        </a>
-                    </li>
-                    <li class="side-nav-item">
-                        <a href="{{ route('blog_categories.index') }}" class="side-nav-link">
-                            <i class="ri-dashboard-3-line"></i>
-                            <span>Blog Category</span>
-                        </a>
-                    </li>
-                    <li class="side-nav-item">
-                        <a href="{{ route('blog_posts.index') }}" class="side-nav-link">
-                            <i class="ri-dashboard-3-line"></i>
-                            <span>Blog Post</span>
-                        </a>
-                    </li>
-
-                    <li class="side-nav-item">
-                        <a href="{{ route('blog_comments.index') }}" class="side-nav-link">
-                            <i class="ri-dashboard-3-line"></i>
-                            <span>Blog Comment</span>
-                        </a>
-                    </li>
-
+                            </ul>
+                        </div>
                     </li>
 
                     {{-- Location Settings --}}
@@ -505,14 +493,11 @@
                                 </li>
 
                                 <li>
-                                    <a href="{{ route('cities.index') }}">city</a>
+                                    <a href="{{ route('cities.index') }}">City</a>
                                 </li>
                                 <li>
                                     <a href="{{ route('currencies.index') }}">Currency</a>
                                 </li>
-
-
-
 
                             </ul>
                         </div>
@@ -524,9 +509,6 @@
                             <span>Subscriber</span>
                         </a>
                     </li>
-
-
-
                     </li>
 
 
@@ -546,13 +528,13 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('terms.index') }}">Terms&Condition</a>
+                                    <a href="{{ route('terms.index') }}">Terms & Condition</a>
                                 </li>
                                 <li>
                                     <a href="{{ route('privacypolicy.index') }}">Privacy Policy</a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('faq.index') }}">Faq</a>
+                                    <a href="{{ route('faq.index') }}">FAQ</a>
                                 </li>
 
                             </ul>
@@ -610,8 +592,8 @@
 
 
 
-<script>
-$(document).ready(function() {
+    <script>
+        $(document).ready(function() {
             @if (session('success'))
                 toastr.success('{{ session('success') }}');
             @endif
