@@ -194,7 +194,7 @@
                                                         </div>
 
                                                         <div class="col-md-12">
-                                                            <label>Price</label>
+                                                            <label>Price &#40;$&#41;</label>
                                                             <input type="text" class="form-control" name="price"
                                                                 value="{{ old('price') }}">
                                                             @error('price')
@@ -204,7 +204,7 @@
                                                         </div>
 
                                                         <div class="col-md-12">
-                                                            <label>Offer Price</label>
+                                                            <label>Offer Price &#40;$&#41;</label>
                                                             <input type="text" class="form-control" name="offer_price"
                                                                 value="{{ old('offer_price') }}">
                                                             @error('offer_price')
