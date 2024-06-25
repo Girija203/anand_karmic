@@ -402,7 +402,6 @@ Route::post('product_sml_share/update/{id}', [ProductSMLShareController::class, 
 Route::get('product_sml_share/delete/{id}', [ProductSMLShareController::class, 'delete'])->name('product_sml_shares.delete');
 
 //Order 
-
 Route::get('order-all', [OrderController::class, 'all'])->name('orders.all');
 Route::get('/orders/{id}', [OrderController::class, 'getOrder']);
 Route::post('order-update', [OrderController::class, 'update'])->name('orders.update');
@@ -421,6 +420,8 @@ Route::get('order-completed', [OrderController::class, 'completed'])->name('orde
 Route::get('order-declined', [OrderController::class, 'declined'])->name('orders.declined');
 Route::get('order-cash_on_delivery', [OrderController::class, 'cashONDelivery'])->name('orders.cashONDelivery');
 Route::get('order-show/{id}', [OrderController::class, 'show'])->name('orders.show');
+Route::get('order_message_read_one/{id}', [OrderController::class, 'read_one'])->name('order_messages.read.one');
+Route::post('order_message_read_all', [OrderController::class, 'read_all'])->name('order_messages.read.all');
 
 //Frontend
 
