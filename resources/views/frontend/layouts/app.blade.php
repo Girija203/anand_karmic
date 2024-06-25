@@ -8,7 +8,7 @@
 <meta name="description" content="Karmic Bags">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <!-- Favicon -->
-<link rel="shortcut icon" type="image/x-icon" href="assets/images/favicon.png">
+<link rel="shortcut icon" type="image/x-icon" href="frontend/assets/images/favicon.png">
 <!-- CSS (Font, Vendor, Icon, Plugins & Style CSS files) -->
 <!-- Font CSS -->
 <link rel="preconnect" href="https://fonts.googleapis.com/">

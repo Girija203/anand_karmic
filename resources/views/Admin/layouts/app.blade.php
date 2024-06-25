@@ -87,9 +87,14 @@
 
 
                     <li class="dropdown">
-                        @php
-                            $unreadCount = auth()->user()->unreadNotifications->count();
-                        @endphp
+                   @php
+    $unreadCount = 0;
+    if (auth()->check()) {
+        $unreadCount = auth()->user()->unreadNotifications->count();
+    }
+@endphp
+
+
 
                         <a class="nav-link dropdown-toggle arrow-none nav-user" data-bs-toggle="dropdown" href="#"
                             role="button" aria-haspopup="false" aria-expanded="false" style="position: relative">
@@ -105,31 +110,34 @@
                                 </h5>
                             </span>
                         </a>
+<div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown">
+    <div id="notification_list">
+        @if (auth()->check())
+            @foreach (auth()->user()->notifications as $notification)
+                @if ($notification->unread() && $notification->read_at == null)
+                    <a href="{{ route('contact_messages.read.one', ['id' => $notification->id]) }}"
+                        class="dropdown-item">
+                        <i class="ri-user-fill fs-18 align-middle me-1"></i>
+                        <span><b>{{ $notification->data['name'] }}</b> </span>contacted
+                        <p>
+                            <small
+                                style="color: #02a8b5">{{ $notification->created_at->diffForHumans() }}</small>
+                        </p>
+                    </a>
+                @endif
+            @endforeach
+        @else
+            <p class="dropdown-item">No notifications available.</p>
+        @endif
+    </div>
+    @if (auth()->check() && $unreadCount > 0)
+        <form class="mx-2" action="{{ route('contact_messages.read.all') }}" method="POST">
+            @csrf
+            <button class="card widget-flat text-bg-primary" type="submit">Mark all as Read</button>
+        </form>
+    @endif
+</div>
 
-                        <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown">
-                            <div id="notification_list">
-                                @foreach (auth()->user()->notifications as $notification)
-                                    @if ($notification->unread() && $notification->read_at == null)
-                                        <a href="{{ route('contact_messages.read.one', ['id' => $notification->id]) }}"
-                                            class="dropdown-item">
-                                            <i class="ri-user-fill fs-18 align-middle me-1"></i>
-                                            <span><b>{{ $notification->data['name'] }}</b> </span>contacted
-                                            <p>
-                                                <small
-                                                    style="color: #02a8b5">{{ $notification->created_at->diffForHumans() }}</small>
-                                            </p>
-                                        </a>
-                                    @endif
-                                @endforeach
-                            </div>
-                            @if ($unreadCount > 0)
-                                <form class="mx-2" action="{{ route('contact_messages.read.all') }}" method="POST">
-                                    @csrf
-                                    <button class="card widget-flat text-bg-primary" type="submit">Mark all as
-                                        Read</button>
-                                </form>
-                            @endif
-                        </div>
                     </li>
 
 

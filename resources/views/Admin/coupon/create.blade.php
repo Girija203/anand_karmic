@@ -87,7 +87,7 @@
                                                     </div>
 
                                                     <label for="name" class="col-sm-2 col-form-label mandatory">Minimum
-                                                        Purchase Price</label>
+                                                        Purchase Price($)</label>
                                                     <div class="col-sm-4 mb-4">
                                                         <input class="form-control" type="text"
                                                             name="minimum_purchase_price" id="name">

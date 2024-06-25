@@ -116,10 +116,15 @@
 
                                     </div> -->
                                     <div class="p-2">
-                                        <a href="{{route('single.product',$product->id)}} " class="card_height">
-                                            <img class="card-img-top object-fit-cover" src="{{ asset('storage/' . $product->image) }}" alt="Card image cap" width="100%">
-                                        </a>
-                                    </div>
+    <a href="{{ route('single.product', $product->id) }}" class="card_height">
+        @if($product->image)
+            <img class="card-img-top object-fit-cover" src="{{ asset('storage/' . $product->image) }}" alt="Card image cap" width="100%">
+        @else
+            <img class="card-img-top object-fit-cover" src="{{ asset('images/products/default-image.jpg') }}" alt="Default image" width="100%">
+        @endif
+    </a>
+</div>
+
                                     <div class="card-body">
                                         <h6 class="card-title">{{ $product->title }}</h6>
                                         <span> 2colors </span>

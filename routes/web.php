@@ -478,6 +478,10 @@ Route::get('review', [ReviewController::class, 'index'])->name('review.index');
 
 Route::get('review/data', [ReviewController::class, 'indexData'])->name('review.data');
 
+Route::post('/product_reviews/update', [ReviewController::class,'updateStatus'])->name('review.update');
+
+
+
 //product report
 
 Route::get('report', [ReportController::class, 'index'])->name('report.index');
