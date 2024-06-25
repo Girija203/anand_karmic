@@ -6,23 +6,23 @@
             @method('PUT')
            
             <div class="form-group">
-                <label>Razorpay Key</label>
+                <label class="mandatory">Razorpay Key</label>
                 <input type="text" class="form-control" name="razorpay_key" value="{{$razorpay->razorpay_key ?? ''}}">
             </div>
             <div class="form-group">
-                <label>Razorpay Secret</label>
+                <label class="mandatory">Razorpay Secret</label>
                 <input type="text" class="form-control" name="razorpay_secret" value="{{$razorpay->razorpay_secret ?? ''}}">
             </div>
             <div class="form-group">
-                <label>Name</label>
+                <label class="mandatory">Name</label>
                 <input type="text" class="form-control" name="name" value="{{$razorpay->name ?? ''}}">
             </div>
             <div class="form-group">
-                <label>Description</label>
+                <label class="mandatory">Description</label>
                 <input type="text" class="form-control" name="description" value="{{$razorpay->description ?? ''}}">
             </div>
             <div class="form-group">
-                <label>Country</label>
+                <label class="mandatory">Country</label>
                <select class="form-control" name="country_code" id="">
                 <option value="">select</option>
                 @foreach ($country as $item)
@@ -32,7 +32,7 @@
                </select>
             </div>
              <div class="form-group">
-                <label>Currency</label>
+                <label class="mandatory">Currency</label>
                 <select class="form-control" name="currency_code" id="">
                 <option value="">select</option>
                 @foreach ($currency as $item)
@@ -43,7 +43,7 @@
             </div>
 
              <div class="form-group">
-                <label>Currency Rate</label>
+                <label class="mandatory">Currency Rate</label>
                 <input type="text" class="form-control" name="currency_rate"  id="" value="{{$razorpay->currency_rate ?? ''}}">
             </div>
             <div class="form-group">
@@ -61,7 +61,7 @@
 
 
            <div class="form-group">
-                <label>Status</label>
+                <label class="mandatory">Status</label>
 
                                <select name="status" id="" class="form-control select2">
                     <option value="">Select</option>

@@ -53,7 +53,7 @@
 
                                                     @csrf
 
-                                                    @if ($errors->any())
+                                                    {{-- @if ($errors->any())
                                                         <div class="alert alert-danger">
                                                             <ul>
                                                                 @foreach ($errors->all() as $error)
@@ -61,7 +61,7 @@
                                                                 @endforeach
                                                             </ul>
                                                         </div>
-                                                    @endif
+                                                    @endif --}}
 
                                                     <div class="row">
 
@@ -86,10 +86,10 @@
 
 
                                                         <div class="col-md-12">
-                                                            <label for="name" class=""> Product Name </label>
+                                                            <label for="name" class=""> Product Name<span class="text text-danger">*</span> </label>
                                                             <div class="">
                                                                 <input class="form-control" type="text" name="title"
-                                                                    id="title" required value="{{ $product->title }}">
+                                                                    id="title"  value="{{ $product->title }}">
                                                                 @error('title')
                                                                     <span class="error"
                                                                         style="color: red;">{{ $message }}</span>
@@ -99,7 +99,7 @@
 
 
                                                         <div class="col-md-12">
-                                                            <label for="multiple_images"> Select Multiple image</label>
+                                                            <label for="multiple_images"> Select Multiple image<span class="text text-danger">*</span></label>
 
                                                             <input class="form-control" type="file"
                                                                 name="multiple_images[]" id="multiple_images" multiple
@@ -113,9 +113,9 @@
 
 
                                                         <div class="col-md-12">
-                                                            <label for="category_id">Category</label>
+                                                            <label for="category_id">Category<span class="text text-danger">*</span></label>
                                                             <select id="category_id" class="form-control" name="category_id"
-                                                                value="{{ old('category_id') }}" required>
+                                                                value="{{ old('category_id') }}" >
                                                                 <option value="">Select Category</option>
                                                                 @foreach ($category as $categories)
                                                                     <option value="{{ $categories->id }}"
@@ -134,7 +134,7 @@
                                                             <label for="subcategory_id">SubCategory</label>
                                                             <select id="subcategory_id" class="form-control"
                                                                 name="subcategory_id" value="{{ old('subcategory_id') }}"
-                                                                required>
+                                                               >
                                                                 <option value="">Select SubCategory</option>
                                                                 @foreach ($subcategory as $subcategories)
                                                                     <option
@@ -169,7 +169,7 @@
                                                         </div>
 
                                                         <div class="col-md-12">
-                                                            <label for="category_id">Brand</label>
+                                                            <label for="category_id">Brand<span class="text text-danger">*</span></label>
 
                                                             <select id="inputState" class="form-control" name="brand_id"
                                                                 required value="{{ old('brand_id') }}">
@@ -190,7 +190,7 @@
                                                         </div>
 
                                                         <div class="col-md-12">
-                                                            <label for="name">Short description </label>
+                                                            <label for="name">Short description<span class="text text-danger">*</span> </label>
                                                             <div class="">
                                                                 <textarea class="form-control" rows="3" name="short_description" value="{{ $product->short_description }}">{{ $product->short_description }}</textarea>
                                                                 @error('short_description')
@@ -200,7 +200,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="col-md-12">
-                                                            <label for="name">Long description </label>
+                                                            <label for="name">Long description<span class="text text-danger">*</span> </label>
                                                             <div class="">
                                                                 <textarea id="summernote" name="long_description" value="{{ $product->long_description }}">{{ $product->long_description }}</textarea>
                                                                 @error('long_description')
@@ -221,7 +221,7 @@
                                                         </div>
 
                                                         <div class="col-md-12">
-                                                            <label>Price &#40;$&#41;</label>
+                                                            <label>Price &#40;$&#41;<span class="text text-danger">*</span></label>
                                                             <input type="text" class="form-control" name="price"
                                                                 value="{{ $product->price }}">
                                                             @error('price')
@@ -241,7 +241,7 @@
                                                         </div>
 
                                                         <div class="col-md-12">
-                                                            <label>Stock Quantity</label>
+                                                            <label> Quantity<span class="text text-danger">*</span></label>
                                                             <input type="number" min="0" class="form-control"
                                                                 name="qty" value="{{ $product->qty }}">
                                                             @error('qty')
@@ -250,7 +250,7 @@
                                                             @enderror
                                                         </div>
 
-                                                        <div class="form-group col-md-12">
+                                                        {{-- <div class="form-group col-md-12">
                                                             <label>Highlight</label>
                                                             <div>
                                                                 <input type="checkbox" name="is_top" id="top_product"
@@ -275,7 +275,7 @@
                                                                     for="is_featured" class="mr-3">Featured
                                                                     Product</label>
                                                             </div>
-                                                        </div>
+                                                        </div> --}}
 
                                                         {{-- <div class="form-group col-md-12">
                                                             <label>Specification</label>
@@ -288,7 +288,7 @@
 
                                                         <div class="col-md-12">
                                                             <label for="status"
-                                                                class="col-sm-1 col-form-label">Status</label>
+                                                                class="col-form-label">Status<span class="text text-danger">*</span></label>
                                                             <select id="inputState" class="form-control" name="status"
                                                                 value="{{ old('status') }}" required>
                                                                 <option>select option</option>

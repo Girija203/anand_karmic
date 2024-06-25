@@ -6,34 +6,34 @@
                 @method('PUT')
                
                 <div class="form-group">
-                    <label>Email</label>
+                    <label class="mandatory">Email</label>
                     <input type="email" class="form-control" required name="mail" value="{{ $emailconfiguration->mail ?? '' }}">
                 </div>
 
                 <div class="form-group">
-                    <label>Host</label>
+                    <label class="mandatory">Host</label>
                     <input type="text" class="form-control" required name="mail_host" value="{{  $emailconfiguration->mail_host ?? '' }}">
                 </div>
                 
                 <div class="form-group">
-                    <label>Username</label>
+                    <label class="mandatory">Username</label>
                     <input type="text" class="form-control" required name="smtp_username" value="{{  $emailconfiguration->smtp_username ?? '' }}">
                 </div>
                 <div class="form-group">
-                    <label>Password</label>
+                    <label class="mandatory">Password</label>
                     <input type="text" class="form-control" required name="smtp_password" value="{{  $emailconfiguration->smtp_password ?? '' }}">
                 </div>
                 <div class="form-group">
-                    <label>Port</label>
+                    <label class="mandatory">Port</label>
                     <input type="text" class="form-control" required name="mail_port" value="{{  $emailconfiguration->mail_port ?? '' }}">
                 </div>
                 <div class="form-group">
-                    <label>Encryption</label>
+                    <label class="mandatory">Encryption</label>
                     <input type="text" class="form-control" required name="mail_encryption" value="{{  $emailconfiguration->mail_encryption ?? '' }}">
                 </div>
 
                     <div class="form-group">
-                        <label>Status</label>
+                        <label class="mandatory">Status</label>
                     <select name="status" id="" class="form-control select2">
                         <option value="">Select</option>
                         @if( $emailconfiguration && $emailconfiguration->status == '1')
@@ -52,9 +52,9 @@
                     </select>
                     </div>
                   <br>
-                           <div style="text-align: center;">
-      <button type="submit" class="btn btn-primary">Update</button>
-    </div>
+                <div style="text-align: center;">
+                <button type="submit" class="btn btn-primary">Update</button>
+                </div>
             </form>
         </div>
     </div>

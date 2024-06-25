@@ -40,7 +40,8 @@ class SubCategoryController extends Controller
     $request->validate([
         'category_id'=>'required',
         'name' => 'required|string|max:255',
-        'status'=>'required',
+        'status'=>'required'
+       
  
     ]);
 

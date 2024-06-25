@@ -7,11 +7,11 @@
            
 
             <div class="form-group">
-                <label>Primary Color</label>
+                <label class="mandatory">Primary Color</label>
                 <input type="color" class="form-control" name="primary_color" value="{{ $setting->primary_color ?? '#000000' }}">
             </div>
             <div class="form-group">
-                <label>Secondary Color</label>
+                <label class="mandatory">Secondary Color</label>
                 <input type="color" class="form-control" name="secondary_color" value="{{ $setting->secondary_color ?? '#000000' }}">
             </div>
             <br>

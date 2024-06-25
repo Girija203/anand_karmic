@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AccountSettingController;
 use App\Http\Controllers\Admin\AddStockController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\SetCurrency;
@@ -91,6 +92,15 @@ Route::post('user-store', [UserController::class, 'store'])->name('users.store')
 Route::get('user-edit/{id}', [UserController::class, 'edit'])->name('users.edit');
 Route::post('user-update/{id}', [UserController::class, 'update'])->name('users.update');
 Route::get('user-delete/{id}', [UserController::class, 'delete'])->name('users.delete');
+
+
+//accountsetting
+
+Route::get('account', [AccountSettingController::class, 'index'])->name('accountsetting.index');
+Route::get('profile/edit', [AccountSettingController::class, 'edit'])->name('accountsetting.profile');
+Route::post('/admin-profile/update', [AccountSettingController::class, 'adminupdate'])->name('adminprofile.update');
+Route::post('/adminchange-password', [AccountSettingController::class, 'AdminchangePassword'])->name('adminaccount.changepassword');
+
 
 //Role
 Route::get('roles', [RoleController::class, 'index'])->name('roles.index');

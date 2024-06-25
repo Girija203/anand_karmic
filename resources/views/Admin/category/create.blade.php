@@ -48,11 +48,11 @@
                                                     @csrf
                                                     <div class="row">
                                                         <div class="col-md-6">
-                                                            <label for="name" class="col-sm-1 col-form-label">Name
+                                                            <label for="name" class=" col-form-label">Name<span class="text text-danger">*</span>
                                                             </label>
                                                             <div class="">
                                                                 <input class="form-control" type="text" name="name"
-                                                                    id="name" required>
+                                                                    id="name" >
                                                                 @error('name')
                                                                     <span class="error"
                                                                         style="color: red;">{{ $message }}</span>
@@ -61,9 +61,9 @@
                                                         </div>
                                                         <div class="col-md-6">
                                                             <label for="status"
-                                                                class="col-sm-1 col-form-label">Status</label>
+                                                                class="col-form-label">Status<span class="text text-danger">*</span></label>
                                                             <select id="inputState" class="form-control" name="status">
-                                                                <option value="1">Select Status</option>
+                                                                <option value="">Select Status</option>
                                                                 <option value="1">Active</option>
                                                                 <option value="0">Inactive</option>
                                                             </select>

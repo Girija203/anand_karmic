@@ -39,6 +39,7 @@ class ProductShowCaseController extends Controller
         //   dd($request);
         $request->validate([
             'title' => 'required',
+            'description'=>'required'
 
             
         ]);

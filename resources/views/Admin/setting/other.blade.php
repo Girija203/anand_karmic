@@ -6,7 +6,7 @@
             @method('PUT')
            
             <div class="form-group">
-                <label>Current Version</label>
+                <label class="mandatory">Current Version</label>
                 <input type="text" class="form-control" name="current_version" value="{{ $setting->current_version ?? '' }}">
             </div>
             <div class="form-group">
@@ -18,7 +18,7 @@
 </select>
 </div>
             <div class="form-group">
-                <label>Frontend Url</label>
+                <label class="mandatory">Frontend Url</label>
                 <input type="text" class="form-control" name="frontend_url" value="{{ $setting->frontend_url ?? '' }}">
             </div>
             <div class="form-group">

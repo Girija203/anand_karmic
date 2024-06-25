@@ -20,6 +20,7 @@
 
 
     <script src="{{ asset('assets/admin/js/vendor.min.js') }}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
     <!-- Scripts -->
     {{-- @vite(['resources/sass/app.scss', 'resources/js/app.js']) --}}
@@ -37,6 +38,7 @@
                                     <img src="{{ asset('assets/admin/images/auth-img.png') }}" alt=""
                                         class="img-fluid rounded h-100">
                                 </div>
+                              
                                 <div class="col-lg-6">
                                     <div class="d-flex flex-column h-100">
                                         <div class="auth-brand p-4">
@@ -120,6 +122,7 @@
                                                 </div> -->
                                             </form>
                                             <!-- end form-->
+                                            
 
                                         </div>
                                     </div>
@@ -168,4 +171,28 @@
     });
 </script>
 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+
+
+<script>
+    $(document).ready(function() {
+        @if (session('success'))
+            toastr.success('{{ session('success') }}');
+        @endif
+
+        @if (session('error'))
+            toastr.error('{{ session('error') }}');
+        @endif
+
+        @if (session('info'))
+            toastr.info('{{ session('info') }}');
+        @endif
+
+        @if (session('warning'))
+            toastr.warning('{{ session('warning') }}');
+        @endif
+    });
+</script>
 </html>
