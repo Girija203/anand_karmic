@@ -91,6 +91,9 @@ class ProductShowCaseController extends Controller
 
          $ProductShowCases->delete();
 
+         $result = "Productshowcase deleted successfully";
+         return $result;
+
         return redirect()->route('product_show_cases.index')->with('success', 'Product Show Case Deleted successfully!');
 
 

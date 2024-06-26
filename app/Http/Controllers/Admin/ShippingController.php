@@ -102,6 +102,9 @@ class ShippingController extends Controller
      
         $shipping->delete();
 
+        $result = "Shipping Deleted successfully";
+        return $result;
+
         return redirect()->route('shippings.index')->with('success', 'Shipping Deleet successfully!');
 
 

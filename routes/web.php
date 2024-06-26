@@ -236,7 +236,7 @@ Route::get('brand/create', [BrandController::class, 'create'])->name('brand.crea
 Route::post('brand/store', [BrandController::class, 'store'])->name('brand.store');
 Route::get('brand/edit/{id}', [BrandController::class, 'edit'])->name('brand.edit');
 Route::PUT('brand/update/{id}', [BrandController::class, 'update'])->name('brand.update');
-Route::get('brand/delete/{id}', [BrandController::class, 'delete'])->name('brand.delete');
+Route::get('/brand/delete/{id}', [BrandController::class, 'delete'])->name('brand.delete');
 
 //\
 Route::get('product/create', [ProductController::class, 'create'])->name('product.create');

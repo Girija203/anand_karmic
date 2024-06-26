@@ -181,7 +181,7 @@
 
             if (confirm('Are you sure you want to delete this Brand?')) {
                 $.ajax({
-                    url: 'brand/delete/' + id,
+                    url: '/brand/delete/' + id,
                     type: 'get',
                     data: {
                         _token: '{{ csrf_token() }}',
