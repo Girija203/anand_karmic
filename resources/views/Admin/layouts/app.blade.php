@@ -188,8 +188,14 @@
                         <a class="nav-link dropdown-toggle arrow-none nav-user" data-bs-toggle="dropdown"
                             href="#" role="button" aria-haspopup="false" aria-expanded="false">
                             <span class="account-user-avatar">
+                                @if (auth()->check() && auth()->user()->image)
+                                <img src="{{ asset('storage/' . auth()->user()->image) }}"
+                                    class="user-img" alt="user-image"
+                                    width="32" class="rounded-circle" />
+                            @else
                                 <img src="{{ asset('assets/admin/images/users/avatar-1.jpg') }}" alt="user-image"
                                     width="32" class="rounded-circle">
+                                    @endif
                             </span>
                             <span class="d-lg-block d-none">
                                 <h5 class="my-0 fw-normal">Thomson <i
@@ -203,13 +209,13 @@
                             </div>
 
                             <!-- item-->
-                            <a href="pages-profile.html" class="dropdown-item">
+                            <a href="{{route('accountsetting.index')}}" class="dropdown-item">
                                 <i class="ri-account-circle-line fs-18 align-middle me-1"></i>
                                 <span>My Account</span>
                             </a>
 
                             <!-- item-->
-                            <a href="pages-profile.html" class="dropdown-item">
+                            {{-- <a href="pages-profile.html" class="dropdown-item">
                                 <i class="ri-settings-4-line fs-18 align-middle me-1"></i>
                                 <span>Settings</span>
                             </a>
@@ -224,7 +230,7 @@
                             <a href="auth-lock-screen.html" class="dropdown-item">
                                 <i class="ri-lock-password-line fs-18 align-middle me-1"></i>
                                 <span>Lock Screen</span>
-                            </a>
+                            </a> --}}
 
                             <!-- item-->
                             <a href="{{ route('admin.logout') }}" class="dropdown-item">
@@ -493,13 +499,13 @@
 
                     {{-- Blogs --}}
                     <li class="side-nav-item">
-                        <a data-bs-toggle="collapse" href="#footerPages" aria-expanded="false"
-                            aria-controls="footerPages" class="side-nav-link">
+                        <a data-bs-toggle="collapse" href="#blogPages" aria-expanded="false"
+                            aria-controls="blogPages" class="side-nav-link">
                             <i class="ri-pages-line"></i>
                             <span>Blogs</span>
                             <span class="menu-arrow"></span>
                         </a>
-                        <div class="collapse" id="footerPages">
+                        <div class="collapse" id="blogPages">
                             <ul class="side-nav-second-level">
                                 <li>
                                     <a href="{{ route('blog_posts.index') }}">Blog Post</a>

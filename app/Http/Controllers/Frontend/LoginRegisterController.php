@@ -21,6 +21,8 @@ class LoginRegisterController extends Controller
 {
    public function register(){
 
+  
+
     $cartItems = Cart::with('product')->get();
             $cart = $cartItems->map(function($item) {
                 $product = $item->product;

@@ -16,6 +16,9 @@ class AdminLoginController extends Controller
 {
      public function login()
      {
+        if (Auth::check()) {
+            return redirect()->route('dashboard'); 
+        }
         return view('Admin.auth.login');
      }
 
@@ -43,7 +46,7 @@ class AdminLoginController extends Controller
             } 
             
             else {
-                return redirect()->back()->with('danger', 'You do not have permission to access the admin dashboard');
+                return redirect()->back()->with('error', 'Your Credential does not match our records');
             
         }
     }

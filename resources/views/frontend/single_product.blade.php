@@ -239,13 +239,20 @@
                 </div>
                 <div class="col-md-6">
                     <div class="swiper product-details-lg-active">
-                        <div class="swiper-wrapper">
-                            @foreach ($products->images as $image)
-                            <div class="swiper-slide">
-                                <img class="w-75" src="{{ asset('storage/' . $image->image) }}" alt="{{ $products->title }} Image" />
-                            </div>
-                            @endforeach
-                        </div>
+                       <div class="swiper-wrapper">
+    @if($products->images->isNotEmpty())
+        @foreach ($products->images as $image)
+        <div class="swiper-slide">
+            <img class="w-75" src="{{ asset('storage/' . $image->image) }}" alt="{{ $products->title }} Image" />
+        </div>
+        @endforeach
+    @else
+        <div class="swiper-slide">
+            <img class="w-75" src="{{ asset('images/products/default-image.jpg') }}" alt="Default Product Image" />
+        </div>
+    @endif
+</div>
+
                         <div class="product-details-button-next product-details-navigation-next">
                             <i class="icon-rt-arrow-right"></i>
                         </div>
@@ -315,32 +322,32 @@
                         <!-- Display other product details here -->
                         <!-- Product reviews -->
                         <div class="product-reviews">
-                            <h3>Product Reviews</h3>
-                            @if ($products->reviews->count() > 0)
-                            <ul>
-                                @foreach ($products->reviews as $review)
-                                <li>
-                                    <div class="review-header">
-                                        <span>Rating:
-                                            @for ($i = 1; $i <= 5; $i++) @if ($i <=$review->rating)
-                                                <i class="fas fa-star text-warning"></i>
-                                                @else
-                                                <i class="far fa-star"></i>
-                                                @endif
-                                                @endfor
-                                        </span>
-                                    </div>
-
-                                    <div class="review-body">
-                                        <p>{{ $review->review }}</p>
-                                    </div>
-                                </li>
-                                @endforeach
-                            </ul>
-                            @else
-                            <p>No reviews for this product yet.</p>
-                            @endif
-                        </div>
+    <h3>Product Reviews</h3>
+    @if ($reviews->count() > 0)
+    <ul>
+        @foreach ($reviews as $review)
+        <li>
+            <div class="review-header">
+                <span>Rating:
+                    @for ($i = 1; $i <= 5; $i++)
+                        @if ($i <= $review->rating)
+                            <i class="fas fa-star text-warning"></i>
+                        @else
+                            <i class="far fa-star"></i>
+                        @endif
+                    @endfor
+                </span>
+            </div>
+            <div class="review-body">
+                <p>{{ $review->review }}</p>
+            </div>
+        </li>
+        @endforeach
+    </ul>
+    @else
+    <p>No reviews for this product yet.</p>
+    @endif
+</div>
                         <!-- Add your form for submitting new reviews here -->
                     </div>
 
@@ -415,33 +422,34 @@
 
 <!-- test start -->
 <div class="row">
-@foreach ($relatedProducts as $relatedProduct)
-<!-- <swiper-slide> -->
-    
-        <div class="col-md-3">
-            <div class="card position-relative box-shad">
-                <div class="position-absolute r-0 card_icon">
-                    <i class="fa-solid fa-lock fs-15"></i>
-                </div>
-                <div class="p-2">
-                    <img class="card-img-top" src="{{ asset('storage/' . $relatedProduct->image) }}" alt="{{ $relatedProduct->title }}" width="100%">
-                </div>
-                <div class="card-body">
-                    <h6 class="card-title">{{ $relatedProduct->title }}</h6>
-                    <span>{{ $relatedProduct->color_count }} colors</span>
-                    <div class="d-flex justify-content-between align-items-center my-2">
-                        <a href="{{ route('single.product', $relatedProduct->id) }}">
-                            <button class="btn btn-black">Shop Now</button>
-                        </a>
-                        <span>Rs. {{ $relatedProduct->offer_price }}</span>
+    @if($relatedProducts->isEmpty())
+        <p>There is no relative products for this Product</p>
+    @else
+        @foreach ($relatedProducts as $relatedProduct)
+            <div class="col-md-3">
+                <div class="card position-relative box-shad">
+                    <div class="position-absolute r-0 card_icon">
+                        <i class="fa-solid fa-lock fs-15"></i>
+                    </div>
+                    <div class="p-2">
+                        <img class="card-img-top" src="{{ asset('storage/' . $relatedProduct->image) }}" alt="{{ $relatedProduct->title }}" width="100%">
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-title">{{ $relatedProduct->title }}</h6>
+                        <span>{{ $relatedProduct->color_count }} colors</span>
+                        <div class="d-flex justify-content-between align-items-center my-2">
+                            <a href="{{ route('single.product', $relatedProduct->id) }}">
+                                <button class="btn btn-black">Shop Now</button>
+                            </a>
+                            <span>Rs. {{ $relatedProduct->offer_price }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-  
-<!-- </swiper-slide> -->
-@endforeach
+        @endforeach
+    @endif
 </div>
+
 <!-- test end -->
 <!-- </swiper-container> -->
     </section>
@@ -571,7 +579,7 @@
         }, 2000);
     }
 </script>
-Explanation:
+
 
 
 

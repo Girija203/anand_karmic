@@ -9641,6 +9641,7 @@ fieldset:disabled .btn {
 
 .mb-0 {
     margin-bottom: 0 !important;
+   
 }
 
 .mb-1 {
@@ -18939,7 +18940,7 @@ html[data-bs-theme="dark"] .auth-brand .logo-dark {
 }
 .profile-bg-picture {
     position: relative;
-    min-height: 300px;
+    min-height: 130px;
     margin: 0 -20px 0px -20px;
     background-position: center;
     background-size: cover;
