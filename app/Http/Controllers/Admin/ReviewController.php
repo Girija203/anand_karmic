@@ -56,4 +56,13 @@ class ReviewController extends Controller
 
        return redirect()->back()->with('success', 'Review submitted successfully!');
    }
+public function updateStatus(Request $request)
+{
+    $productReview = ProductReview::findOrFail($request->review_id);
+    $productReview->status = $request->status;
+    $productReview->save();
+
+    return redirect()->back()->with('success', 'Review Status updated successfully!');
+}
+
 }

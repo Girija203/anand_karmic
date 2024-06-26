@@ -85,45 +85,47 @@
 
                 <ul class="topbar-menu d-flex align-items-center gap-3">
 
-
                     <li class="dropdown">
                         @php
-                            $unreadCount = auth()->user()->unreadNotifications->count();
+                            $unreadNotifications = auth()->user()->unreadNotifications;
+                            $order_Notification = $unreadNotifications->filter(function ($notification) {
+                                return $notification->type == 'App\Notifications\OrderNotification';
+                            });
+                            $order_Notify_Count = $order_Notification->count();
                         @endphp
 
                         <a class="nav-link dropdown-toggle arrow-none nav-user" data-bs-toggle="dropdown" href="#"
                             role="button" aria-haspopup="false" aria-expanded="false" style="position: relative">
                             <div class="badge d-none d-sm-inline-block"
                                 style="position: absolute;top: 40px;right: -15px;">
-                                <span class="badge text-bg-primary float-end" style="font-size: 12px" id="notify_count"
-                                    @if ($unreadCount == 0) hidden @endif>{{ $unreadCount }}</span>
+                                <span class="badge text-bg-primary float-end" style="font-size: 12px" id="order_count"
+                                    @if ($order_Notify_Count == 0) hidden @endif>{{ $order_Notify_Count }}</span>
                             </div>
                             <span>
                                 <h5 class="my-0 fw-normal">
-                                    <i class="ri-notification-3-line d-none d-sm-inline-block align-middle"
+                                    <i class="ri-file-list-3-line d-none d-sm-inline-block align-middle"
                                         style="font-size: 25px"></i>
                                 </h5>
                             </span>
                         </a>
-
                         <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown">
-                            <div id="notification_list">
-                                @foreach (auth()->user()->notifications as $notification)
+                            <div id="order_list">
+                                @foreach ($order_Notification as $notification)
                                     @if ($notification->unread() && $notification->read_at == null)
-                                        <a href="{{ route('contact_messages.read.one', ['id' => $notification->id]) }}"
+                                        <a href="{{ route('order_messages.read.one', ['id' => $notification->id]) }}"
                                             class="dropdown-item">
                                             <i class="ri-user-fill fs-18 align-middle me-1"></i>
-                                            <span><b>{{ $notification->data['name'] }}</b> </span>contacted
+                                            <span><b>{{ $notification->data['name'] }}</b> </span>Ordered
                                             <p>
                                                 <small
-                                                    style="color: #02a8b5">{{ $notification->created_at->diffForHumans() }}</small>
+                                                    class="text-primary">{{ $notification->created_at->diffForHumans() }}</small>
                                             </p>
                                         </a>
                                     @endif
                                 @endforeach
                             </div>
-                            @if ($unreadCount > 0)
-                                <form class="mx-2" action="{{ route('contact_messages.read.all') }}" method="POST">
+                            @if ($order_Notify_Count > 0)
+                                <form class="mx-2" action="{{ route('order_messages.read.all') }}" method="POST">
                                     @csrf
                                     <button class="card widget-flat text-bg-primary" type="submit">Mark all as
                                         Read</button>
@@ -132,11 +134,59 @@
                         </div>
                     </li>
 
+                    <li class="dropdown">
+                        @php
+                            $unreadNotifications = auth()->user()->unreadNotifications;
+                            $contact_Notification = $unreadNotifications->filter(function ($notification) {
+                                return $notification->type == 'App\Notifications\ContactNotification';
+                            });
+                            $contact_Notify_Count = $contact_Notification->count();
+                        @endphp
 
+                        <a class="nav-link dropdown-toggle arrow-none nav-user" data-bs-toggle="dropdown" href="#"
+                            role="button" aria-haspopup="false" aria-expanded="false" style="position: relative">
+                            <div class="badge d-none d-sm-inline-block"
+                                style="position: absolute;top: 40px;right: -15px;">
+                                <span class="badge text-bg-primary float-end" style="font-size: 12px" id="notify_count"
+                                    @if ($contact_Notify_Count == 0) hidden @endif>{{ $contact_Notify_Count }}</span>
+                            </div>
+                            <span>
+                                <h5 class="my-0 fw-normal">
+                                    <i class="ri-notification-3-line d-none d-sm-inline-block align-middle"
+                                        style="font-size: 25px"></i>
+                                </h5>
+                            </span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown">
+                            <div id="notification_list">
+                                @foreach ($contact_Notification as $notification)
+                                    @if ($notification->unread() && $notification->read_at == null)
+                                        <a href="{{ route('contact_messages.read.one', ['id' => $notification->id]) }}"
+                                            class="dropdown-item">
+                                            <i class="ri-user-fill fs-18 align-middle me-1"></i>
+                                            <span><b>{{ $notification->data['name'] }}</b> </span>Contacted
+                                            <p>
+                                                <small
+                                                class="text-primary">{{ $notification->created_at->diffForHumans() }}</small>
+                                            </p>
+                                        </a>
+                                    @endif
+                                @endforeach
+                            </div>
+                            @if ($contact_Notify_Count > 0)
+                                <form class="mx-2" action="{{ route('contact_messages.read.all') }}"
+                                    method="POST">
+                                    @csrf
+                                    <button class="card widget-flat text-bg-primary" type="submit">Mark all as
+                                        Read</button>
+                                </form>
+                            @endif
+                        </div>
+                    </li>
 
                     <li class="dropdown">
-                        <a class="nav-link dropdown-toggle arrow-none nav-user" data-bs-toggle="dropdown" href="#"
-                            role="button" aria-haspopup="false" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle arrow-none nav-user" data-bs-toggle="dropdown"
+                            href="#" role="button" aria-haspopup="false" aria-expanded="false">
                             <span class="account-user-avatar">
                                 @if (auth()->check() && auth()->user()->image)
                                 <img src="{{ asset('storage/' . auth()->user()->image) }}"
@@ -628,13 +678,13 @@
 
 
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+
+    {{-- For Contact Notification --}}
     <script>
         Pusher.logToConsole = true;
-
         var pusher = new Pusher('f6700b65ed665872ec5e', {
             cluster: 'ap2'
         });
-
         var channel = pusher.subscribe('notification');
         channel.bind('noify', function(data) {
             if (data.name) {
@@ -645,7 +695,6 @@
                     notifyCount.textContent = newCount;
                     notifyCount.removeAttribute('hidden');
                 }
-
                 let notificationList = document.getElementById('notification_list');
                 let notificationTime = new Date();
                 let currentTime = new Date();
@@ -653,9 +702,9 @@
                 let timeAgo = diff > 1 ? diff + ' mins ago' : 'just now';
                 let newNotification = `<a href="{{ route('contact_messages.index') }}" class="dropdown-item">
                             <i class="ri-user-fill fs-18 align-middle me-1"></i>
-                            <span><b>${data.name}</b></span> contacted 
+                            <span><b>${data.name}</b></span> Contacted 
                             <p>
-                                <small style="color: #02a8b5">${timeAgo}</small>
+                                <small class="text-primary">${timeAgo}</small>
                             </p>
                         </a>`;
                 notificationList.insertAdjacentHTML('afterbegin', newNotification);
@@ -663,7 +712,38 @@
         });
     </script>
 
-
+    {{-- For Order Notification --}}
+    <script>
+        Pusher.logToConsole = true;
+        var pusher = new Pusher('f6700b65ed665872ec5e', {
+            cluster: 'ap2'
+        });
+        var channel = pusher.subscribe('order_notification');
+        channel.bind('order', function(data) {
+            if (data.name) {
+                let orderCount = document.getElementById('order_count');
+                let currentCount = orderCount == null ? 0 : parseInt(orderCount.textContent);
+                let newCount = orderCount == null ? 1 : currentCount + 1;
+                if (orderCount != null) {
+                    orderCount.textContent = newCount;
+                    orderCount.removeAttribute('hidden');
+                }
+                let notificationList = document.getElementById('order_list');
+                let notificationTime = new Date();
+                let currentTime = new Date();
+                let diff = Math.floor((currentTime - notificationTime) / 60000);
+                let timeAgo = diff > 1 ? diff + ' mins ago' : 'just now';
+                let newNotification = `<a href="{{ route('orders.all') }}" class="dropdown-item">
+                            <i class="ri-user-fill fs-18 align-middle me-1"></i>
+                            <span><b>${data.name}</b></span> Ordered 
+                            <p>
+                                <small class="text-primary">${timeAgo}</small>
+                            </p>
+                        </a>`;
+                notificationList.insertAdjacentHTML('afterbegin', newNotification);
+            }
+        });
+    </script>
 
 </body>
 

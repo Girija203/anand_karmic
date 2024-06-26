@@ -4520,3 +4520,13 @@ font-weight: 600;
 .about-image img{
     border-radius: 15px 0px;
 }
+.wrong-icon i{
+    font-size: 24px !important;
+    color: red;
+}
+button#removeCouponButton:active{
+    outline: none !important ;
+    border: none !important;
+    border-color: none !important;
+}
+

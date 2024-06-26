@@ -1,36 +1,37 @@
 @php
+     if (!function_exists('lightenColor')) {
+        function lightenColor($hex, $percent)
+        {
+            // Convert hex to RGB
+            $hex = str_replace('#', '', $hex);
+
+            if (strlen($hex) == 3) {
+                $r = hexdec(substr($hex, 0, 1) . substr($hex, 0, 1));
+                $g = hexdec(substr($hex, 1, 1) . substr($hex, 1, 1));
+                $b = hexdec(substr($hex, 2, 1) . substr($hex, 2, 1));
+            } else {
+                $r = hexdec(substr($hex, 0, 2));
+                $g = hexdec(substr($hex, 2, 2));
+                $b = hexdec(substr($hex, 4, 2));
+            }
+
+            // Calculate the lighter color
+            $r = round($r + ($percent / 100) * (255 - $r));
+            $g = round($g + ($percent / 100) * (255 - $g));
+            $b = round($b + ($percent / 100) * (255 - $b));
+
+            // Convert RGB back to hex
+            $r = sprintf('%02x', $r);
+            $g = sprintf('%02x', $g);
+            $b = sprintf('%02x', $b);
+
+            return '#' . $r . $g . $b;
+        }
+    }
+
     $setting = App\Models\Setting::first();
     $lighterColor1 = lightenColor($setting->primary_color, 80);
     $lighterColor2 = lightenColor($setting->secondary_color, 80);
-    // $setting->primary_color = 'blue';
-    // $setting->secondary_color = 'green';
-    function lightenColor($hex, $percent)
-    {
-        // Convert hex to RGB
-        $hex = str_replace('#', '', $hex);
-
-        if (strlen($hex) == 3) {
-            $r = hexdec(substr($hex, 0, 1) . substr($hex, 0, 1));
-            $g = hexdec(substr($hex, 1, 1) . substr($hex, 1, 1));
-            $b = hexdec(substr($hex, 2, 1) . substr($hex, 2, 1));
-        } else {
-            $r = hexdec(substr($hex, 0, 2));
-            $g = hexdec(substr($hex, 2, 2));
-            $b = hexdec(substr($hex, 4, 2));
-        }
-
-        // Calculate the lighter color
-        $r = round($r + ($percent / 100) * (255 - $r));
-        $g = round($g + ($percent / 100) * (255 - $g));
-        $b = round($b + ($percent / 100) * (255 - $b));
-
-        // Convert RGB back to hex
-        $r = sprintf('%02x', $r);
-        $g = sprintf('%02x', $g);
-        $b = sprintf('%02x', $b);
-
-        return '#' . $r . $g . $b;
-    }
 @endphp
 
 <style>

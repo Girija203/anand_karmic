@@ -31,13 +31,16 @@ class ContactMessageController extends Controller
         $notify = Notification::find($id);
         $notify->read_at = Carbon::now();
         $notify->save();
-
         return redirect()->route('contact_messages.index');
     }
 
     public function read_all()
     {
-        Auth::user()->unreadNotifications->markAsRead();
+        $unreadNotifications = auth()->user()->unreadNotifications;
+        $contact_Notification = $unreadNotifications->filter(function ($notification) {
+            return $notification->type == 'App\Notifications\ContactNotification';
+        });
+        $contact_Notification->markAsRead();
         return redirect()->back();
     }
 }

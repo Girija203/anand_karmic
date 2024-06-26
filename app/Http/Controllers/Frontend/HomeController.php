@@ -173,7 +173,11 @@ class HomeController extends Controller
 
         $cart = Cart::all();
 
-        return view('frontend.shop', compact('categories', 'products', 'specifications', 'cart', 'totalProducts'));
+        
+        $exchangeRate = session('exchange_rate', 1);
+        $currencySymbol = session('currency_symbol', '$');
+
+        return view('frontend.shop', compact('categories', 'products', 'specifications', 'cart', 'totalProducts','exchangeRate','currencySymbol'));
     }
 
     public function filterBySpecifications(Request $request)
@@ -193,8 +197,10 @@ class HomeController extends Controller
         $categories = Category::all();
         $totalProducts = Product::count();
         $cart = Cart::all();
+           $exchangeRate = session('exchange_rate', 1);
+        $currencySymbol = session('currency_symbol', '$');
 
-        return view('frontend.shop', compact('products', 'specifications', 'categories', 'cart', 'totalProducts'));
+        return view('frontend.shop', compact('products', 'specifications', 'categories', 'cart', 'totalProducts','exchangeRate','currencySymbol'));
     }
 
     public function singleProduct($id)
@@ -214,7 +220,10 @@ class HomeController extends Controller
             ->take(4)
             ->get();
 
-        $reviews = $products->reviews()->where('status', 0)->get();
+        $reviews = $products->reviews()->where('status', 1)->get();
+
+        
+
         $cart = Cart::get();
 
         $product_sml_share = [];
@@ -351,6 +360,7 @@ class HomeController extends Controller
         // dd($totalAmountConverted);
 
         // Check for coupon code in the request
+        
         if ($couponCode) {
             $coupon = Coupon::where('code', $couponCode)
                 ->where('status', 1)
