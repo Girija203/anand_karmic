@@ -342,5 +342,16 @@
          });
      </script>
 
-     
+     <script>
+document.getElementById('removeCouponButton').addEventListener('click', function() {
+    // Clear the input field
+    const couponInput = document.querySelector('input[name="coupon"]');
+    couponInput.value = '';
+
+    // Clear the coupon parameter in the URL
+    const url = new URL(window.location);
+    url.searchParams.delete('coupon');
+    window.history.pushState({}, document.title, url);
+});
+</script>
  @endsection

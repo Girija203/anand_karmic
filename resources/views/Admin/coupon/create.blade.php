@@ -97,7 +97,7 @@
                                                     </div>
 
                                                     <div class="form-group col-6">
-                                                        <label class="col-sm-2 col-form-label">Discount <span
+                                                        <label class="col-sm-2 col-form-label">Discount ($)<span
                                                                 class="text-danger">*</span></label>
                                                         <div class="input-group mb-3">
                                                             <div class="input-group-prepend">
