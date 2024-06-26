@@ -5,7 +5,7 @@
             @csrf
             @method('PUT')
             <div class="form-group">
-                <label>Site Title</label>
+                <label class="mandatory">Site Title</label>
                 <input type="text" class="form-control" name="site_title" value="{{ $setting->site_title ?? '' }}">
             </div>
             <div class="form-group">
@@ -24,7 +24,7 @@
 
 <div class="form-group">
     
-    <label>Favicon</label>
+    <labelclass="mandatory">Favicon</label>
     <input type="file" class="form-control" name="favicon" value="">
     <input type="hidden" class="form-control" name="old_favicon" value="{{ $setting->favicon ?? '' }}">
 </div>
@@ -36,7 +36,7 @@
     <br>
 
             <div class="form-group">
-                <label>Timezone</label>
+                <label class="mandatory">Timezone</label>
                 <select name="time_zone" id="" class="form-control select2">
                     <option value="">Select</option>
                     @if($setting && $setting->timezone == 'india')

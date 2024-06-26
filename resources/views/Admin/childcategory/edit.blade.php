@@ -50,7 +50,7 @@
 
                                                     <div class="row">
                                                         <div class="col-md-6">
-                                                            <label for="category_id">Category</label>
+                                                            <label for="category_id">Category<span class="text text-danger">*</span></label>
                                                             <select id="category_id" class="form-control" name="category_id"
                                                                 required>
                                                                 <option value="">Select Category</option>
@@ -68,7 +68,7 @@
                                                         </div>
 
                                                         <div class="col-md-6">
-                                                            <label for="subcategory_id">SubCategory</label>
+                                                            <label for="subcategory_id">SubCategory<span class="text text-danger">*</span></label>
                                                             <select id="subcategory_id" class="form-control"
                                                                 name="subcategory_id" required>
                                                                 <option value="">Select SubCategory</option>
@@ -86,7 +86,7 @@
                                                         </div>
 
                                                         <div class="col-md-6">
-                                                            <label for="name">Name</label>
+                                                            <label for="name">Name<span class="text text-danger">*</span></label>
                                                             <div>
                                                                 <input class="form-control" type="text" name="name"
                                                                     id="name" required
@@ -99,7 +99,7 @@
                                                         </div>
 
                                                         <div class="col-md-6">
-                                                            <label for="status" class="">Status</label>
+                                                            <label for="status" class="">Status<span class="text text-danger">*</span></label>
                                                             <select id="inputState" class="form-control" name="status"
                                                                 required>
                                                                 <option>select option</option>

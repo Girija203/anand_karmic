@@ -47,7 +47,7 @@
                                                     action="{{ route('shippings.store') }}">
                                                     @csrf
                                                     <div class="form-group row">
-                                                        <label class="col-sm-2 col-form-label">City/Delivery Area</label>
+                                                        <label class="col-sm-2 col-form-label mandatory">City/Delivery Area</label>
                                                         <div class="col-sm-4 mb-4">
                                                             <select class="form-control select2" name="city_id">
                                                                 <option value="">Select</option>
@@ -73,7 +73,7 @@
                                                                     style="color: red;">{{ $message }}</span>
                                                             @enderror
                                                         </div>
-                                                        <label class="col-sm-2 col-form-label">Type</label>
+                                                        <label class="col-sm-2 col-form-label mandatory">Type</label>
                                                         <div class="col-sm-4 mb-4">
                                                             <select class="form-control select2" name="type">
                                                                 <option value="">Select</option>

@@ -63,7 +63,7 @@
 
                                                     <div class="form-group row">
                                                         <div class="col-md-6">
-                                                            <label for="name" class="col-form-label">Name</label>
+                                                            <label for="name" class="col-form-label mandatory">Name</label>
                                                             <div class="">
                                                                 <input class="form-control" type="text" name="name"
                                                                     id="name" value="{{ $user->name }}">
@@ -76,7 +76,7 @@
 
                                                         <div class="col-md-6">
 
-                                                            <label for="email" class="col-form-label">Email</label>
+                                                            <label for="email" class="col-form-label mandatory">Email</label>
                                                             <div class="">
                                                                 <input class="form-control" type="email" name="email"
                                                                     id="email" value="{{ $user->email }}">
@@ -91,7 +91,7 @@
 
                                                     <div class="form-group row mb-2 mt-2">
                                                         <div class="col-md-6">
-                                                            <label for="password" class="col-form-label">Password</label>
+                                                            <label for="password" class="col-form-label mandatory">Password</label>
                                                             <div class="">
                                                                 <input type="password" id="password" class="form-control"
                                                                     name="password" placeholder="Password" />
@@ -104,7 +104,7 @@
 
                                                         <div class="col-md-6">
                                                             <label for="password_confirmation"
-                                                                class="col-form-label">Confirm
+                                                                class="col-form-label mandatory">Confirm
                                                                 Password</label>
                                                             <div class="">
                                                                 <input type="password" name="password_confirmation"
@@ -116,7 +116,7 @@
 
                                                     <div class="form-group row">
                                                         <div class="col-md-6">
-                                                            <label class="col-form-label">Select</label>
+                                                            <label class="col-form-label mandatory">Select</label>
                                                             <div class="">
                                                                 <select class="form-control" name="role">
                                                                     <option value="">Select</option>
