@@ -98,8 +98,9 @@ class LoginRegisterController extends Controller
 }
 
     public function forgotpassword(){
+        $cart=Cart::all();
 
-    return view('frontend.forgotpassword');
+    return view('frontend.forgotpassword',compact('cart'));
 
     }
 

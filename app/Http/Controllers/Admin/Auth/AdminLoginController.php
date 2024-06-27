@@ -27,7 +27,7 @@ class AdminLoginController extends Controller
         Session::flush();
         Auth::logout();
 
-        return redirect()->to(route('admin.login'));
+        return redirect()->to(route('login'));
     }
 
       public function adminLogin(Request $request)
