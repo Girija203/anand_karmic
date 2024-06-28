@@ -79,6 +79,11 @@ class BlogTagController extends Controller
      
         $blog_tag->delete();
 
-        return redirect()->route('blog_tags.index')->with('success', 'Blog Tag Delete successfully!');
+        $result = "Blog tag deleted successfully";
+        return $result;
+
+
+
+       
      }
 }

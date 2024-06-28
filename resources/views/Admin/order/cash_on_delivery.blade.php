@@ -156,7 +156,7 @@
                         searchable: false,
                         render: function(data, type, row) {
                             return `
-                            <button onclick="edit(${row.id})" class="icon-link common-color"><i class="ri-show-box-line" style="font-size: 18px;"></i></button>
+                            <button onclick="edit(${row.id})" class="icon-link common-color"><i class="mdi mdi-eye" style="font-size: 18px;"></i></button>
                            
                                                  
                        `;

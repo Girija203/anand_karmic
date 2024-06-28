@@ -61,7 +61,7 @@
 
 
                                                         <div class="col-md-6">
-                                                            <label for="name">Name </label>
+                                                            <label for="name" class="mandatory">Name </label>
                                                             <div class="">
                                                                 <input class="form-control" type="text"
                                                                     value="{{ $brand->name }}" name="name"
@@ -105,7 +105,7 @@
 
                                                         <div class="col-md-6">
                                                             <label for="status"
-                                                                class="col-sm-1 col-form-label">Status</label>
+                                                                class=" col-form-label mandatory">Status</label>
                                                             <select id="inputState" class="form-control" name="status"
                                                                 required>
                                                                 <option>select option</option>

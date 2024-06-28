@@ -21,6 +21,8 @@ class LoginRegisterController extends Controller
 {
    public function register(){
 
+  
+
     $cartItems = Cart::with('product')->get();
             $cart = $cartItems->map(function($item) {
                 $product = $item->product;
@@ -96,8 +98,9 @@ class LoginRegisterController extends Controller
 }
 
     public function forgotpassword(){
+        $cart=Cart::all();
 
-    return view('frontend.forgotpassword');
+    return view('frontend.forgotpassword',compact('cart'));
 
     }
 

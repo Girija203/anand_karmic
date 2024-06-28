@@ -91,7 +91,11 @@ class CurrencyController extends Controller
      
         $currency->delete();
 
-        return redirect()->route('currencies.index')->with('success', 'Currency Delete successfully!');
+        $result = "Currency deleted successfully";
+        return $result;
+
+
+       
 
      }
 

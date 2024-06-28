@@ -33,11 +33,14 @@ class Kernel extends HttpKernel
    protected $routeMiddleware = [
     // Other middlewares
     'set.currency' => \App\Http\Middleware\SetCurrency::class,
+  
 ];
   protected $middlewareAliases = [
         'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
         'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
         'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
+        'auth' => \App\Http\Middleware\Authenticate::class,
+        'admin' => \App\Http\Middleware\Admin::class,
         
         
     ];

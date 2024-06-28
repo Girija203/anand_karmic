@@ -181,20 +181,14 @@
 
             if (confirm('Are you sure you want to delete this Brand?')) {
                 $.ajax({
-                    url: 'brand/delete/' + id,
+                    url: '/brand/delete/' + id,
                     type: 'get',
                     data: {
                         _token: '{{ csrf_token() }}',
                     },
                     success: function(result) {
 
-                        $('.alert-success').show();
-
-
-                        setTimeout(function() {
-                            $('.alert-success').alert('close');
-                        }, 5000);
-
+                        toastr.success(result);
 
                         table.ajax.reload();
                     }
