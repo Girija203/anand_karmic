@@ -198,13 +198,8 @@
                     },
                     success: function(result) {
 
-                        $('.alert-success').show();
-
-
-                        setTimeout(function() {
-                            $('.alert-success').alert('close');
-                        }, 5000);
-
+                       
+                        toastr.success(result);
 
                         table.ajax.reload();
                     }

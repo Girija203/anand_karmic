@@ -93,7 +93,10 @@ class MetaKeyController extends Controller
      {
           $meta_type = MetaKey::find($id);
           $meta_type->delete();
-          return redirect()->route('meta_keys.index')->with('success', 'Meta key Delete successfully!');
+          $result = "Meta key deleted successfully";
+          return $result;
+  
+         
      }
 
 

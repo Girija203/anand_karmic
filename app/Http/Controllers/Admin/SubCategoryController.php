@@ -94,6 +94,6 @@ class SubCategoryController extends Controller
     $result = "SubCategory deleted successfully";
     return $result;
 
-    return redirect()->route('subcategory.index')->with('success','subcategory deleted successfully');
+  
    }
 }

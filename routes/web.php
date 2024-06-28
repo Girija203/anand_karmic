@@ -529,7 +529,8 @@ Route::post('/user-profile/update', [HomeController::class, 'userupdate'])->name
 //change password
 // routes/web.php or routes/api.php
 Route::post('/change-password', [HomeController::class, 'changePassword'])->name('account.changepassword');
-
+Route::post('contact/store', [HomeController::class, 'contactstore'])->name('contact.store');
+Route::get('vieworder/{id}',[HomeController::class,'vieworder'])->name('vieworder');
 
 // cart
 Route::post('/add-to-cart/{id}', [CartController::class, 'addToCart'])->name('cart.add');
@@ -541,7 +542,7 @@ Route::post('remove-from-cart/{id}', [CartController::class, 'removeCart'])->nam
 
 //contact
 
-Route::post('contact/store', [HomeController::class, 'contactstore'])->name('contact.store');
+
 
 
 //loginregister for normal user

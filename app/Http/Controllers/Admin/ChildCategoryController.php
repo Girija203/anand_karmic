@@ -108,7 +108,7 @@ class ChildCategoryController extends Controller
     $result = "ChildCategory deleted successfully";
     return $result;
 
-    return redirect()->route('subcategory.index')->with('success','childcategory deleted successfully');
+   
    }
 
    

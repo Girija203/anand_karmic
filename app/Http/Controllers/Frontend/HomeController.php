@@ -24,6 +24,7 @@ use App\Models\Category;
 use App\Models\ContactPage;
 use App\Models\Shipping;
 use App\Models\Coupon;
+use App\Models\OrderItem;
 use App\Models\ProductShowCase;
 use App\Models\ShowCaseProduct;
 use App\Models\User;
@@ -797,4 +798,17 @@ public function changePassword(Request $request)
 
     return redirect()->back()->with('success', 'Password changed successfully!');
 }
+
+public function vieworder($id){
+
+   
+    $cart=Cart::all();
+    $order = Order::with('orderItems.product')->findOrFail($id);
+
+  
+
+    return view( 'frontend.vieworder',compact('cart','order'));
+}
+
+
 }

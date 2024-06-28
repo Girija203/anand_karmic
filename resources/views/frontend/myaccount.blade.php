@@ -109,7 +109,7 @@
                                              {{ $orders->product_qty }} item(s)
                                           </td>
                                           <td>
-                                             <a href="" class="view">view</a>
+                                             <a href="{{ route('vieworder', $orders->id) }}" class="view">view</a>
                                           </td>
                                        </tr>
                                        @endforeach
