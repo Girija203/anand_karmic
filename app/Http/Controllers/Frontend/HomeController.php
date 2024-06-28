@@ -234,13 +234,13 @@ class HomeController extends Controller
     }
 
         
-
+    $wishlistProductIds = Wishlist::pluck('product_id')->toArray();
         //   dd($relatedProducts);
         $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
         $currencySymbol = session('currency_symbol', '$');
 
 
-        return view('frontend.single_product', compact('products', 'specifications', 'relatedProducts', 'reviews', 'cart','product_sml_share','exchangeRate','currencySymbol'));
+        return view('frontend.single_product', compact('products', 'specifications', 'relatedProducts', 'reviews', 'cart','product_sml_share','exchangeRate','currencySymbol','wishlistProductIds'));
     }
 
     public function wishlist()
@@ -298,6 +298,18 @@ class HomeController extends Controller
         return redirect()->route('wishlist')->with('success', 'Wishlist item deleted successfully');
     }
 
+    public function wishlistRemove($productId)
+{
+    $wishlist = Wishlist::where('product_id', $productId)->first();
+
+    if ($wishlist) {
+        $wishlist->delete();
+    }
+
+   return redirect()->back()->with('success', 'Wishlist item Remove successfully');
+}
+
+
 
     public function cart(Request $request)
     {
@@ -314,6 +326,7 @@ class HomeController extends Controller
             $singleAmount = $item->product->offer_price;
         }
         // dd($totalAmount );
+     
 
         $exchangeRate = session('exchange_rate', 1);
         $currencySymbol = session('currency_symbol', '$');

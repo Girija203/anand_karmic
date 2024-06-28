@@ -213,10 +213,19 @@
                         </form>
                     </div>
                     <div>
-                        <a href="#" class="product-item-wishlist-action mt-3" data-product-id="{{ $products->id }}">
-                            <i class="icon-rt-heart2"></i><span>Add to wishlist</span>
-                        </a>
-                    </div>
+    @if(in_array($products->id, $wishlistProductIds))
+        <a href="{{route('wishlist.delete',$products->id)}}">
+            <i class="fa-solid fa-heart" filled></i>
+            <span>Added to wishlist</span>
+        </a>
+    @else
+        <a href="#" class="product-item-wishlist-action mt-3" data-product-id="{{ $products->id }}" data-action="add">
+            <i class="icon-rt-heart2"></i><span>Add to wishlist</span>
+        </a>
+    @endif
+</div>
+
+                    
                     @if (!empty($product_sml_share))
                     <div class="social-share-wrap d-flex gap-1 mt-3">
                           
@@ -582,5 +591,7 @@
 
 
 
-
+<script>
+    
+</script>
 @endsection
