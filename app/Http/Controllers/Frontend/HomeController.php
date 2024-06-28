@@ -24,6 +24,7 @@ use App\Models\Category;
 use App\Models\ContactPage;
 use App\Models\Shipping;
 use App\Models\Coupon;
+use App\Models\Notification;
 use App\Models\OrderItem;
 use App\Models\ProductShowCase;
 use App\Models\ShowCaseProduct;
@@ -43,10 +44,10 @@ class HomeController extends Controller
         $cart = Cart::get();
         $showCaseProducts = ShowCaseProduct::with(['product', 'productShowCase'])->get();
         $ProductShowCases = ProductShowCase::first();
-             $exchangeRate = session('exchange_rate', 1); 
-         $currencySymbol = session('currency_symbol', '$');
+        $exchangeRate = session('exchange_rate', 1);
+        $currencySymbol = session('currency_symbol', '$');
         // dd( $showCaseProducts);
-        return view('frontend.home', compact('cart', 'showCaseProducts', 'ProductShowCases','exchangeRate','currencySymbol'));
+        return view('frontend.home', compact('cart', 'showCaseProducts', 'ProductShowCases', 'exchangeRate', 'currencySymbol'));
     }
 
     public function about()
@@ -174,11 +175,11 @@ class HomeController extends Controller
 
         $cart = Cart::all();
 
-        
+
         $exchangeRate = session('exchange_rate', 1);
         $currencySymbol = session('currency_symbol', '$');
 
-        return view('frontend.shop', compact('categories', 'products', 'specifications', 'cart', 'totalProducts','exchangeRate','currencySymbol'));
+        return view('frontend.shop', compact('categories', 'products', 'specifications', 'cart', 'totalProducts', 'exchangeRate', 'currencySymbol'));
     }
 
     public function filterBySpecifications(Request $request)
@@ -198,10 +199,10 @@ class HomeController extends Controller
         $categories = Category::all();
         $totalProducts = Product::count();
         $cart = Cart::all();
-           $exchangeRate = session('exchange_rate', 1);
+        $exchangeRate = session('exchange_rate', 1);
         $currencySymbol = session('currency_symbol', '$');
 
-        return view('frontend.shop', compact('products', 'specifications', 'categories', 'cart', 'totalProducts','exchangeRate','currencySymbol'));
+        return view('frontend.shop', compact('products', 'specifications', 'categories', 'cart', 'totalProducts', 'exchangeRate', 'currencySymbol'));
     }
 
     public function singleProduct($id)
@@ -223,16 +224,17 @@ class HomeController extends Controller
 
         $reviews = $products->reviews()->where('status', 1)->get();
 
-        
+
 
         $cart = Cart::get();
 
         $product_sml_share = [];
 
-    // Check if the product is shareable
-    if ($products->is_shareable) {
-        $product_sml_share = ProductSMLShare::all();
-    }
+        // Check if the product is shareable
+        if ($products->is_shareable) {
+            $product_sml_share = ProductSMLShare::all();
+        }
+
 
         
     $wishlistProductIds = Wishlist::pluck('product_id')->toArray();
@@ -241,7 +243,9 @@ class HomeController extends Controller
         $currencySymbol = session('currency_symbol', '$');
 
 
+
         return view('frontend.single_product', compact('products', 'specifications', 'relatedProducts', 'reviews', 'cart','product_sml_share','exchangeRate','currencySymbol','wishlistProductIds'));
+
     }
 
     public function wishlist()
@@ -374,7 +378,7 @@ class HomeController extends Controller
         // dd($totalAmountConverted);
 
         // Check for coupon code in the request
-        
+
         if ($couponCode) {
             $coupon = Coupon::where('code', $couponCode)
                 ->where('status', 1)
@@ -625,34 +629,34 @@ class HomeController extends Controller
 
     //personal information
 
-  
+
     public function userupdate(Request $request)
     {
-      
-    
+
+
         $request->validate([
-            'name' => 'required',         
+            'name' => 'required',
             'email' => 'required',
             'phone' => 'required',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-   
-       $user = Auth::user();
-       $user->name = $request->name;
-      
-       $user->email = $request->email;
-  
-       $user->phone = $request->phone;
-         if ($request->hasFile('image')) {        
-          $imagePath = $request->file('image')->store('profileimages', 'public');
-          $user->image = $imagePath;
-      }
-     
+
+        $user = Auth::user();
+        $user->name = $request->name;
+
+        $user->email = $request->email;
+
+        $user->phone = $request->phone;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('profileimages', 'public');
+            $user->image = $imagePath;
+        }
+
         $user->save();
- 
+
         return redirect()->back()->with('success', 'Profile updated successfully.');
     }
-  
+
 
 
 
@@ -699,7 +703,18 @@ class HomeController extends Controller
         $admins = User::all();
 
         foreach ($admins as $admin) {
-            $admin->notify(new ContactNotification($notifyData));
+            $unread_Count = $admin->unreadNotifications;
+            $contact_Notification = $unread_Count->filter(function ($notification) {
+                return $notification->type == 'App\Notifications\ContactNotification';
+            });
+            if (count($contact_Notification) < 5) {
+                $admin->notify(new ContactNotification($notifyData));
+            } else {
+                $admin->notify(new ContactNotification($notifyData));
+                $last_notification = $contact_Notification->sortByDesc('created_at')->last();
+                $notificat = Notification::where('id', $last_notification->id)->first();
+                $notificat->delete();
+            }
         }
 
 
@@ -707,7 +722,7 @@ class HomeController extends Controller
     }
 
 
- public function setCountry(Request $request)
+    public function setCountry(Request $request)
     {
         $request->validate([
             'country' => 'required|string'
@@ -761,56 +776,56 @@ class HomeController extends Controller
         return redirect()->back();
     }
 
-public function buyNow($productId, Request $request)
-{
-    // Add product to cart
-    $product = Product::findOrFail($productId);
+    public function buyNow($productId, Request $request)
+    {
+        // Add product to cart
+        $product = Product::findOrFail($productId);
 
-    $existingCartItem = Cart::where('product_id', $product->id)->first();
+        $existingCartItem = Cart::where('product_id', $product->id)->first();
 
-    if ($existingCartItem) {
-        // If the product is already in the cart, update the quantity
-        $existingCartItem->quantity += 1;
-        $existingCartItem->save();
-    } else {
-        Cart::create([
-            'product_id' => $product->id,
-            'name' => $product->title,
-            'price' => $product->offer_price,
-            'image' => $product->image,
-            'quantity' => 1,
+        if ($existingCartItem) {
+            // If the product is already in the cart, update the quantity
+            $existingCartItem->quantity += 1;
+            $existingCartItem->save();
+        } else {
+            Cart::create([
+                'product_id' => $product->id,
+                'name' => $product->title,
+                'price' => $product->offer_price,
+                'image' => $product->image,
+                'quantity' => 1,
+            ]);
+        }
+
+        // Store the cart in a cookie
+        $cart = Cart::all();
+        Cookie::queue('cart', json_encode($cart), 60 * 24 * 30); // 30 days
+
+        // Redirect to the checkout page
+        return redirect()->route('checkout')->with('success', 'Product added to cart successfully');
+    }
+
+
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'old_password' => 'required',
+            'new_password' => 'required|confirmed',
         ]);
+
+        $user = Auth::user();
+
+        // Check if old password matches
+        if (!Hash::check($request->old_password, $user->password)) {
+            return back()->withErrors(['old_password' => 'The provided password does not match your current password.']);
+        }
+
+        // Update password
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        return redirect()->back()->with('success', 'Password changed successfully!');
     }
-
-    // Store the cart in a cookie
-    $cart = Cart::all();
-    Cookie::queue('cart', json_encode($cart), 60 * 24 * 30); // 30 days
-
-    // Redirect to the checkout page
-    return redirect()->route('checkout')->with('success', 'Product added to cart successfully');
-}
-
-
-public function changePassword(Request $request)
-{
-    $request->validate([
-        'old_password' => 'required',
-        'new_password' => 'required|confirmed',
-    ]);
-
-    $user = Auth::user();
-
-    // Check if old password matches
-    if (!Hash::check($request->old_password, $user->password)) {
-        return back()->withErrors(['old_password' => 'The provided password does not match your current password.']);
-    }
-
-    // Update password
-    $user->password = Hash::make($request->new_password);
-    $user->save();
-
-    return redirect()->back()->with('success', 'Password changed successfully!');
-}
 
 public function vieworder($id){
 
@@ -822,6 +837,4 @@ public function vieworder($id){
 
     return view( 'frontend.vieworder',compact('cart','order'));
 }
-
-
 }

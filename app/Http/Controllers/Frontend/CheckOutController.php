@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserCreated;
+use App\Models\Notification;
 use App\Notifications\OrderNotification;
 use Illuminate\Support\Str;
 
@@ -240,7 +241,19 @@ class CheckOutController extends Controller
 
         $admins = User::all();
         foreach ($admins as $admin) {
-            $admin->notify(new OrderNotification($orderData, $order_no));
+            $unreadNotification = $admin->unreadNotifications;
+            $order_Notification = $unreadNotification->filter(function ($notification) {
+                return $notification->type == 'App\Notifications\OrderNotification';
+            });
+
+            if (count($order_Notification) < 5) {
+                $admin->notify(new OrderNotification($orderData, $order_no));
+            } else {
+                $admin->notify(new OrderNotification($orderData, $order_no));
+                $last_order = $order_Notification->sortByDesc('created_at')->last();
+                $notificat = Notification::where('id', $last_order->id)->first();
+                $notificat->delete();
+            }
         }
 
         if (auth()->check()) {
