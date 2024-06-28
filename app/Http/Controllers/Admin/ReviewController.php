@@ -46,9 +46,11 @@ class ReviewController extends Controller
        ]);
       // dd($data);
 
+      $authuser=Auth::user();
+
        $review = new ProductReview();
        $review->product_id = $request->product_id;
-       $review->user_id = 1;
+       $review->user_id = $authuser->id;
        $review->rating =  $request->rating;
        $review->review = $request->review;
        $review->status = 0; // or 1, based on your moderation policy

@@ -25,6 +25,7 @@ use App\Models\ContactPage;
 use App\Models\Shipping;
 use App\Models\Coupon;
 use App\Models\Notification;
+use App\Models\OrderItem;
 use App\Models\ProductShowCase;
 use App\Models\ShowCaseProduct;
 use App\Models\User;
@@ -63,46 +64,46 @@ class HomeController extends Controller
     }
 
     public function shop(Request $request)
-    {
-        // Define how many products you want per page
-        $perPage = 12;
+{
+    // Define how many products you want per page
+    $perPage = 12;
 
-        // Fetch all products with pagination
-        $products = Product::paginate($perPage);
-        $totalProducts = Product::count();
+    // Fetch all products with pagination
+    $products = Product::paginate($perPage);
+    $totalProducts = Product::count();
 
-        $cart = Cart::get();
-        $categories = Category::all();
-        $specifications = ProductSpecification::where('product_specification_key_id', 2)->get();
+    $cart = Cart::get();
+    $categories = Category::all();
+    $specifications = ProductSpecification::where('product_specification_key_id', 2)->get();
 
-        $cartItems = Cart::with('product')->get();
-        $cart = $cartItems->map(function ($item) {
-            $product = $item->product;
-            $discount = 0;
+    $cartItems = Cart::with('product')->get();
+    $cart = $cartItems->map(function ($item) {
+        $product = $item->product;
+        $discount = 0;
 
-            if ($product->offer_price && $product->price > $product->offer_price) {
-                $discount = $product->price - $product->offer_price;
-            }
-
-            $item->discount = $discount;
-            return $item;
-        });
-
-        // Calculate the total amount and discount amount
-        $totalAmount = 0;
-        $discountAmount = 0;
-
-        foreach ($cart as $item) {
-            $itemAmount = $item->quantity * $item->price;
-            $totalAmount += $itemAmount;
-            $discountAmount += $item->discount;
+        if ($product->offer_price && $product->price > $product->offer_price) {
+            $discount = $product->price - $product->offer_price;
         }
 
-        $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
-        $currencySymbol = session('currency_symbol', '$'); // Default to $ if not set
+        $item->discount = $discount;
+        return $item;
+    });
 
-        return view('frontend.shop', compact('products', 'categories', 'specifications', 'cart', 'cartItems', 'exchangeRate', 'currencySymbol', 'totalProducts'));
+    // Calculate the total amount and discount amount
+    $totalAmount = 0;
+    $discountAmount = 0;
+
+    foreach ($cart as $item) {
+        $itemAmount = $item->quantity * $item->price;
+        $totalAmount += $itemAmount;
+        $discountAmount += $item->discount;
     }
+
+    $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
+    $currencySymbol = session('currency_symbol', '$'); // Default to $ if not set
+
+    return view('frontend.shop', compact('products', 'categories', 'specifications', 'cart', 'cartItems', 'exchangeRate', 'currencySymbol', 'totalProducts'));
+}
 
 
     public function filter(Request $request)
@@ -235,13 +236,16 @@ class HomeController extends Controller
         }
 
 
-
+        
+    $wishlistProductIds = Wishlist::pluck('product_id')->toArray();
         //   dd($relatedProducts);
         $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
         $currencySymbol = session('currency_symbol', '$');
 
 
-        return view('frontend.single_product', compact('products', 'specifications', 'relatedProducts', 'reviews', 'cart', 'product_sml_share', 'exchangeRate', 'currencySymbol'));
+
+        return view('frontend.single_product', compact('products', 'specifications', 'relatedProducts', 'reviews', 'cart','product_sml_share','exchangeRate','currencySymbol','wishlistProductIds'));
+
     }
 
     public function wishlist()
@@ -299,6 +303,18 @@ class HomeController extends Controller
         return redirect()->route('wishlist')->with('success', 'Wishlist item deleted successfully');
     }
 
+    public function wishlistRemove($productId)
+{
+    $wishlist = Wishlist::where('product_id', $productId)->first();
+
+    if ($wishlist) {
+        $wishlist->delete();
+    }
+
+   return redirect()->back()->with('success', 'Wishlist item Remove successfully');
+}
+
+
 
     public function cart(Request $request)
     {
@@ -315,6 +331,7 @@ class HomeController extends Controller
             $singleAmount = $item->product->offer_price;
         }
         // dd($totalAmount );
+     
 
         $exchangeRate = session('exchange_rate', 1);
         $currencySymbol = session('currency_symbol', '$');
@@ -809,4 +826,15 @@ class HomeController extends Controller
 
         return redirect()->back()->with('success', 'Password changed successfully!');
     }
+
+public function vieworder($id){
+
+   
+    $cart=Cart::all();
+    $order = Order::with('orderItems.product')->findOrFail($id);
+
+  
+
+    return view( 'frontend.vieworder',compact('cart','order'));
+}
 }

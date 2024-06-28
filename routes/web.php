@@ -75,14 +75,18 @@ Route::get('/storage-link', function () {
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+Route::get('/admin/login', [AdminLoginController::class, 'login'])->name('login');
+Route::post('/admin-login-validate', [AdminLoginController::class, 'adminLogin'])->name('adminlogin.validate');
+
+Route::middleware(['auth'])->group(function () {
+
 Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
 //Admin 
-Route::get('/admin/login', [AdminLoginController::class, 'login'])->name('admin.login');
-Route::post('/admin-login-validate', [AdminLoginController::class, 'adminLogin'])->name('adminlogin.validate');
+
 Route::get('logout-admin', [AdminLoginController::class, 'logout'])->name('admin.logout');
 
-Route::get('myaccount', [HomeController::class, 'myaccount'])->name('myaccount');
+
 
 //User 
 Route::get('user', [UserController::class, 'index'])->name('users.index');
@@ -91,7 +95,7 @@ Route::get('user-create', [UserController::class, 'create'])->name('users.create
 Route::post('user-store', [UserController::class, 'store'])->name('users.store');
 Route::get('user-edit/{id}', [UserController::class, 'edit'])->name('users.edit');
 Route::post('user-update/{id}', [UserController::class, 'update'])->name('users.update');
-Route::get('user-delete/{id}', [UserController::class, 'delete'])->name('users.delete');
+Route::delete('/user-delete/{id}', [UserController::class, 'delete'])->name('users.delete');
 
 
 //accountsetting
@@ -433,48 +437,7 @@ Route::get('order-show/{id}', [OrderController::class, 'show'])->name('orders.sh
 Route::get('order_message_read_one/{id}', [OrderController::class, 'read_one'])->name('order_messages.read.one');
 Route::post('order_message_read_all', [OrderController::class, 'read_all'])->name('order_messages.read.all');
 
-//Frontend
 
-Route::get('/', [HomeController::class, 'home'])->name('home');
-Route::get('about', [HomeController::class, 'about'])->name('about');
-Route::get('contact', [HomeController::class, 'contact'])->name('contact');
-
-Route::get('shop', [HomeController::class, 'shop'])->name('shop');
-
-
-Route::get('/shop/filter',  [HomeController::class, 'filter'])->name('shop.filter');
-Route::get('/products/filter', [HomeController::class, 'filterByPrice'])->name('products.filter');
-Route::get('/shop/category/{id}', [HomeController::class, 'filterByCategory'])->name('shop.category');
-Route::get('/filter', [HomeController::class, 'filterBySpecifications'])->name('filter.bySpecifications');
-
-Route::get('product/{id}', [HomeController::class, 'singleProduct'])->name('single.product');
-Route::get('wishlist', [HomeController::class, 'wishlist'])->name('wishlist');
-Route::post('/wishlist/add-to-cart', [HomeController::class, 'addToCart'])->name('wishlist.addToCart');
-Route::get('wishlist/remove/{id}', [HomeController::class, 'wishlistDelete'])->name('wishlist.remove');
-Route::post('/add-to-wishlist', [HomeController::class, 'addToWishlist'])->name('wishlist.add');
-Route::get('cart', [HomeController::class, 'cart'])->name('cart');
-Route::get('checkout', [HomeController::class, 'checkout'])->name('checkout');
-Route::put('/update-address', [HomeController::class, 'update'])->name('update.address');
-
-Route::post('/user/coupons', [HomeController::class, 'applyCouponCode'])->name('coupons.apply');
-Route::post('/set-country', [HomeController::class, 'setCountry'])->name('setCountry');
-
-
-Route::post('/buy-now/{productId}', [HomeController::class, 'buyNow'])->name('buy.now');
-
-Route::post('/user-profile/update', [HomeController::class, 'userupdate'])->name('profile.update');
-//change password
-// routes/web.php or routes/api.php
-Route::post('/change-password', [HomeController::class, 'changePassword'])->name('account.changepassword');
-
-
-// cart
-Route::post('/add-to-cart/{id}', [CartController::class, 'addToCart'])->name('cart.add');
-
-
-Route::post('/update-cart', [CartController::class, 'updateCart'])->name('update.cart');
-
-Route::post('remove-from-cart/{id}', [CartController::class, 'removeCart'])->name('remove.from.cart');
 
 
 Route::get('stock/delete/{id}', [AddStockController::class, 'delete'])->name('stock.delete');
@@ -493,15 +456,95 @@ Route::post('/product_reviews/update', [ReviewController::class,'updateStatus'])
 
 
 
+//terms and condition
+
+Route::get('terms/index', [TermsAndConditionController::class, 'index'])->name('terms.index');
+
+Route::put('terms/store', [TermsAndConditionController::class, 'store'])->name('terms.store');
+
+
+Route::get('privacypolicy/index', [PrivacyPolicyController::class, 'index'])->name('privacypolicy.index');
+
+Route::put('privacypolicy/store', [PrivacyPolicyController::class, 'store'])->name('privacypolicy.store');
+
+//faq
+
+Route::get('faq/index', [FaqController::class, 'index'])->name('faq.index');
+Route::get('faq/create', [FaqController::class, 'create'])->name('faq.create');
+Route::get('faq/indexData', [FaqController::class, 'indexData'])->name('faq.data');
+Route::post('faq/store', [FaqController::class, 'store'])->name('faq.store');
+Route::get('/faq/edit/{id}', [FaqController::class, 'edit'])->name('faq.edit');
+Route::PUT('/faq/update/{id}', [FaqController::class, 'update'])->name('faq.update');
+Route::get('/faq/delete/{id}', [FaqController::class, 'delete'])->name('faq.delete');
+
+
+Route::get('subscriber/index', [SubscriberController::class, 'index'])->name('subscriber.index');
+
+Route::get('subscriber/data', [SubscriberController::class, 'indexData'])->name('subscriber.data');
+Route::post('storeNewsletter', [SubscriberController::class, 'storeNewsletter'])->name('newsletter.store');
 //product report
 
 Route::get('report', [ReportController::class, 'index'])->name('report.index');
 
 Route::get('report/data', [ReportController::class, 'indexData'])->name('report.data');
 
+});
+
+
+
+//Frontend
+
+Route::post('subscriber/store', [SubscriberController::class, 'store'])->name('subscriber.store');
+
+Route::get('myaccount', [HomeController::class, 'myaccount'])->name('myaccount');
+
+Route::get('/', [HomeController::class, 'home'])->name('home');
+Route::get('about', [HomeController::class, 'about'])->name('about');
+Route::get('contact', [HomeController::class, 'contact'])->name('contact');
+
+Route::get('shop', [HomeController::class, 'shop'])->name('shop');
+
+
+Route::get('/shop/filter',  [HomeController::class, 'filter'])->name('shop.filter');
+Route::get('/products/filter', [HomeController::class, 'filterByPrice'])->name('products.filter');
+Route::get('/shop/category/{id}', [HomeController::class, 'filterByCategory'])->name('shop.category');
+Route::get('/filter', [HomeController::class, 'filterBySpecifications'])->name('filter.bySpecifications');
+
+Route::get('product/{id}', [HomeController::class, 'singleProduct'])->name('single.product');
+Route::get('wishlist', [HomeController::class, 'wishlist'])->name('wishlist');
+Route::post('/wishlist/add-to-cart', [HomeController::class, 'addToCart'])->name('wishlist.addToCart');
+Route::get('wishlist/remove/{id}', [HomeController::class, 'wishlistDelete'])->name('wishlist.remove');
+Route::get('/wishlist/{productId}', [HomeController::class, 'wishlistRemove'])->name('wishlist.delete');
+
+Route::post('/add-to-wishlist', [HomeController::class, 'addToWishlist'])->name('wishlist.add');
+Route::get('cart', [HomeController::class, 'cart'])->name('cart');
+Route::get('checkout', [HomeController::class, 'checkout'])->name('checkout');
+Route::put('/update-address', [HomeController::class, 'update'])->name('update.address');
+
+Route::post('/user/coupons', [HomeController::class, 'applyCouponCode'])->name('coupons.apply');
+Route::post('/set-country', [HomeController::class, 'setCountry'])->name('setCountry');
+
+
+Route::post('/buy-now/{productId}', [HomeController::class, 'buyNow'])->name('buy.now');
+
+Route::post('/user-profile/update', [HomeController::class, 'userupdate'])->name('profile.update');
+//change password
+// routes/web.php or routes/api.php
+Route::post('/change-password', [HomeController::class, 'changePassword'])->name('account.changepassword');
+Route::post('contact/store', [HomeController::class, 'contactstore'])->name('contact.store');
+Route::get('vieworder/{id}',[HomeController::class,'vieworder'])->name('vieworder');
+
+// cart
+Route::post('/add-to-cart/{id}', [CartController::class, 'addToCart'])->name('cart.add');
+
+
+Route::post('/update-cart', [CartController::class, 'updateCart'])->name('update.cart');
+
+Route::post('remove-from-cart/{id}', [CartController::class, 'removeCart'])->name('remove.from.cart');
+
 //contact
 
-Route::post('contact/store', [HomeController::class, 'contactstore'])->name('contact.store');
+
 
 
 //loginregister for normal user
@@ -531,14 +574,10 @@ Route::post('review/store', [ReviewController::class, 'store'])->name('reviews.s
 
 //subscriber
 
-Route::get('subscriber/index', [SubscriberController::class, 'index'])->name('subscriber.index');
 
-Route::get('subscriber/data', [SubscriberController::class, 'indexData'])->name('subscriber.data');
-Route::post('subscriber/store', [SubscriberController::class, 'store'])->name('subscriber.store');
+//frontend subscription
 
-//newsletter
 
-Route::post('storeNewsletter', [SubscriberController::class, 'storeNewsletter'])->name('newsletter.store');
 
 //contactinfopage
 
@@ -546,24 +585,3 @@ Route::get('contactpage/index', [ContactPageController::class, 'index'])->name('
 
 
 Route::PUT('contactpage/store', [ContactPageController::class, 'store'])->name('contactpage.store');
-
-//terms and condition
-
-Route::get('terms/index', [TermsAndConditionController::class, 'index'])->name('terms.index');
-
-Route::put('terms/store', [TermsAndConditionController::class, 'store'])->name('terms.store');
-
-
-Route::get('privacypolicy/index', [PrivacyPolicyController::class, 'index'])->name('privacypolicy.index');
-
-Route::put('privacypolicy/store', [PrivacyPolicyController::class, 'store'])->name('privacypolicy.store');
-
-//faq
-
-Route::get('faq/index', [FaqController::class, 'index'])->name('faq.index');
-Route::get('faq/create', [FaqController::class, 'create'])->name('faq.create');
-Route::get('faq/indexData', [FaqController::class, 'indexData'])->name('faq.data');
-Route::post('faq/store', [FaqController::class, 'store'])->name('faq.store');
-Route::get('/faq/edit/{id}', [FaqController::class, 'edit'])->name('faq.edit');
-Route::PUT('/faq/update/{id}', [FaqController::class, 'update'])->name('faq.update');
-Route::get('/faq/delete/{id}', [FaqController::class, 'delete'])->name('faq.delete');

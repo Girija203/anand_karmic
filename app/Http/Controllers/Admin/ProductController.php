@@ -335,5 +335,9 @@ class ProductController extends Controller
 
         $product = Product::findOrfail($id);
         $product->delete();
+        $result = "Product deleted successfully";
+        return $result;
+
+       
     }
 }

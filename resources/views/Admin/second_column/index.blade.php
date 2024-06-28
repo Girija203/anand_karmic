@@ -177,12 +177,7 @@
                     },
                     success: function(result) {
                         // Show success message
-                        $('.alert-success').show();
-
-                        // Hide success message after 5 seconds
-                        setTimeout(function() {
-                            $('.alert-success').alert('close');
-                        }, 5000);
+                        toastr.success(result);
 
                         // Reload the DataTable after success message is shown
                         table.ajax.reload(); // Reload the DataTable

@@ -77,6 +77,9 @@ class ProductSpecificationKeyController extends Controller
 
     $specificationkey->delete();
 
+    $result = "ProductSpecification deleted successfully";
+    return $result;
+
     return redirect()->route('productspecificationkey.index')->with('success','category deleted successfully');
    }
 }

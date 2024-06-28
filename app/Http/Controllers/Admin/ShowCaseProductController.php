@@ -94,6 +94,8 @@ class ShowCaseProductController extends Controller
       
            $ShowCaseproducts = ShowCaseProduct::find($id);
            $ShowCaseproducts->delete();
+           $result = "Showcase product deleted successfully";
+           return $result;
 
         return redirect()->route('show_case_products.index')->with('success', 'Show Case Product Delete successfully!');
 

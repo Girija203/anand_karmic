@@ -91,8 +91,10 @@ class CountryController extends Controller
      
         $Country->delete();
 
-        return redirect()->route('countries.index')->with('success', 'Country Delete successfully!');
+        $result = "Country deleted successfully";
+        return $result;
 
+       
      }
 
      
