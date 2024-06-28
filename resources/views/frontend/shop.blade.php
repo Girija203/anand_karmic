@@ -23,24 +23,24 @@
                         </div>
                         <div class="shop-sidebar-widget">
                             <h5 class="shop-sidebar-widget-title">Filter By Price</h5>
-                            <div class="sidebar-widget-item__filter price-range-filter">
-                                <form action="{{ route('products.filter') }}" method="GET">
-                                    <div class="filter-slider">
-                                        <div class="filter-progress"></div>
-                                    </div>
-                                    <div class="filter-range-input">
-                                        <input type="range" name="min_price" class="range-min" min="0" max="10000" value="{{ request('min_price', 0) }}" step="100" aria-label="Min value" />
-                                        <input type="range" name="max_price" class="range-max" min="0" max="10000" value="{{ request('max_price', 10000) }}" step="100" aria-label="Max value" />
-                                    </div>
-                                    <p class="filter-price-value">
-                                        Price:
-                                        <input type="text" class="input-min" value="{{ $currencySymbol }}{{ request('min_price', 0) }}" aria-label="Input min value" readonly />
-                                        <span>—</span>
-                                        <input type="text" class="input-max" value=" {{ $currencySymbol }}{{ request('max_price', 10000) }}" aria-label="Input max value" readonly />
-                                    </p>
-                                    <button type="submit" class="filter-price-btn">Filter</button>
-                                </form>
-                            </div>
+                        <div class="sidebar-widget-item__filter price-range-filter">
+    <form action="{{ route('products.filter') }}" method="GET">
+        <div class="filter-slider">
+            <div class="filter-progress"></div>
+        </div>
+        <div class="filter-range-input">
+            <input type="range" name="min_price" id="range-min" class="range-min" min="0" max="10000" value="{{ request('min_price', 0) }}" step="100" aria-label="Min value" />
+            <input type="range" name="max_price" id="range-max" class="range-max" min="0" max="10000" value="{{ request('max_price', 10000) }}" step="100" aria-label="Max value" />
+        </div>
+        <p class="filter-price-value">
+            Price:
+            <input type="text" id="input-min" class="input-min" value="{{ $currencySymbol }}{{ request('min_price', 0) }}" aria-label="Input min value" readonly />
+            <span>—</span>
+            <input type="text" id="input-max" class="input-max" value="{{ $currencySymbol }}{{ request('max_price', 10000) }}" aria-label="Input max value" readonly />
+        </p>
+        <button type="submit" class="filter-price-btn">Filter</button>
+    </form>
+</div>
                         </div>
                         <div class="shop-sidebar-widget">
                             <h5 class="shop-sidebar-widget-title">Size</h5>
@@ -191,7 +191,27 @@
 <!-- <script src="{{ asset('/frontend/assets/js/ajax.js')}}"></script> -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const exchangeRate = {{ $exchangeRate }};
+        const currencySymbol = '{{ $currencySymbol }}';
 
+        const rangeMin = document.getElementById('range-min');
+        const rangeMax = document.getElementById('range-max');
+        const inputMin = document.getElementById('input-min');
+        const inputMax = document.getElementById('input-max');
+
+        function updatePriceInputs() {
+            inputMin.value = currencySymbol + (rangeMin.value * exchangeRate).toFixed(2);
+            inputMax.value = currencySymbol + (rangeMax.value * exchangeRate).toFixed(2);
+        }
+
+        rangeMin.addEventListener('input', updatePriceInputs);
+        rangeMax.addEventListener('input', updatePriceInputs);
+
+        updatePriceInputs();
+    });
+</script>
 
 
 @endsection

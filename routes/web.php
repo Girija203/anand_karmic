@@ -514,6 +514,8 @@ Route::get('product/{id}', [HomeController::class, 'singleProduct'])->name('sing
 Route::get('wishlist', [HomeController::class, 'wishlist'])->name('wishlist');
 Route::post('/wishlist/add-to-cart', [HomeController::class, 'addToCart'])->name('wishlist.addToCart');
 Route::get('wishlist/remove/{id}', [HomeController::class, 'wishlistDelete'])->name('wishlist.remove');
+Route::get('/wishlist/{productId}', [HomeController::class, 'wishlistRemove'])->name('wishlist.delete');
+
 Route::post('/add-to-wishlist', [HomeController::class, 'addToWishlist'])->name('wishlist.add');
 Route::get('cart', [HomeController::class, 'cart'])->name('cart');
 Route::get('checkout', [HomeController::class, 'checkout'])->name('checkout');
