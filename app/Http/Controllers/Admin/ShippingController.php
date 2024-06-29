@@ -41,7 +41,9 @@ class ShippingController extends Controller
         $request->validate([
             'shipping_rule' => 'required',
              'city_id' => 'required',
-            
+             'condition_from'=>'required|numeric',
+               'condition_to'=>'required|numeric',
+             'shipping_fee'=>'required|numeric',
         ]);
         
          $shipping = new Shipping;

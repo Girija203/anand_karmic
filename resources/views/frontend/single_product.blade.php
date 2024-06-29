@@ -450,7 +450,8 @@
                             <a href="{{ route('single.product', $relatedProduct->id) }}">
                                 <button class="btn btn-black">Shop Now</button>
                             </a>
-                            <span>Rs. {{ $relatedProduct->offer_price }}</span>
+                            <span class="product-card-old-price"><del>{{ $currencySymbol }}{{ number_format($relatedProduct->getPriceInSelectedCurrency(), 2) }}</del></span>
+                                <span class="product-card-regular-price">{{ $currencySymbol }}{{ number_format($relatedProduct->getOfferPriceInSelectedCurrency(), 2) }}</span>
                         </div>
                     </div>
                 </div>
