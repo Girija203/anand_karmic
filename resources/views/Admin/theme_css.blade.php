@@ -2,6 +2,7 @@
     $setting = App\Models\Setting::first();
     $lighterColor1 = lightenColor($setting->primary_color, 80);
     $lighterColor2 = lightenColor($setting->secondary_color, 80);
+    $primary_hover_color = darken_color($setting->primary_color, 10);
     // $setting->primary_color = 'blue';
     // $setting->secondary_color = 'green';
     function lightenColor($hex, $percent)
@@ -31,6 +32,24 @@
 
         return '#' . $r . $g . $b;
     }
+
+    function darken_color($color, $percent) {
+    $color = trim($color, '#');
+
+    if (strlen($color) === 3) {
+        $color = str_repeat(substr($color, 0, 1), 2) . str_repeat(substr($color, 1, 1), 2) . str_repeat(substr($color, 2, 1), 2);
+    }
+
+    $r = hexdec(substr($color, 0, 2));
+    $g = hexdec(substr($color, 2, 2));
+    $b = hexdec(substr($color, 4, 2));
+
+    $r = round($r * (100 - $percent) / 100);
+    $g = round($g * (100 - $percent) / 100);
+    $b = round($b * (100 - $percent) / 100);
+
+    return '#' . sprintf('%02x%02x%02x', $r, $g, $b);
+}
 @endphp
 
 <style>
@@ -158,7 +177,7 @@
         --tz-pink-rgb: 242, 79, 124;
         --tz-light-rgb: 242, 242, 247;
         --tz-dark-rgb: 33, 37, 41;
-        --tz-primary-text-emphasis: #35adb0;
+        --tz-primary-text-emphasis: {{ $primary_hover_color }};
         --tz-secondary-text-emphasis: #616971;
         --tz-success-text-emphasis: #3d7bcd;
         --tz-info-text-emphasis: #2e9eca;

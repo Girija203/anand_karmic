@@ -137,9 +137,24 @@
                 }
             });
 
+            
             // activate the menu in left side bar (Vertical Menu) based on url
             $(".side-nav a").each(function () {
                 var pageUrl = window.location.href.split(/[?#]/)[0];
+                pageUrl = getFirstSubdirectory(pageUrl);
+                console.log("pageUrl");
+                console.log(pageUrl);
+                function getFirstSubdirectory(url) {
+                    // Parse the URL to get its components
+                    let urlParts = url.split('/');
+                    
+                    // Reconstruct the URL up to the first subdirectory
+                    if (urlParts.length > 3) {
+                        return urlParts.slice(0, 4).join('/');
+                    }
+                    
+                    return url;
+                }
                 if (this.href == pageUrl) {
                     $(this).addClass("active");
                     $(this).parent().addClass("menuitem-active");

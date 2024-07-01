@@ -29,7 +29,7 @@ class CategoryController extends Controller
     }
 
     public function store(Request $request)
-    {
+    {   
         
         $request->validate([
             'name' => 'required|string|max:255',
@@ -41,7 +41,12 @@ class CategoryController extends Controller
         $category->status = $request->input('status');
         $category->save();
 
-        return redirect()->route('category.index')->with('success', 'Category created successfully');
+        if ($request->action === 'save') {
+            return redirect()->route('category.index')->with('success', 'Category created successfully');
+        } elseif ($request->action === 'save_and_new') {
+            return redirect()->route('category.create')->with('success', 'Category created successfully');
+        }
+        
     }
 
     public function edit($id)
