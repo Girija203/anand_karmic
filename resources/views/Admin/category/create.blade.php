@@ -41,14 +41,15 @@
                                 <div class="row">
                                     <div class="col-md-12 rightsetup-details">
                                         <div class="d-flex justify-content-between p-2 bd-highlight">
+
                                         </div>
                                         <div class="card-body">
                                             <div class="m-b-30">
                                                 <form class="row g-3" method="POST" action="{{ route('category.store') }}">
                                                     @csrf
-                                                    <div class="row">
+                                                    <div class="row justify-content-center">
                                                         <div class="col-md-6">
-                                                            <label for="name" class=" col-form-label">Name<span class="text text-danger">*</span>
+                                                            <label for="name" class="col-form-label">Name<span class="text text-danger">*</span>
                                                             </label>
                                                             <div class="">
                                                                 <input class="form-control" type="text" name="name"
@@ -59,6 +60,8 @@
                                                                 @enderror
                                                             </div>
                                                         </div>
+                                                    </div>
+                                                    <div class="row justify-content-center">
                                                         <div class="col-md-6">
                                                             <label for="status"
                                                                 class="col-form-label">Status<span class="text text-danger">*</span></label>
@@ -74,12 +77,15 @@
                                                             @enderror
                                                         </div>
                                                     </div>
-
                                                     <div class="form-group">
                                                         <div class="d-flex justify-content-evenly">
                                                             <button type="submit"
-                                                                class="btn btn-primary waves-effect waves-light">
-                                                                Submit
+                                                                class="btn btn-primary waves-effect waves-light" name="action" value="save">
+                                                                Save
+                                                            </button>
+                                                            <button type="submit"
+                                                                class="btn btn-light waves-effect waves-light" name="action" value="save_and_new">
+                                                                Save and New
                                                             </button>
                                                             <a href="{{ route('category.index') }}"
                                                                 class="btn btn-secondary waves-effect m-l-5">

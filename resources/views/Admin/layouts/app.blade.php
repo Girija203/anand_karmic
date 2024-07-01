@@ -317,8 +317,6 @@
                                 <li>
                                     <a href="{{ route('childcategory.index') }}">ChildCategory</a>
                                 </li>
-
-
                             </ul>
                         </div>
                     </li>
@@ -658,7 +656,7 @@
 
 
     <!-- App js -->
-    <script src="{{ asset('assets/admin/js/app.min.js') }}"></script>
+    <script src="{{ asset('assets/admin/js/app.js') }}"></script>
 
     {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
     <!-- Toastr JS -->
