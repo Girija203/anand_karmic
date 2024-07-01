@@ -87,7 +87,9 @@ class FooterController extends Controller
         
         $footer = Footer::find($id);
         $footer->delete();
+        $result = "Footer deleted successfully";
+        return $result;
 
-        return redirect()->route('footers.index')->with('success', 'Footer Delete successfully!');
+     
      }
 }

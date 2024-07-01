@@ -96,9 +96,13 @@ class CityController extends Controller
         $city =  City::find($id);
          
      
-        $city->delete();    
+        $city->delete();  
+        
+        $result = "City deleted successfully";
+        return $result;
 
-        return redirect()->route('cities.index')->with('success', 'City Delete successfully!');
+
+       
 
 
      }

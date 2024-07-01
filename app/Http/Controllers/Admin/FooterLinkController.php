@@ -77,10 +77,13 @@ class FooterLinkController extends Controller
         
         $firstColumn = FooterLink::find($id);
         
-     
+        
         $firstColumn->delete();
+        $result = "Footer first column link deleted successfully";
+        return $result;
+     
 
-        return redirect()->route('footer_links.index')->with('success', 'First Column Delete successfully!');
+       
      }
 
      //Second Column
@@ -155,6 +158,8 @@ class FooterLinkController extends Controller
         
      
         $secondColumn->delete();
+        $result = "Second column link deleted successfully";
+        return $result;
 
         return redirect()->route('second_columns.index')->with('success', 'Second Column Delete successfully!');
      }
@@ -230,11 +235,14 @@ class FooterLinkController extends Controller
      {
         
         $thirdColumn = FooterLink::find($id);
-        
      
         $thirdColumn->delete();
 
-        return redirect()->route('third_columns.index')->with('success', 'Third Column Delete successfully!');
+        $result = "Footer third column link deleted successfully";
+        return $result;
+
+
+      //   return redirect()->route('third_columns.index')->with('success', 'Third Column Delete successfully!');
      }
 
 

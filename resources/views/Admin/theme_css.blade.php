@@ -33,23 +33,27 @@
         return '#' . $r . $g . $b;
     }
 
-    function darken_color($color, $percent) {
-    $color = trim($color, '#');
+    function darken_color($color, $percent)
+    {
+        $color = trim($color, '#');
 
-    if (strlen($color) === 3) {
-        $color = str_repeat(substr($color, 0, 1), 2) . str_repeat(substr($color, 1, 1), 2) . str_repeat(substr($color, 2, 1), 2);
+        if (strlen($color) === 3) {
+            $color =
+                str_repeat(substr($color, 0, 1), 2) .
+                str_repeat(substr($color, 1, 1), 2) .
+                str_repeat(substr($color, 2, 1), 2);
+        }
+
+        $r = hexdec(substr($color, 0, 2));
+        $g = hexdec(substr($color, 2, 2));
+        $b = hexdec(substr($color, 4, 2));
+
+        $r = round(($r * (100 - $percent)) / 100);
+        $g = round(($g * (100 - $percent)) / 100);
+        $b = round(($b * (100 - $percent)) / 100);
+
+        return '#' . sprintf('%02x%02x%02x', $r, $g, $b);
     }
-
-    $r = hexdec(substr($color, 0, 2));
-    $g = hexdec(substr($color, 2, 2));
-    $b = hexdec(substr($color, 4, 2));
-
-    $r = round($r * (100 - $percent) / 100);
-    $g = round($g * (100 - $percent) / 100);
-    $b = round($b * (100 - $percent) / 100);
-
-    return '#' . sprintf('%02x%02x%02x', $r, $g, $b);
-}
 @endphp
 
 <style>

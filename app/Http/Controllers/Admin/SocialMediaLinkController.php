@@ -76,6 +76,8 @@ class SocialMediaLinkController extends Controller
         $social_mdeia_link = SocialMediaLink::find($id);
 
         $social_mdeia_link->delete();
+        $result = "Social media link deleted successfully";
+        return $result;
 
         return redirect()->route('social_media_links.index')->with('success', 'Social Mdeia Link Delete successfully!');
      }

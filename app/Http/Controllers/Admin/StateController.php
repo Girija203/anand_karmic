@@ -93,8 +93,11 @@ class StateController extends Controller
      
         $state->delete();
 
-        return redirect()->route('states.index')->with('success', 'State Delete successfully!');
+        $result = "State deleted successfully";
+        return $result;
 
+
+      
 
      }
 

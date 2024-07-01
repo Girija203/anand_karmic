@@ -110,8 +110,10 @@ class ProductController extends Controller
             'short_description' => 'required',
             'long_description' => 'required',
             'price' => 'required',
-            'offer_price' => 'required',
+            // 'offer_price' => 'required',
+            'brand_id'=>'required',
             'qty' => 'required',
+            'status'=>'required'
         ]);
 
 
@@ -234,12 +236,12 @@ class ProductController extends Controller
             'title' => 'required',
             'main_image' => 'nullable',
             'category_id' => 'required',
-            'subcategory_id' => 'required',
+            // 'subcategory_id' => 'required',
             'brand_id' => 'required',
             'short_description' => 'required',
             'long_description' => 'required',
             'price' => 'required',
-            'offer_price' => 'required',
+            // 'offer_price' => 'required',
             'qty' => 'required',
             'status' => 'required',
             'multiple_images.*' => 'nullable',
@@ -333,5 +335,9 @@ class ProductController extends Controller
 
         $product = Product::findOrfail($id);
         $product->delete();
+        $result = "Product deleted successfully";
+        return $result;
+
+       
     }
 }

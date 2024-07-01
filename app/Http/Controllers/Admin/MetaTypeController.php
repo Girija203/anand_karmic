@@ -82,7 +82,10 @@ class MetaTypeController extends Controller
      {
           $meta_type = MetaType::find($id);
           $meta_type->delete();
-          return redirect()->route('meta_types.index')->with('success', 'Meta Type Delete successfully!');
+          $result = "Meta type deleted successfully";
+          return $result;
+  
+        
      }
 
 }

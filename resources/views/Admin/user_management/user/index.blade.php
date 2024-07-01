@@ -170,19 +170,14 @@
             // Send an AJAX request to delete the user
             if (confirm('Are you sure you want to delete this User?')) {
                 $.ajax({
-                    url: 'w' + id,
-                    type: 'get',
+                    url: 'user-delete/' + id,
+                    type: 'delete',
                     data: {
                         _token: '{{ csrf_token() }}',
                     },
                     success: function(result) {
                         // Show success message
-                        $('.alert-success').show();
-
-                        // Hide success message after 5 seconds
-                        setTimeout(function() {
-                            $('.alert-success').alert('close');
-                        }, 5000);
+                        toastr.success(result);
 
                         // Reload the DataTable after success message is shown
                         table.ajax.reload(); // Reload the DataTable

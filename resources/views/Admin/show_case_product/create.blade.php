@@ -98,7 +98,7 @@
                                                         <div class="d-flex justify-content-evenly">
                                                             <button type="submit"
                                                                 class="btn btn-primary waves-effect waves-light">Submit</button>
-                                                            <a href="{{ route('shippings.index') }}"
+                                                            <a href="{{ route('show_case_products.index') }}"
                                                                 class="btn btn-secondary waves-effect m-l-5">Cancel</a>
                                                         </div>
                                                     </div>

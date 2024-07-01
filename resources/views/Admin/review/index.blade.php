@@ -66,8 +66,9 @@
 
                                                         <th>Review</th>
                                                         <th>Rating</th>
-                                                        {{-- <th>Action</th> --}}
-                                                        {{-- <th>Action</th> --}}
+                                                        <th>Status</th> 
+                                                        <th>Action</th>
+                                                        
 
                                                     </tr>
                                                 </thead>
@@ -90,6 +91,52 @@
             <!-- container -->
         </div>
         <!-- content -->
+         <!-- start -->
+           <div class="modal employe-resign-modal-center" id="resignModal" tabindex="-1" role="dialog"
+            aria-labelledby="mySmallModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title mt-0">Review Status</h5>
+                        <button type="button" class="close" onclick="closeResignModal()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body pb-0">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card m-b-30">
+                                    <div class="card-body py-0">
+      <form action="{{ route('review.update') }}" method="POST" enctype="multipart/form-data" id="reviewForm">
+    @csrf
+    <div class="row">
+        <input type="hidden" class="review_id" name="review_id" value="" id="review_id">
+
+        
+        <label for="employee_name" class="col-sm-12 col-form-label mandatory">Review Status</label>
+        <div class="col-sm-12 mb-4">
+            <select class="form-control" name="status" id="">
+                <option value="">Select</option>
+                <option value="0">Unapprovel</option>
+                <option value="1">Approvel</option>
+            </select>
+            @error('status')
+                <span class="error" style="color: red;">{{ $message }}</span>
+            @enderror
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Update</button>
+    <button type="button" class="btn btn-secondary" onclick="closeResignModal()">Close</button>
+</form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end  -->
         <!-- Footer Start -->
         <footer class="footer">
             <div class="container-fluid">
@@ -147,20 +194,38 @@
 
                     },
 
+                   {
+            data: 'status',
+            name: 'status',
+            render: function(data, type, full, meta) {
+                // Check the status value
+                if (data == 0) {
+                    return 'Unapproved';
+                } else if (data == 1) {
+                    return 'Approved';
+                } else {
+                    return 'Unknown'; // Handle any other status values
+                }
+            }
+        },
 
-                    // {
-                    //     data: null,
-                    //     orderable: false,
-                    //     searchable: false,
-                    //     render: function(data, type, row) {
-                    //         return `
-                //        <button class="btn py-0 px-0" onclick="editUsers(${row.id})"><i class="ri-edit-box-line text_danger_blue " style="font-size: 20px;"></i></button>
-                //        <button  class="btn py-0" onclick="deleteUsers(${row.id})"><i class="mdi mdi-delete text_danger_red" style="font-size: 20px;"></i></button>
 
-                //    `;
-                    //     }
 
-                    // },
+                    {
+                        data: null,
+                        orderable: false,
+                        searchable: false,
+                        render: function(data, type, row) {
+                            return `
+      <button class="btn py-0 px-0" onclick="openReviewModal(${row.id})">
+                <i class="ri-edit-box-line text_danger_blue " style="font-size: 20px;"></i>
+            </button>   
+                      
+
+                   `;
+                        }
+
+                    },
                 ],
                 order: [
                     [0, 'asc']
@@ -176,35 +241,18 @@
 
         });
 
-        function editUsers(id) {
-            console.log("inside");
+        
+   function openReviewModal(reviewId) {
+    document.getElementById('review_id').value = reviewId;
+    $('#resignModal').modal('show');
+}
 
-            window.location.href = 'brand/edit/' + id;
+
+ function closeResignModal() {
+            $('#resignModal').modal('hide');
         }
 
-        function deleteUsers(id) {
+        
 
-            if (confirm('Are you sure you want to delete this Brand?')) {
-                $.ajax({
-                    url: 'brand/delete/' + id,
-                    type: 'get',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                    },
-                    success: function(result) {
-
-                        $('.alert-success').show();
-
-
-                        setTimeout(function() {
-                            $('.alert-success').alert('close');
-                        }, 5000);
-
-
-                        table.ajax.reload();
-                    }
-                });
-            }
-        }
-    </script>
+           </script>
 @endsection
