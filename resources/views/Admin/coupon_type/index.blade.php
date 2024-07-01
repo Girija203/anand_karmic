@@ -12,11 +12,11 @@
                         <div class="page-title-box">
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="{{ route('coupons.index') }}">Coupon</a></li>
+                                    <li class="breadcrumb-item"><a href="{{ route('coupon_types.index') }}">Coupon Type</a></li>
                                     <li class="breadcrumb-item active">List</li>
                                 </ol>
                             </div>
-                            <h4 class="page-title">Coupon</h4>
+                            <h4 class="page-title">Coupon Type</h4>
                         </div>
                     </div>
                 </div>
@@ -25,14 +25,14 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="header-title">Coupon List</h4>
+                                <h4 class="header-title">Coupon Type List</h4>
                             </div>
                             <div class="alert alert-success alert-dismissible fade show" role="alert"
                                 style="display:none;">
                                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
-                                <strong></strong>Coupon deleted successfully.
+                                <strong></strong>Coupon Type deleted successfully.
                             </div>
                             <div class="card-body pt-0">
                                 <div class="row">
@@ -41,53 +41,11 @@
                                             <div>
                                             </div>
                                             <div>
-                                                <a href="{{ route('coupons.create') }}"  class="icon-link common-color"
-                                                    title="Create Coupon"   data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                <a href="{{ route('coupon_types.create') }}" class="icon-link common-color"
+                                                    title="Create Coupon Type">
                                                     <i class="mdi mdi-plus-box" style="font-size: 22px;"></i>
                                                 </a>
                                             </div>
-
-
-                                            <!-- Button trigger modal -->
-<!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-  Launch demo modal
-</button> -->
-
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Coupon Type</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-    <form action="{{ route('coupon.process') }}" method="POST">
-    @csrf
-    <label for="coupon_type" class="col-sm-3 col-form-label mandatory">Coupon Type</label>
-    <div class="col-sm-6 mb-8">
-        <select name="coupon_type" class="form-control" id="coupon_type">
-            <option value="">Select</option>
-            @foreach($coupon_type as $item)
-            <option value="{{ $item->id }}">{{ $item->name }}</option>
-            @endforeach
-        </select>
-        @error('shipping_rule')
-        <span class="error" style="color: red;">{{ $message }}</span>
-        @enderror
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-primary">Continue</button>
-    </div>
-</form>
-
-    </div>
-  </div>
-</div>
-
-
-
                                         </div>
                                         <div class="card-body">
                                             <table id="users-table"
@@ -98,9 +56,8 @@
                                                         <th>ID</th>
                                                         <th>Name</th>
                                                         <th>Code</th>
-                                                        <th>Discount</th>
-                                                        <th>Expired Date</th>
-                                                        <th>Minimum Purchase Price</th>
+                                                        <th>Status</th>
+                
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>
@@ -155,7 +112,7 @@
             table = $('#users-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{{ route('coupons.data') }}',
+                ajax: '{{ route('coupon_types.data') }}',
                 columns: [{
                         data: 'id',
                         name: 'id'
@@ -168,17 +125,10 @@
                         data: 'code',
                         name: 'code'
                     },
+                
                     {
-                        data: 'discount_value',
-                        name: 'discount_value'
-                    },
-                    {
-                        data: 'end_date',
-                        name: 'end_date'
-                    },
-                    {
-                        data: 'minimum_purchase_price',
-                        name: 'minimum_purchase_price'
+                        data: 'status',
+                        name: 'status'
                     },
 
 
@@ -188,8 +138,8 @@
                         searchable: false,
                         render: function(data, type, row) {
                             return `
-                           <button onclick="editCoupons(${row.id})" class="icon-link common-color"><i class="ri-edit-box-line" style="font-size: 18px;"></i></button>
-                           <button onclick="deleteCoupons(${row.id})" class="icon-link common-color"><i class="mdi mdi-delete" style="font-size: 18px;"></i></button>
+                           <button onclick="editCoupontypes(${row.id})" class="icon-link common-color"><i class="ri-edit-box-line" style="font-size: 18px;"></i></button>
+                           <button onclick="deleteCoupontypes(${row.id})" class="icon-link common-color"><i class="mdi mdi-delete" style="font-size: 18px;"></i></button>
                                                  
                        `;
                         }
@@ -210,17 +160,17 @@
 
         });
 
-        function editCoupons(id) {
+        function editCoupontypes(id) {
             console.log("inside");
             // Redirect to the user edit page or open a modal for editing
-            window.location.href = 'coupon-edit/' + id;
+            window.location.href = 'coupon_type-edit/' + id;
         }
 
-        function deleteCoupons(id) {
+        function deleteCoupontypes(id) {
             // Send an AJAX request to delete the user
-            if (confirm('Are you sure you want to delete this Coupon?')) {
+            if (confirm('Are you sure you want to delete this Coupon Type?')) {
                 $.ajax({
-                    url: 'coupon-delete/' + id,
+                    url: 'coupon_type-delete/' + id,
                     type: 'get',
                     data: {
                         _token: '{{ csrf_token() }}',

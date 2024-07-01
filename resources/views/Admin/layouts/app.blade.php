@@ -425,10 +425,14 @@
                                 <li>
                                     <a href="{{ route('payment_methods.index') }}">Payment Method</a>
                                 </li>
+                                 <li>
+                                    <a href="{{ route('coupon_types.index') }}">Coupon Type</a>
+                                </li>
 
                                 <li>
                                     <a href="{{ route('coupons.index') }}">Coupon</a>
                                 </li>
+                                
                             </ul>
                         </div>
                         {{-- 

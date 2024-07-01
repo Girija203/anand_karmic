@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Coupon;
+use App\Models\CouponType;
 use Yajra\DataTables\DataTables;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -13,7 +14,8 @@ class CouponController extends Controller
      
     public function index()
     {
-        return view('Admin.coupon.index');
+        $coupon_type = CouponType::get();
+        return view('Admin.coupon.index',compact('coupon_type'));
     }
 
     
@@ -106,5 +108,30 @@ class CouponController extends Controller
 
        
      }
+
+     public function process(Request $request)
+    {
+        $couponTypeId = $request->input('coupon_type');
+
+        // Perform validation if necessary
+        $request->validate([
+            'coupon_type' => 'required|exists:coupon_types,id'
+        ]);
+
+        // Redirect based on coupon type ID
+        switch ($couponTypeId) {
+            case 1:
+                return redirect()->route('coupon.general'); 
+            case 2:
+                return redirect()->route('coupon.userCoupon');
+                case 3:
+                return redirect()->route('coupon.productCoupon');
+                case 4:
+                return redirect()->route('coupon.userProductCoupon'); 
+            default:
+                return redirect()->route('coupon.general'); 
+        }
+
+    }
 
 }

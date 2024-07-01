@@ -38,6 +38,8 @@ use App\Http\Controllers\Admin\ShippingController;
 use App\Http\Controllers\Admin\PaymentMethodController;
 use App\Http\Controllers\Admin\CurrencyController;
 use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Admin\CouponTypeController;
+
 use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PrivacyPolicyController;
@@ -340,6 +342,24 @@ Route::get('coupon-edit/{id}', [CouponController::class, 'edit'])->name('coupons
 Route::post('coupon-update/{id}', [CouponController::class, 'update'])->name('coupons.update');
 Route::get('coupon-delete/{id}', [CouponController::class, 'delete'])->name('coupons.delete');
 
+Route::post('/coupon/process', [CouponController::class, 'process'])->name('coupon.process');
+
+Route::get('/coupon/general', [CouponController::class, 'general'])->name('coupon.general');
+Route::get('/coupon/user-coupon', [CouponController::class, 'userCoupon'])->name('coupon.userCoupon');
+Route::get('/coupon/product-coupon', [CouponController::class, 'productCoupon'])->name('coupon.productCoupon');
+Route::get('/coupon/user-product-coupon', [CouponController::class, 'userProductCoupon'])->name('coupon.userProductCoupon');
+
+
+
+
+//Coupon Type
+Route::get('coupon_type-list', [CouponTypeController::class, 'index'])->name('coupon_types.index');
+Route::get('coupon_type/data', [CouponTypeController::class, 'indexData'])->name('coupon_types.data');
+Route::get('coupon_type-create', [CouponTypeController::class, 'create'])->name('coupon_types.create');
+Route::post('coupon_type-store', [CouponTypeController::class, 'store'])->name('coupon_types.store');
+Route::get('coupon_type-edit/{id}', [CouponTypeController::class, 'edit'])->name('coupon_types.edit');
+Route::post('coupon_type-update/{id}', [CouponTypeController::class, 'update'])->name('coupon_types.update');
+Route::get('coupon_type-delete/{id}', [CouponTypeController::class, 'delete'])->name('coupon_types.delete');
 //Product show case
 Route::get('product_show_case-list', [ProductShowCaseController::class, 'index'])->name('product_show_cases.index');
 Route::get('product_show_case/data', [ProductShowCaseController::class, 'indexData'])->name('product_show_cases.data');
