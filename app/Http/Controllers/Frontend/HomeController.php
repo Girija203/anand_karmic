@@ -731,44 +731,46 @@ class HomeController extends Controller
         $country = $request->country;
         session(['country' => $country]);
 
+        
+
         $client = new Client();
         $apiKey = '93426a64e4020f5d28396f59';
-        $apiUrl = 'https://v6.exchangerate-api.com/v6/' . $apiKey . '/latest/USD';
+        $apiUrl = 'https://v6.exchangerate-api.com/v6/' . $apiKey . '/latest/INR';
 
         try {
             $response = $client->get($apiUrl);
             $data = json_decode($response->getBody(), true);
             // Set exchange rate and currency symbol based on the country
             switch ($country) {
-                case 'US':
-                    session(['exchange_rate' => 1, 'currency_symbol' => '$']);
-                    break;
                 case 'IN':
-                    $exchangeRate = $data['conversion_rates']['INR'] ?? 0.013;
-                    session(['exchange_rate' => $exchangeRate, 'currency_symbol' => '₹']);
+                    session(['exchange_rate' => 1, 'currency_symbol' => '₹']);
+                    break;
+                case 'US':
+                    $exchangeRate = $data['conversion_rates']['USD'] ?? 0.01198;
+                    session(['exchange_rate' => $exchangeRate, 'currency_symbol' => '$']);
                     break;
                 case 'UK':
-                    $exchangeRate = $data['conversion_rates']['GBP'] ?? 1.39;
+                    $exchangeRate = $data['conversion_rates']['GBP'] ?? 0.009467;
                     session(['exchange_rate' => $exchangeRate, 'currency_symbol' => '£']);
                     break;
                 default:
-                    session(['exchange_rate' => 1, 'currency_symbol' => '$']);
+                    session(['exchange_rate' => 1, 'currency_symbol' => '₹']);
                     break;
             }
         } catch (\Exception $e) {
             // Handle exception if the API request fails
             switch ($country) {
-                case 'US':
+                case 'IN':
                     session(['exchange_rate' => 1, 'currency_symbol' => '$']);
                     break;
-                case 'IN':
-                    session(['exchange_rate' => 83.49, 'currency_symbol' => '₹']);
+                case 'US':
+                    session(['exchange_rate' => 0.01198, 'currency_symbol' => '₹']);
                     break;
                 case 'UK':
-                    session(['exchange_rate' => 0.79, 'currency_symbol' => '£']);
+                    session(['exchange_rate' => 0.009467, 'currency_symbol' => '£']);
                     break;
                 default:
-                    session(['exchange_rate' => 1, 'currency_symbol' => '$']);
+                    session(['exchange_rate' => 1, 'currency_symbol' => '₹']);
                     break;
             }
         }

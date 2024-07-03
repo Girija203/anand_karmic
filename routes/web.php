@@ -343,13 +343,17 @@ Route::post('coupon-update/{id}', [CouponController::class, 'update'])->name('co
 Route::get('coupon-delete/{id}', [CouponController::class, 'delete'])->name('coupons.delete');
 
 Route::post('/coupon/process', [CouponController::class, 'process'])->name('coupon.process');
-
+//Coupun create
 Route::get('/coupon/general', [CouponController::class, 'general'])->name('coupon.general');
 Route::get('/coupon/user-coupon', [CouponController::class, 'userCoupon'])->name('coupon.userCoupon');
 Route::get('/coupon/product-coupon', [CouponController::class, 'productCoupon'])->name('coupon.productCoupon');
 Route::get('/coupon/user-product-coupon', [CouponController::class, 'userProductCoupon'])->name('coupon.userProductCoupon');
 
-
+    //coupon edit
+    Route::get('/coupon/general/{id}', [CouponController::class, 'generalEdit'])->name('coupon.general.edit');
+    Route::get('/coupon/user-coupon/{id}', [CouponController::class, 'userCouponEdit'])->name('coupon.userCoupon.edit');
+    Route::get('/coupon/product-coupon/{id}', [CouponController::class, 'productCouponEdit'])->name('coupon.productCoupon.edit');
+    Route::get('/coupon/user-product-coupon/{id}', [CouponController::class, 'userProductCouponEdit'])->name('coupon.userProductCoupon.edit');
 
 
 //Coupon Type

@@ -23,7 +23,7 @@ class FooterLinkController extends Controller
    }
 
      public function firstColumnCreate()
-     {
+     {   
         return view ('Admin.footer_link.create');
      }
       public function firstColumnStore(Request $request)

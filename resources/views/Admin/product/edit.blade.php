@@ -221,7 +221,7 @@
                                                         </div>
 
                                                         <div class="col-md-12">
-                                                            <label>Price &#40;$&#41;<span class="text text-danger">*</span></label>
+                                                            <label>Price &#40;₹&#41;<span class="text text-danger">*</span></label>
                                                             <input type="text" class="form-control" name="price"
                                                                 value="{{ $product->price }}">
                                                             @error('price')
@@ -231,7 +231,7 @@
                                                         </div>
 
                                                         <div class="col-md-12">
-                                                            <label>Offer Price &#40;$&#41;<span class="text text-danger">*</span></label>
+                                                            <label>Offer Price &#40;₹&#41;<span class="text text-danger">*</span></label>
                                                             <input type="text" class="form-control" name="offer_price"
                                                                 value="{{ $product->offer_price }}">
                                                             @error('offer_price')

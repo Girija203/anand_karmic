@@ -92,7 +92,7 @@
                                                         </div>
 
                                                         <label for="name"
-                                                            class="col-sm-2 col-form-label mandatory">Condition From($)</label>
+                                                            class="col-sm-2 col-form-label mandatory">Condition From(₹)</label>
                                                         <div class="col-sm-4 mb-4">
                                                             <input class="form-control" type="text" name="condition_from"
                                                                 id="name">
@@ -102,7 +102,7 @@
                                                             @enderror
                                                         </div>
                                                         <label for="name"
-                                                            class="col-sm-2 col-form-label mandatory">Condition To($)</label>
+                                                            class="col-sm-2 col-form-label mandatory">Condition To(₹)</label>
                                                         <div class="col-sm-4 mb-4">
                                                             <input class="form-control" type="text" name="condition_to"
                                                                 id="name">
@@ -113,7 +113,7 @@
                                                         </div>
 
                                                         <label for="name"
-                                                            class="col-sm-2 col-form-label mandatory">Shipping Fee($)</label>
+                                                            class="col-sm-2 col-form-label mandatory">Shipping Fee(₹)</label>
                                                         <div class="col-sm-4 mb-4">
                                                             <input class="form-control" type="text" name="shipping_fee"
                                                                 id="name">

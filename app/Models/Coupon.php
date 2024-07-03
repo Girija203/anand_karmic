@@ -9,6 +9,7 @@ class Coupon extends Model
 {
     use HasFactory;
     protected $fillable=[
+        'coupon_type_id',
         'name',
         'code',  
         'discount_type',
@@ -20,4 +21,9 @@ class Coupon extends Model
         'minimum_purchase_price',
         'status'
     ];
+
+    public function couponType()
+    {
+        return $this->belongsTo(CouponType::class);
+    }
 }
