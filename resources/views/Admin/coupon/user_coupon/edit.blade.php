@@ -13,11 +13,11 @@
                         <div class="page-title-box">
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="{{ route('coupons.index') }}">Coupon</a></li>
-                                    <li class="breadcrumb-item active">Create</li>
+                                    <li class="breadcrumb-item"><a href="{{ route('coupons.index') }}">User Coupon</a></li>
+                                    <li class="breadcrumb-item active">Edit</li>
                                 </ol>
                             </div>
-                            <h4 class="page-title">Coupon Create</h4>
+                            <h4 class="page-title">User Coupon Edit</h4>
                         </div>
                     </div>
                 </div>
@@ -27,7 +27,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="header-title">Coupon Create</h4>
+                                <h4 class="header-title">User Coupon Edit</h4>
 
                             </div>
                             <div class="card-body pt-0">
@@ -324,13 +324,13 @@
                         discount_value: discount_value,
                         usage_limit: usage_limit,
                         status: status,
-                        selectet_userList: selectet_userList,
+                        selected_userList: selectet_userList,
                         _token: '{{ csrf_token() }}',
 
                     },
                     success: function(result) {
-                        alert('success.,............');
-                        // window.location.href = "{{ route('coupons.index') }}";
+                        // alert('success.,............');
+                        window.location.href = "{{ route('coupons.index') }}";
                     },
                     error: function(result) {
                         alert('error.,............');
@@ -415,47 +415,3 @@
 
 
 
-
-
-
-
-
-
-
-
-{{-- 
-                 // var name = $('.name').val();
-                // var code = $('.code').val();
-                // var start_date = $('.start_date').val();
-                // var end_date = $('.end_date').val();
-                // var minimum_purchase_price = $('.minimum_purchase_price').val();
-                // var discount_type = $('.discount_type').val();
-                // var discount_value = $('.discount_value').val();
-                // var usage_limit = $('.usage_limit').val();
-                
-                
-                // let data = {
-                //         name: name,
-                //         code: code,
-                //         // start_date: start_date,
-                //         // end_date: end_date,
-                //         // minimum_purchase_price: minimum_purchase_price,
-                //         // discount_type: discount_type,
-                //         // discount_type: discount_type,
-                //         // discount_value: discount_value,
-                //         // usage_limit: usage_limit,
-                //         // selectet_userList: selectet_userList,
-                //     },
-
-                // name:name,
-                // code:code,
-                // start_date:start_date,
-                // end_date:end_date,
-                // minimum_purchase_price:minimum_purchase_price,
-                // discount_type:discount_type,
-                // discount_type:discount_type,
-                // discount_value:discount_value,
-                // usage_limit:usage_limit,
-                
-                
-                --}}

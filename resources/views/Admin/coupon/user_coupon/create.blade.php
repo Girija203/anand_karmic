@@ -13,11 +13,11 @@
                         <div class="page-title-box">
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="{{ route('coupons.index') }}">Coupon</a></li>
+                                    <li class="breadcrumb-item"><a href="{{ route('coupons.index') }}">User Coupon</a></li>
                                     <li class="breadcrumb-item active">Create</li>
                                 </ol>
                             </div>
-                            <h4 class="page-title">Coupon Create</h4>
+                            <h4 class="page-title">User Coupon Create</h4>
                         </div>
                     </div>
                 </div>
@@ -27,7 +27,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="header-title">Coupon Create</h4>
+                                <h4 class="header-title">User Coupon Create</h4>
 
                             </div>
                             <div class="card-body pt-0">
@@ -46,7 +46,8 @@
                                                 <div class="row g-3">
                                                     {{-- action="{{ route('coupons.store') }}" --}}
                                                     @csrf
-                                                <input type="text" value="2" hidden id="coupon_type_id" name="coupon_type_id">
+                                                    <input type="text" value="2" hidden id="coupon_type_id"
+                                                        name="coupon_type_id">
 
                                                     <label for="name"
                                                         class="col-sm-2 col-form-label mandatory">Name</label>
@@ -253,13 +254,13 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <!--These jQuery libraries for
-                                                                    chosen need to be included-->
+                                                                        chosen need to be included-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
     <link rel="stylesheet" href= 
 "https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.min.css" />
 
     <!--These jQuery libraries for select2
-                                                                     need to be included-->
+                                                                         need to be included-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js"></script>
     <link rel="stylesheet" href= 
 "https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css" />
@@ -298,16 +299,15 @@
                         end_date: end_date,
                         minimum_purchase_price: minimum_purchase_price,
                         discount_type: discount_type,
-                        discount_type: discount_type,
                         discount_value: discount_value,
                         usage_limit: usage_limit,
-                        selectet_userList: selectet_userList,
+                        selected_userList: selectet_userList,
                         _token: '{{ csrf_token() }}',
 
                     },
                     success: function(result) {
-                        // alert('success.,............');  
-                         window.location.href = "{{ route('coupons.index') }}";
+                        alert('success.,............');  
+                        // window.location.href = "{{ route('coupons.index') }}";
                     },
                     error: function(result) {
                         alert('error.,............');
