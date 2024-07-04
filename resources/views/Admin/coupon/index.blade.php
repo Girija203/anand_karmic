@@ -96,6 +96,7 @@
                                                 <thead>
                                                     <tr>
                                                         <th>ID</th>
+                                                        <th>Coupon Type</th>
                                                         <th>Name</th>
                                                         <th>Code</th>
                                                         <th>Discount</th>
@@ -161,6 +162,10 @@
                         name: 'id'
                     },
                     {
+                        data: 'coupon_type_name',
+                        name: 'coupon_type_name'
+                    },
+                    {
                         data: 'name',
                         name: 'name'
                     },
@@ -210,11 +215,10 @@
 
         });
 
-        function editCoupons(id) {
-            console.log("inside");
-            // Redirect to the user edit page or open a modal for editing
-            window.location.href = 'coupon-edit/' + id;
-        }
+       function editCoupons(couponId) {
+    window.location.href = '/coupon-edit/' + couponId;
+}
+
 
         function deleteCoupons(id) {
             // Send an AJAX request to delete the user

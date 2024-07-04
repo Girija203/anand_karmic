@@ -407,8 +407,8 @@
     <form id="country-select-form" class="m-0" action="{{ route('setCountry') }}" method="POST">
         @csrf
         <select name="country" class="btn btn-black bg-black text-white p-1 rounded" id="country-select" onchange="document.getElementById('country-select-form').submit();">
-            <option value="US" {{ session('country') == 'US' ? 'selected' : '' }}>United States</option>
-            <option value="IN" {{ session('country') == 'IN' ? 'selected' : '' }}>India</option>
+             <option value="IN" {{ session('country') == 'IN' ? 'selected' : '' }}>India</option>
+            <option value="US" {{ session('country') == 'US' ? 'selected' : '' }}>United States</option>    
             <option value="UK" {{ session('country') == 'UK' ? 'selected' : '' }}>United Kingdom</option>
             <!-- Add more countries as needed -->
         </select>
