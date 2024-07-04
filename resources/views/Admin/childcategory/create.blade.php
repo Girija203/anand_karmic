@@ -28,7 +28,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header py-1 pt-2">
+                            <div class="card-header m-0 p-0">
                                 <a href="{{ route('childcategory.index') }}" title="Child Category List">
                                     <button class="header-title btn btn-gery">ChildCategory List</button>
                                 </a>
@@ -50,7 +50,8 @@
 
                                                     <div class="row">
                                                         <div class="col-md-6">
-                                                            <label for="category_id">Category<span class="text text-danger">*</span></label>
+                                                            <label for="category_id">Category<span
+                                                                    class="text text-danger">*</span></label>
                                                             <select id="category_id" class="form-control" name="category_id"
                                                                 required>
                                                                 <option value="">Select Category</option>
@@ -66,7 +67,8 @@
                                                         </div>
 
                                                         <div class="col-md-6">
-                                                            <label for="subcategory_id">SubCategory<span class="text text-danger">*</span></label>
+                                                            <label for="subcategory_id">SubCategory<span
+                                                                    class="text text-danger">*</span></label>
                                                             <select id="subcategory_id" class="form-control"
                                                                 name="subcategory_id" required>
                                                                 <option value="">Select SubCategory</option>
@@ -78,10 +80,11 @@
                                                         </div>
 
                                                         <div class="col-md-6">
-                                                            <label for="name">Name<span class="text text-danger">*</span></label>
+                                                            <label for="name">Name<span
+                                                                    class="text text-danger">*</span></label>
                                                             <div>
                                                                 <input class="form-control" type="text" name="name"
-                                                                    id="name" >
+                                                                    id="name">
                                                                 @error('name')
                                                                     <span class="error"
                                                                         style="color: red;">{{ $message }}</span>
@@ -90,9 +93,9 @@
                                                         </div>
 
                                                         <div class="col-md-6">
-                                                            <label for="status" class="">Status<span class="text text-danger">*</span></label>
-                                                            <select id="inputState" class="form-control" name="status"
-                                                               >
+                                                            <label for="status" class="">Status<span
+                                                                    class="text text-danger">*</span></label>
+                                                            <select id="inputState" class="form-control" name="status">
                                                                 <option value="">select option</option>
                                                                 <option value="1">Active</option>
                                                                 <option value="0">Inactive</option>

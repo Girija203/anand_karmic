@@ -25,7 +25,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header py-1 pt-2">
+                            <div class="card-header m-0 p-0">
                                 <a href="#" title="Review List">
                                     <button class="header-title btn btn_primary_color">Review List</button>
                                 </a>
@@ -66,9 +66,9 @@
 
                                                         <th>Review</th>
                                                         <th>Rating</th>
-                                                        <th>Status</th> 
+                                                        <th>Status</th>
                                                         <th>Action</th>
-                                                        
+
 
                                                     </tr>
                                                 </thead>
@@ -91,8 +91,8 @@
             <!-- container -->
         </div>
         <!-- content -->
-         <!-- start -->
-           <div class="modal employe-resign-modal-center" id="resignModal" tabindex="-1" role="dialog"
+        <!-- start -->
+        <div class="modal employe-resign-modal-center" id="resignModal" tabindex="-1" role="dialog"
             aria-labelledby="mySmallModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
@@ -107,27 +107,31 @@
                             <div class="col-12">
                                 <div class="card m-b-30">
                                     <div class="card-body py-0">
-      <form action="{{ route('review.update') }}" method="POST" enctype="multipart/form-data" id="reviewForm">
-    @csrf
-    <div class="row">
-        <input type="hidden" class="review_id" name="review_id" value="" id="review_id">
+                                        <form action="{{ route('review.update') }}" method="POST"
+                                            enctype="multipart/form-data" id="reviewForm">
+                                            @csrf
+                                            <div class="row">
+                                                <input type="hidden" class="review_id" name="review_id" value=""
+                                                    id="review_id">
 
-        
-        <label for="employee_name" class="col-sm-12 col-form-label mandatory">Review Status</label>
-        <div class="col-sm-12 mb-4">
-            <select class="form-control" name="status" id="">
-                <option value="">Select</option>
-                <option value="0">Unapprovel</option>
-                <option value="1">Approvel</option>
-            </select>
-            @error('status')
-                <span class="error" style="color: red;">{{ $message }}</span>
-            @enderror
-        </div>
-    </div>
-    <button type="submit" class="btn btn-primary">Update</button>
-    <button type="button" class="btn btn-secondary" onclick="closeResignModal()">Close</button>
-</form>
+
+                                                <label for="employee_name" class="col-sm-12 col-form-label mandatory">Review
+                                                    Status</label>
+                                                <div class="col-sm-12 mb-4">
+                                                    <select class="form-control" name="status" id="">
+                                                        <option value="">Select</option>
+                                                        <option value="0">Unapprovel</option>
+                                                        <option value="1">Approvel</option>
+                                                    </select>
+                                                    @error('status')
+                                                        <span class="error" style="color: red;">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Update</button>
+                                            <button type="button" class="btn btn-secondary"
+                                                onclick="closeResignModal()">Close</button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -194,20 +198,20 @@
 
                     },
 
-                   {
-            data: 'status',
-            name: 'status',
-            render: function(data, type, full, meta) {
-                // Check the status value
-                if (data == 0) {
-                    return 'Unapproved';
-                } else if (data == 1) {
-                    return 'Approved';
-                } else {
-                    return 'Unknown'; // Handle any other status values
-                }
-            }
-        },
+                    {
+                        data: 'status',
+                        name: 'status',
+                        render: function(data, type, full, meta) {
+                            // Check the status value
+                            if (data == 0) {
+                                return 'Unapproved';
+                            } else if (data == 1) {
+                                return 'Approved';
+                            } else {
+                                return 'Unknown'; // Handle any other status values
+                            }
+                        }
+                    },
 
 
 
@@ -241,18 +245,15 @@
 
         });
 
-        
-   function openReviewModal(reviewId) {
-    document.getElementById('review_id').value = reviewId;
-    $('#resignModal').modal('show');
-}
 
-
- function closeResignModal() {
-            $('#resignModal').modal('hide');
+        function openReviewModal(reviewId) {
+            document.getElementById('review_id').value = reviewId;
+            $('#resignModal').modal('show');
         }
 
-        
 
-           </script>
+        function closeResignModal() {
+            $('#resignModal').modal('hide');
+        }
+    </script>
 @endsection

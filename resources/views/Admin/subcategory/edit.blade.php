@@ -28,7 +28,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header py-1 pt-2">
+                            <div class="card-header m-0 p-0">
                                 <a href="{{ route('subcategory.index') }}" title="Sub Category List">
                                     <button class="header-title btn btn-gery">Sub Category List</button>
                                 </a>
@@ -61,7 +61,8 @@
                                                     <div class="row">
 
                                                         <div class="col-md-6">
-                                                            <label for="category_id">Category<span class="text text-danger">*</span></label>
+                                                            <label for="category_id">Category<span
+                                                                    class="text text-danger">*</span></label>
 
                                                             <select id="inputState" class="form-control" name="category_id"
                                                                 required>
@@ -81,7 +82,8 @@
                                                             @enderror
                                                         </div>
                                                         <div class="col-md-6">
-                                                            <label for="name">Name<span class="text text-danger">*</span> </label>
+                                                            <label for="name">Name<span
+                                                                    class="text text-danger">*</span> </label>
                                                             <div class="">
                                                                 <input class="form-control" type="text" name="name"
                                                                     id="name" required
@@ -93,8 +95,8 @@
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
-                                                            <label for="status"
-                                                                class=" col-form-label">Status<span class="text text-danger">*</span></label>
+                                                            <label for="status" class=" col-form-label">Status<span
+                                                                    class="text text-danger">*</span></label>
                                                             <select id="inputState" class="form-control" name="status"
                                                                 required>
                                                                 <option>select option</option>

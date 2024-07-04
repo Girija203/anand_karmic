@@ -710,6 +710,7 @@
                 let newCount = notifyCount == null ? 1 : (currentCount > 4 ? currentCount : currentCount + 1);
                 if (notifyCount != null) {
                     notifyCount.textContent = newCount;
+                    notifyCount.removeAttribute('hidden');
                 }
                 contact_Notify_Count > 4 ? (notificationList.removeChild(notificationList.lastElementChild)) : '';
                 let notificationTime = new Date();

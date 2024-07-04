@@ -695,7 +695,7 @@ class HomeController extends Controller
         ];
         //   dd($data);
         $mailData = Contact::create($data);
-        Mail::to('developer@itsk.in')->send(new ContactFormMail($mailData));
+        // Mail::to('developer@itsk.in')->send(new ContactFormMail($mailData));
         Mail::to($request['email'])->send(new ContactReplyMail($mailData));
 
         event(new ContactNotificationEvent($request->input('name')));

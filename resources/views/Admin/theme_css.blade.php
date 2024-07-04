@@ -238,7 +238,7 @@
         --tz-link-color: {{ $setting->primary_color }};
         --tz-link-color-rgb: 59, 192, 195;
         --tz-link-decoration: none;
-        --tz-link-hover-color: #32a3a6;
+        --tz-link-hover-color: {{ $setting->primary_color }};
         --tz-link-hover-color-rgb: 50, 163, 166;
         --tz-code-color: {{ $setting->primary_color }};
         --tz-highlight-bg: #fbf4dd;

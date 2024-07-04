@@ -3,10 +3,8 @@
 @section('content')
     <div class="content-page">
         <div class="content">
-
             <!-- Start Content-->
             <div class="container-fluid">
-
                 <!-- start page title -->
                 <div class="row">
                     <div class="col-12">
@@ -27,36 +25,30 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header py-1 pt-2">
-                                <a href="{{ route('category.index') }}" title="Category List">
-                                    <button class="header-title btn btn-gery">Category List</button>
-                                </a>
-                                <a href="#" title="Category Edit">
-                                    <button class="header-title btn  btn_primary_color">Edit
-                                        Category</button>
-                                </a>
+                            <div class="card-header m-0 p-0">
+                                <ul class="nav nav-pills">
+                                    <li class="nav-item">
+                                        <a class="nav-link rounded-0 pt-2 pb-2" aria-current="page"
+                                            href="{{ route('category.index') }}">Category List</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link active rounded-0 pt-2 pb-2" href="#">Edit
+                                            Category</a>
+                                    </li>
+                                </ul>
                             </div>
                             <div class="card-body pt-0">
                                 <div class="row">
                                     <div class="col-md-12 rightsetup-details">
-                                        <div class="d-flex justify-content-between p-2 bd-highlight">
-                                            {{-- <div>
-
-                                            </div>
-                                            <div>
-
-                                            </div> --}}
-                                        </div>
-                                        <div class="card-body">
+                                        <div class="card-body mt-4">
                                             <div class="m-b-30">
                                                 <form class="row g-3" method="POST"
                                                     action="{{ route('category.update', $category->id) }}">
                                                     @method('PUT')
                                                     @csrf
-
-                                                    <div class="row">
+                                                    <div class="row justify-content-center">
                                                         <div class="col-md-6">
-                                                            <label for="name" class=" col-form-label">Name<span class="text text-danger">*</span>
+                                                            <label for="name" class="col-form-label mandatory">Name
                                                             </label>
                                                             <div class="">
                                                                 <input class="form-control" type="text" name="name"
@@ -67,9 +59,11 @@
                                                                 @enderror
                                                             </div>
                                                         </div>
+                                                    </div>
+                                                    <div class="row justify-content-center">
                                                         <div class="col-md-6">
                                                             <label for="status"
-                                                                class=" col-form-label">Status<span class="text text-danger">*</span></label>
+                                                                class="col-form-label mandatory">Status</label>
                                                             <select id="inputState" class="form-control" name="status"
                                                                 required>
                                                                 <option>select option</option>
@@ -87,18 +81,11 @@
                                                             @enderror
                                                         </div>
                                                     </div>
-
-
-
-
-
                                                     <div class="form-group">
                                                         <div class="d-flex justify-content-evenly">
-
-
                                                             <button type="submit"
-                                                                class="btn btn_primary_color waves-effect waves-light">
-                                                                Submit
+                                                                class="btn btn-primary waves-effect waves-light">
+                                                                Save
                                                             </button>
                                                             <a href="{{ route('category.index') }}"
                                                                 class="btn btn-secondary waves-effect m-l-5">

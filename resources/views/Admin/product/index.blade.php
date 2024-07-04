@@ -26,7 +26,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header py-1 pt-2">
+                            <div class="card-header m-0 p-0">
                                 <a href="#" title="Product List">
                                     <button class="header-title btn btn_primary_color">Product List</button>
                                 </a>
@@ -198,7 +198,7 @@
                     },
                     success: function(result) {
 
-                       
+
                         toastr.success(result);
 
                         table.ajax.reload();

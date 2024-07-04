@@ -19,7 +19,7 @@ class SubCategoryController extends Controller
      public function indexData()
    {
        
-    $subcategory = SubCategory::with('category')->get();
+    $subcategory = SubCategory::with('category')->get()->slice(1);
        
        return DataTables::of($subcategory)
        ->addColumn('category_name', function($row) {
@@ -39,8 +39,7 @@ class SubCategoryController extends Controller
 
     $request->validate([
         'category_id'=>'required',
-        'name' => 'required|string|max:255',
-        'status'=>'required'
+        'name' => 'required|string|unique:sub_categories|max:255',
        
  
     ]);
@@ -52,8 +51,11 @@ class SubCategoryController extends Controller
     $subcategory->status=$request->input('status');
     $subcategory->save();
 
-    return redirect()->route('subcategory.index')->with('success','category created successfully');
-
+    if ($request->action === 'save') {
+        return redirect()->route('subcategory.index')->with('success', 'Sub Category created successfully');
+    } elseif ($request->action === 'save_and_new') {
+        return redirect()->route('subcategory.create')->with('success', 'Sub Category created successfully');
+    }
    }
 
    public function edit($id){

@@ -27,7 +27,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header py-1 pt-2">
+                            <div class="card-header m-0 p-0">
                                 <a href="{{ route('brand.index') }}" title="Brand List">
                                     <button class="header-title btn btn-gery">Brand List</button>
                                 </a>
@@ -55,7 +55,8 @@
                                                     @csrf
                                                     <div class="row">
                                                         <div class="col-md-6">
-                                                            <label for="name">Name<span class="text text-danger">*</span> </label>
+                                                            <label for="name">Name<span
+                                                                    class="text text-danger">*</span> </label>
                                                             <div class="">
                                                                 <input class="form-control" type="text" name="name"
                                                                     id="name">
@@ -70,7 +71,7 @@
                                                             <label for="logo">Logo</label>
 
                                                             <input class="form-control" type="file" name="logo"
-                                                                id="logo" >
+                                                                id="logo">
 
                                                             @error('logo')
                                                                 <span class="error"
@@ -79,10 +80,9 @@
                                                         </div>
 
                                                         <div class="col-md-6">
-                                                            <label for="status"
-                                                                class=" col-form-label">Status<span class="text text-danger">*</span></label>
-                                                            <select id="inputState" class="form-control" name="status"
-                                                               >
+                                                            <label for="status" class=" col-form-label">Status<span
+                                                                    class="text text-danger">*</span></label>
+                                                            <select id="inputState" class="form-control" name="status">
                                                                 <option value="">select option</option>
                                                                 <option value="1">Active</option>
                                                                 <option value="0">Inactive</option>
