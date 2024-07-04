@@ -18,8 +18,8 @@ class CategoryController extends Controller
     public function indexData()
     {
 
-        $category = Category::get();
-        return DataTables::of($category)->make(true);
+        $categories = Category::all()->slice(1);
+        return DataTables::of($categories)->make(true);
     }
 
     public function create()
@@ -30,7 +30,7 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
-        
+
         $request->validate([
             'name' => 'required|string|max:255',
         ]);

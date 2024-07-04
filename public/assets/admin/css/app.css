@@ -2017,9 +2017,7 @@ progress {
             var(--tz-table-bg-type, var(--tz-table-accent-bg))
         );
 }
-.table > tbody {
-    vertical-align: inherit;
-}
+
 .table > thead {
     vertical-align: bottom;
 }
@@ -19627,30 +19625,8 @@ table.dataTable tbody > tr.selected td {
 table.dataTable.table-striped > tbody > tr.selected:nth-of-type(odd) > * {
     --ct-table-accent-bg: $primary !important;
 }
-table.dataTable thead .sorting:before,
-table.dataTable thead .sorting_asc:before,
-table.dataTable thead .sorting_desc:before,
-table.dataTable thead .sorting_asc_disabled:before,
-table.dataTable thead .sorting_desc_disabled:before {
-    right: 0.5rem;
-    left: auto;
-    content: "\ea77";
-    font-family: "remixicon";
-    font-size: 1rem;
-    top: 12px;
-}
-table.dataTable thead .sorting:after,
-table.dataTable thead .sorting_asc:after,
-table.dataTable thead .sorting_desc:after,
-table.dataTable thead .sorting_asc_disabled:after,
-table.dataTable thead .sorting_desc_disabled:after {
-    right: 0.5em;
-    left: auto;
-    content: "\ea4d";
-    font-family: "remixicon";
-    top: 18px;
-    font-size: 1rem;
-}
+
+
 table.dataTable thead > tr > th.sorting_asc,
 table.dataTable thead > tr > th.sorting_desc,
 table.dataTable thead > tr > th.sorting {
@@ -21623,13 +21599,7 @@ table.dataTable tbody td {
     cursor: pointer;
 }
 
-.btn .ri-edit-box-line {
-    color: #1E90FF; /* Edit button color */
-}
 
-.btn .mdi-delete {
-    color: #FF4500; /* Delete button color */
-}
 
 /* Pagination styling */
 .dataTables_paginate a {
@@ -21687,3 +21657,14 @@ table.dataTable tbody td {
       content: " *";
       color: red;
   }
+
+  .btn-edit{
+    color:#179afe;
+  }
+  
+
+  .btn-delete{
+    color:#e85050;
+  }
+
+  
