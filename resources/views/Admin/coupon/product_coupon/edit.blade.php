@@ -241,6 +241,7 @@
         $(document).ready(function() {
 
             var displayedProducts = {}
+             var removedProducts = [];
             var ExistProducts = @json($productCoupons);
             var productList = document.getElementById("productList");
             console.log('ExistProducts...................', ExistProducts);
@@ -274,6 +275,7 @@
             function removeProduct(productId) {
                 var li = document.getElementById("product-" + productId);
                 li.parentNode.removeChild(li);
+                 removedProducts.push(productId);
                 delete displayedProducts[productId];
             }
             $("#product").select2({});
@@ -310,6 +312,7 @@
                         usage_limit: usage_limit,
                         status: status,
                         selected_productList: selected_productList,
+                        removedProducts: removedProducts,
                         _token: '{{ csrf_token() }}',
                     },
                     success: function(result) {

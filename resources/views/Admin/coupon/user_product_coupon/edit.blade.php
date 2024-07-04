@@ -404,6 +404,7 @@
     <script>
         $(document).ready(function() {
             var displayedUsers = {}
+             var removedUserProducts = [];
             var ExistUsers = @json($UserProductCoupons);
             var userList = document.getElementById("userList");
             console.log('ExistUsers...................', ExistUsers);
@@ -441,12 +442,14 @@
             function removeUser(userId) {
                 var li = document.getElementById("user-" + userId);
                 li.parentNode.removeChild(li);
+                removedUserProducts.push(userId);
                 delete displayedUsers[userId];
             }
 
 
 
             var displayedProducts = {}
+            var removedUserProducts = [];
             var ExistProducts = @json($UserProductCoupons);
             var productList = document.getElementById("productList");
             console.log('ExistProducts...................', ExistProducts);
@@ -480,6 +483,7 @@
             function removeProduct(productId) {
                 var li = document.getElementById("product-" + productId);
                 li.parentNode.removeChild(li);
+                removedUserProducts.push(productId);
                 delete displayedProducts[productId];
             }
             $("#product").select2({});
@@ -525,6 +529,7 @@
                         status: status,
                         selectet_userList: selectet_userList,
                         selected_productList: selected_productList,
+                         removedUserProducts: removedUserProducts,
                         _token: '{{ csrf_token() }}',
                     },
 

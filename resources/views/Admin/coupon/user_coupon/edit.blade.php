@@ -246,157 +246,133 @@
 
     <script>
         $(document).ready(function() {
+    var displayedUsers = {};
+    var removedUsers = [];
+    var ExistUsers = @json($userCoupons);
+    var userList = document.getElementById("userList");
+    console.log('ExistUsers...................', ExistUsers);
+    
+    ExistUsers.map((user) => {
+        if (!displayedUsers[user.user_id]) {
+            var li = document.createElement("li");
+            li.setAttribute("id", "user-" + user.user_id);
 
-            var displayedUsers = {}
-            var ExistUsers = @json($userCoupons);
-            var userList = document.getElementById("userList");
-            console.log('ExistUsers...................', ExistUsers);
-            ExistUsers.map((user) => {
+            var idSpan = document.createElement("span");
+            var nameSpan = document.createElement("span");
+            idSpan.textContent = user.user_id;
+            idSpan.setAttribute('class', "selected_user_id");
+            nameSpan.textContent = `Name: ${user.user.name}  `;
 
-                if (!displayedUsers[user.user_id]) {
+            var removeIcon = document.createElement("span");
+            removeIcon.textContent = "❌";
+            removeIcon.style.cursor = "pointer";
+            removeIcon.onclick = function() {
+                removeUser(user.user_id);
+            };
 
-                    var li = document.createElement("li");
-                    li.setAttribute("id", "user-" + user.user_id);
+            li.appendChild(idSpan);
+            li.appendChild(nameSpan);
+            li.appendChild(removeIcon);
 
-                    var idSpan = document.createElement("span");
-                    var nameSpan = document.createElement("span");
-                    idSpan.textContent = user.user_id;
-                    idSpan.setAttribute('class', "selected_user_id");
-                    nameSpan.textContent = `Name: ${user.user.name}  `;
+            userList.appendChild(li);
+            displayedUsers[user.user_id] = true;
+        }
+    });
 
-                    var removeIcon = document.createElement("span");
-                    removeIcon.textContent = "❌";
-                    removeIcon.style.cursor = "pointer";
-                    removeIcon.onclick = function() {
-                        removeUser(user.user_id);
-                    };
+    function removeUser(userId) {
+        var li = document.getElementById("user-" + userId);
+        li.parentNode.removeChild(li);
+        removedUsers.push(userId);
+        delete displayedUsers[userId];
+    }
 
-                    li.appendChild(idSpan);
-                    li.appendChild(nameSpan);
-                    li.appendChild(removeIcon);
-
-
-                    userList.appendChild(li);
-                    displayedUsers[user.user_id] = true;
-                }
-
-            });
-
-            function removeUser(userId) {
-                var li = document.getElementById("user-" + userId);
-                li.parentNode.removeChild(li);
-                delete displayedUsers[userId];
-            }
-
-            $("#user").select2({});
-            $(".confim_btn").on('click', function(e) {
-                e.preventDefault();
-                var coupon_type_id = $('#coupon_type_id').val();
-                var name = $('#name').val();
-                var code = $('#code').val();
-                var start_date = $('#start_date').val();
-                var end_date = $('#end_date').val();
-                var minimum_purchase_price = $('#minimum_purchase_price').val();
-                var discount_type = $('#discount_type').val();
-                var discount_value = $('#discount_value').val();
-                var usage_limit = $('#usage_limit').val();
-                var status = $('#statuses').val();
-                var userId = $('.selected_user_id');
-                console.log(userId);
-                var selectet_userList = [];
-                for (var span of userId) {
-                    console.log(span.textContent);
-                    selectet_userList.push(span.textContent);
-                }
-                console.log('selectet_userList...........', selectet_userList);
-                $.ajax({
-                    url: `{{ route('coupons.update', ['id' => $coupon->id]) }}`,
-                   type: 'POST',
-                    data: {
-                        coupon_type_id: coupon_type_id,
-                        name: name,
-                        code: code,
-                        start_date: start_date,
-                        end_date: end_date,
-                        minimum_purchase_price: minimum_purchase_price,
-                        discount_type: discount_type,
-                        discount_type: discount_type,
-                        discount_value: discount_value,
-                        usage_limit: usage_limit,
-                        status: status,
-                        selected_userList: selectet_userList,
-                        _token: '{{ csrf_token() }}',
-
-                    },
-                    success: function(result) {
-                        // alert('success.,............');
-                        window.location.href = "{{ route('coupons.index') }}";
-                    },
-                    error: function(result) {
-                        alert('error.,............');
-                    },
-
-                });
-
-
-
-            });
-
-
-
+    $("#user").select2({});
+    $(".confim_btn").on('click', function(e) {
+        e.preventDefault();
+        var coupon_type_id = $('#coupon_type_id').val();
+        var name = $('#name').val();
+        var code = $('#code').val();
+        var start_date = $('#start_date').val();
+        var end_date = $('#end_date').val();
+        var minimum_purchase_price = $('#minimum_purchase_price').val();
+        var discount_type = $('#discount_type').val();
+        var discount_value = $('#discount_value').val();
+        var usage_limit = $('#usage_limit').val();
+        var status = $('#statuses').val();
+        var userId = $('.selected_user_id');
+        console.log(userId);
+        var selected_userList = [];
+        for (var span of userId) {
+            console.log(span.textContent);
+            selected_userList.push(span.textContent);
+        }
+        console.log('selected_userList...........', selected_userList);
+        $.ajax({
+            url: `{{ route('coupons.update', ['id' => $coupon->id]) }}`,
+            type: 'POST',
+            data: {
+                coupon_type_id: coupon_type_id,
+                name: name,
+                code: code,
+                start_date: start_date,
+                end_date: end_date,
+                minimum_purchase_price: minimum_purchase_price,
+                discount_type: discount_type,
+                discount_value: discount_value,
+                usage_limit: usage_limit,
+                status: status,
+                selected_userList: selected_userList,
+                removedUsers: removedUsers, // Include removed user IDs
+                _token: '{{ csrf_token() }}',
+            },
+            success: function(result) {
+                // alert('success.,............');
+                window.location.href = "{{ route('coupons.index') }}";
+            },
+            error: function(result) {
+                alert('error.,............');
+            },
         });
+    });
 
+    function updateInputField() {
+        var select = document.getElementById("user");
+        var userList = document.getElementById("userList");
 
-        var displayedUsers = {};
+        if (select.selectedIndex > 0) {
+            var userName = select.options[select.selectedIndex].text;
+            var userId = select.value;
 
-        function updateInputField() {
-            var select = document.getElementById("user");
-            var userList = document.getElementById("userList");
+            // Check if the user is already displayed
+            if (!displayedUsers[userId]) {
+                var li = document.createElement("li");
+                li.setAttribute("id", "user-" + userId);
 
-            if (select.selectedIndex > 0) {
-                var userName = select.options[select.selectedIndex].text;
-                var userId = select.value;
+                var idSpan = document.createElement("span");
+                var nameSpan = document.createElement("span");
+                idSpan.setAttribute('class', "selected_user_id");
+                idSpan.textContent = `${userId} `;
+                nameSpan.textContent = `Name: ${userName}  `;
 
-                // Check if the user is already displayed
-                if (!displayedUsers[userId]) {
-                    var li = document.createElement("li");
-                    li.setAttribute("id", "user-" + userId);
+                var removeIcon = document.createElement("span");
+                removeIcon.textContent = "❌";
+                removeIcon.style.cursor = "pointer";
+                removeIcon.onclick = function() {
+                    removeUser(userId);
+                };
 
-                    var idSpan = document.createElement("span");
-                    var nameSpan = document.createElement("span");
-                    idSpan.setAttribute('class', "selected_user_id");
-                    idSpan.textContent = `${userId} `;
-                    nameSpan.textContent = `Name: ${userName}  `;
+                li.appendChild(idSpan);
+                li.appendChild(nameSpan);
+                li.appendChild(removeIcon);
+                userList.appendChild(li);
 
-
-                    var removeIcon = document.createElement("span");
-                    removeIcon.textContent = "❌";
-                    removeIcon.style.cursor = "pointer";
-                    removeIcon.onclick = function() {
-                        removeUser(userId);
-                    };
-
-                    li.appendChild(idSpan);
-                    li.appendChild(nameSpan);
-
-                    // if (li.) {
-
-                    // }
-
-                    li.appendChild(removeIcon);
-                    userList.appendChild(li);
-
-                    // Add the user to the displayedUsers object
-                    displayedUsers[userId] = true;
-                }
+                // Add the user to the displayedUsers object
+                displayedUsers[userId] = true;
             }
         }
+    }
+});
 
-        function removeUser(userId) {
-            var li = document.getElementById("user-" + userId);
-            li.parentNode.removeChild(li);
-            delete displayedUsers[userId];
-        }
     </script>
 @endsection
 

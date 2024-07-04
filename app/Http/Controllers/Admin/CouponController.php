@@ -134,6 +134,12 @@ class CouponController extends Controller
         $coupon->save();
 
         $selected_userList = $request->input('selected_userList');
+        $removedUsers = $request->input('removedUsers');
+
+        if ($removedUsers) {
+            UserCoupon::where('coupon_id', $coupon->id)->whereIn('user_id', $removedUsers)->delete();
+        }
+
         if ($selected_userList && $coupon->coupon_type_id == 2) {
             foreach ($selected_userList as $userId) {
                 $user_coupon = UserCoupon::where('coupon_id', $coupon->id)
@@ -150,8 +156,12 @@ class CouponController extends Controller
             }
         }
 
-
         $selected_productList = $request->input('selected_productList');
+        $removedProducts = $request->input('removedProducts');
+
+        if ($removedProducts) {
+            ProductCoupon::where('coupon_id', $coupon->id)->whereIn('product_id', $removedProducts)->delete();
+        }
         if ($selected_productList && $coupon->coupon_type_id == 3) {
             foreach ($selected_productList as $productId) {
                 $product_coupon = ProductCoupon::where('coupon_id', $coupon->id)
@@ -167,26 +177,25 @@ class CouponController extends Controller
                 $product_coupon->save();
             }
         }
-        if ($coupon->coupon_type_id == 4) {
-            // $userId = $request->input('user_id');
-            // $productId = $request->input('product_id');
-          
-            // if ($userId && $productId) {
-            //     $user_product_coupon = new UserProductCoupon;
-            //     $user_product_coupon->user_id = $userId;
-            //     $user_product_coupon->product_id = $productId;
-            //     $user_product_coupon->coupon_id = $coupon->id;
-            //     $user_product_coupon->save();
-            // }
 
-            $selectet_userList = $request->input('selectet_userList');
+        if ($coupon->coupon_type_id == 4) {
+            $selected_userList = $request->input('selectet_userList'); // Corrected variable name
             $selected_productList = $request->input('selected_productList');
+            $removedUserProducts = $request->input('removedUserProducts');
+
             foreach ($selected_productList as $productId) {
-                foreach ($selectet_userList as $userId) {
+                foreach ($selected_userList as $userId) { // Corrected variable name
                     $user_product_coupon = UserProductCoupon::where('coupon_id', $coupon->id)
                         ->where('product_id', $productId)
                         ->where('user_id', $userId)
                         ->first();
+                    if ($removedUserProducts) {
+                        // Assuming $productId, $userId are defined somewhere above this block
+                        UserProductCoupon::where('coupon_id', $coupon->id)
+                        ->where('product_id', $productId)
+                        ->where('user_id', $userId)
+                        ->delete();
+                    }
                     if (!$user_product_coupon) {
                         $user_product_coupon = new UserProductCoupon();
                         $user_product_coupon->coupon_id = $coupon->id;
@@ -201,7 +210,6 @@ class CouponController extends Controller
 
         return redirect()->route('coupons.index')->with('success', 'Coupon updated successfully!');
     }
-
 
     public function delete($id)
     {
