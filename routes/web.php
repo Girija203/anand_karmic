@@ -39,7 +39,7 @@ use App\Http\Controllers\Admin\PaymentMethodController;
 use App\Http\Controllers\Admin\CurrencyController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\CouponTypeController;
-
+use App\Http\Controllers\Admin\AboutSectioncontroller;
 use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PrivacyPolicyController;
@@ -501,6 +501,16 @@ Route::get('/faq/edit/{id}', [FaqController::class, 'edit'])->name('faq.edit');
 Route::PUT('/faq/update/{id}', [FaqController::class, 'update'])->name('faq.update');
 Route::get('/faq/delete/{id}', [FaqController::class, 'delete'])->name('faq.delete');
 
+    //About Section
+
+    Route::get('about_section/index', [AboutSectioncontroller::class, 'index'])->name('about_sections.index');
+    Route::get('about_section/create', [AboutSectioncontroller::class, 'create'])->name('about_sections.create');
+    Route::get('about_section/indexData', [AboutSectioncontroller::class, 'indexData'])->name('about_sections.data');
+    Route::post('about_section/store', [AboutSectioncontroller::class, 'store'])->name('about_sections.store');
+    Route::get('about_section/edit/{id}', [AboutSectioncontroller::class, 'edit'])->name('about_sections.edit');
+    Route::post('about_section/update/{id}', [AboutSectioncontroller::class, 'update'])->name('about_sections.update');
+    Route::get('about_section/delete/{id}', [AboutSectioncontroller::class, 'delete'])->name('about_sections.delete');
+
 
 Route::get('subscriber/index', [SubscriberController::class, 'index'])->name('subscriber.index');
 
@@ -525,7 +535,8 @@ Route::get('myaccount', [HomeController::class, 'myaccount'])->name('myaccount')
 Route::get('/', [HomeController::class, 'home'])->name('home');
 Route::get('about', [HomeController::class, 'about'])->name('about');
 Route::get('contact', [HomeController::class, 'contact'])->name('contact');
-
+Route::get('terms_condition', [HomeController::class, 'termsCondition'])->name('terms.condition');
+Route::get('privacy_policy', [HomeController::class, 'privacyPolicy'])->name('privacy.policy');
 Route::get('shop', [HomeController::class, 'shop'])->name('shop');
 
 

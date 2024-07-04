@@ -599,6 +599,12 @@
                                         Contact Page
                                     </a>
                                 </li>
+                                 <li>
+                                    <a href="{{ route('about_sections.index') }}">
+
+                                        About Section
+                                    </a>
+                                </li>
                                 <li>
                                     <a href="{{ route('terms.index') }}">Terms & Condition</a>
                                 </li>
