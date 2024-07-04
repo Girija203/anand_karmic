@@ -46,7 +46,7 @@
                                                 <form class="row g-3" method="POST" action="{{ route('states.store') }}">
                                                     @csrf
                                                     <div class="form-group row">
-                                                        <label class="col-sm-2 col-form-label">Country</label>
+                                                        <label class="col-sm-2 col-form-label mandatory">Country</label>
                                                         <div class="col-sm-4 mb-4">
                                                             <select class="form-control select2" name="country_id">
                                                                 <option value="">Select</option>

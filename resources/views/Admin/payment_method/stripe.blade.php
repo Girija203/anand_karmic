@@ -5,41 +5,41 @@
             @csrf
             @method('PUT')
             <div class="form-group">
-                <label>Country</label>
+                <label class="mandatory">Country</label>
                <select class="form-control" name="country_code" id="">
                 <option value="">select</option>
                 @foreach ($country as $item)
-                                                    <option value="{{ $item->id }}" {{ $stripe && $stripe->country_code == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                                                    @endforeach
+                <option value="{{ $item->id }}" {{ $stripe && $stripe->country_code == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                @endforeach
 
                </select>
             </div>
              <div class="form-group">
-                <label>Currency</label>
+                <label class="mandatory">Currency</label>
                 <select class="form-control" name="currency_code" id="">
                 <option value="">select</option>
                 @foreach ($currency as $item)
-                                                    <option value="{{ $item->id }}" {{ $stripe && $stripe->currency_code == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                                                    @endforeach
+                <option value="{{ $item->id }}" {{ $stripe && $stripe->currency_code == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                @endforeach
 
                </select>
             </div>
 
              <div class="form-group">
-                <label>Currency Rate</label>
+                <label class="mandatory">Currency Rate</label>
                 <input type="text" class="form-control" name="currency_rate"  id="" value="{{ $stripe->currency_rate ?? '' }}">
             </div>
             <div class="form-group">
-                <label>Stripe Key</label>
+                <label class="mandatory">Stripe Key</label>
                 <input type="text" class="form-control" name="stripe_key" id="" value="{{ $stripe->stripe_key ?? '' }}">
             </div>
             <div class="form-group">
-                <label>Stripe Secret</label>
+                <label class="mandatory">Stripe Secret</label>
                 <input type="text" class="form-control" name="stripe_secret" id="" value="{{ $stripe->stripe_secret ?? '' }}">
             </div>
 
                          <div class="form-group">
-                <label>Status</label>
+                <label class="mandatory">Status</label>
 
                                <select name="status" id="" class="form-control select2">
                     <option value="">Select</option>

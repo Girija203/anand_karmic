@@ -6,16 +6,16 @@
             @method('PUT')
            
             <div class="form-group">
-                <label>Contact Email</label>
+                <label class="mandatory">Contact Email</label>
                 <input type="email" class="form-control" name="contact_email" value="{{ $setting->contact_email ?? '' }}">
             </div>
             
             <div class="form-group">
-                <label>Topbar Phone</label>
+                <label class="mandatory">Topbar Phone</label>
                 <input type="text" class="form-control" name="topbar_phone" value="{{ $setting->topbar_phone ?? '' }}">
             </div>
             <div class="form-group">
-                <label>Topbar Email</label>
+                <label class="mandatory">Topbar Email</label>
                 <input type="email" class="form-control" name="topbar_email" value="{{ $setting->topbar_email ?? '' }}">
             </div>
               <br>

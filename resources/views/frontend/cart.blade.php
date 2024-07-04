@@ -190,11 +190,22 @@
                              <tr class="w-100">
                                  <td class="w-100">
                                      <div class="">
-                                         <form method="GET" class="d-flex justify-content-center flex-column align-items-center" action="{{ route('cart') }}">
-                                             <input type="text" name="coupon" class="form-control rounded-pill"
+                                         <form method="GET" class="justify-content-center flex-column align-items-center" action="{{ route('cart') }}">
+                                             <div class="row">
+                                                <div class="col-lg-9">
+                                                    <input type="text" name="coupon" class="form-control rounded-pill"
                                                  placeholder="Coupon Code" class="w-100" value="{{ request('coupon') }}">
-                                             <br>
-                                             <button class="button1 w-50 text-center justify-content-center" type="submit">Apply Coupon</button>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                  <button type="button" class="d-flex btn wrong-icon" id="removeCouponButton" aria-label="Remove Coupon">
+                                                    <i class="fa-regular fa-circle-xmark"></i>
+                                                  </button>
+
+                                                </div>
+                                             </div>
+                                            
+                                             <button class="button1 w-50 text-center d-flex justify-content-center mt-4" type="submit" style='margin:  auto'>Apply Coupon</button>
+            
                                          </form>
                                      </div>
                                  </td>
@@ -330,4 +341,17 @@
              });
          });
      </script>
+
+     <script>
+document.getElementById('removeCouponButton').addEventListener('click', function() {
+    // Clear the input field
+    const couponInput = document.querySelector('input[name="coupon"]');
+    couponInput.value = '';
+
+    // Clear the coupon parameter in the URL
+    const url = new URL(window.location);
+    url.searchParams.delete('coupon');
+    window.history.pushState({}, document.title, url);
+});
+</script>
  @endsection

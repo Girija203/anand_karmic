@@ -156,9 +156,10 @@ public function delete($id)
 {
     $blog_post = BlogPost::find($id);
     $blog_post->delete();
+    $result='Blog poste deleted successfully';
 
-     return redirect()->route('blog_posts.index')->with('success', 'Blog Post Delete successfully.');
-}
+    return $result;
 
     }
 
+}

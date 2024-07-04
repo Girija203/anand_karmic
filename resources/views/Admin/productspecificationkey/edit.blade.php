@@ -58,7 +58,7 @@
 
                                                     <div class="row">
                                                         <div class="col-md-6">
-                                                            <label for="name" class="col-sm-1 col-form-label">Name
+                                                            <label for="name" class=" col-form-label">Name<span class="text text-danger">*</span>
                                                             </label>
                                                             <div class="">
                                                                 <input class="form-control" type="text" name="name"
@@ -71,7 +71,7 @@
                                                         </div>
                                                         <div class="col-md-6">
                                                             <label for="status"
-                                                                class="col-sm-1 col-form-label">Status</label>
+                                                                class="col-form-label">Status<span class="text text-danger">*</span></label>
                                                             <select id="inputState" class="form-control" name="status"
                                                                 required>
                                                                 <option>select option</option>

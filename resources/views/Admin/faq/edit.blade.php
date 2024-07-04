@@ -62,7 +62,7 @@
                                                     </div>
 
                                                     <div class="col-md-12">
-                                                        <label for="status" class="col-sm-1 col-form-label">Status<span
+                                                        <label for="status" class=" col-form-label">Status<span
                                                                 class="text-danger">*</span></label>
                                                         <select id="inputState" class="form-control" name="status"
                                                             value="{{ old('status') }}">

@@ -8,7 +8,7 @@
 <meta name="description" content="Karmic Bags">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <!-- Favicon -->
-<link rel="shortcut icon" type="image/x-icon" href="assets/images/favicon.png">
+<link rel="shortcut icon" type="image/x-icon" href="frontend/assets/images/favicon.png">
 <!-- CSS (Font, Vendor, Icon, Plugins & Style CSS files) -->
 <!-- Font CSS -->
 <link rel="preconnect" href="https://fonts.googleapis.com/">
@@ -407,8 +407,8 @@
     <form id="country-select-form" class="m-0" action="{{ route('setCountry') }}" method="POST">
         @csrf
         <select name="country" class="btn btn-black bg-black text-white p-1 rounded" id="country-select" onchange="document.getElementById('country-select-form').submit();">
-            <option value="US" {{ session('country') == 'US' ? 'selected' : '' }}>United States</option>
-            <option value="IN" {{ session('country') == 'IN' ? 'selected' : '' }}>India</option>
+             <option value="IN" {{ session('country') == 'IN' ? 'selected' : '' }}>India</option>
+            <option value="US" {{ session('country') == 'US' ? 'selected' : '' }}>United States</option>    
             <option value="UK" {{ session('country') == 'UK' ? 'selected' : '' }}>United Kingdom</option>
             <!-- Add more countries as needed -->
         </select>

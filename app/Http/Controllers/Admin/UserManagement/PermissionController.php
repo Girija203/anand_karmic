@@ -153,7 +153,7 @@ public function storePermission(Request $request, $id)
 
         if ($permission) {
             return redirect()->route('permissions.index')
-                ->with('success', 'Permission deleted successfully');
+                ->with('success', 'Permission  deleted successfully');
         }
 
         return back()->with('failure', 'Please try again');

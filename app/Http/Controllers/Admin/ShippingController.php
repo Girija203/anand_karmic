@@ -41,7 +41,9 @@ class ShippingController extends Controller
         $request->validate([
             'shipping_rule' => 'required',
              'city_id' => 'required',
-            
+             'condition_from'=>'required|numeric',
+               'condition_to'=>'required|numeric',
+             'shipping_fee'=>'required|numeric',
         ]);
         
          $shipping = new Shipping;
@@ -101,6 +103,9 @@ class ShippingController extends Controller
     
      
         $shipping->delete();
+
+        $result = "Shipping Deleted successfully";
+        return $result;
 
         return redirect()->route('shippings.index')->with('success', 'Shipping Deleet successfully!');
 

@@ -88,9 +88,14 @@ class FaqController extends Controller
         {
         
             $faq = Faq::find($id);
-           $faq->delete();    
+           $faq->delete();  
+           
+           $result = "Faq deleted successfully";
+           return $result;
+       
+       
 
-            return redirect()->route('faq.index')->with('success', 'Faq Deleted successfully!');
+        
 
 
         }

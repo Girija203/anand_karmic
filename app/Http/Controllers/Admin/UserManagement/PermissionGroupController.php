@@ -87,7 +87,9 @@ class PermissionGroupController extends Controller
      {
           $permission_group = PermissionGroup::find($id);
           $permission_group->delete();
-          return redirect()->route('permission_groups.index')->with('success', 'Permission Group Delete successfully!');
+          $result = "Permission group deleted successfully";
+          return $result;
+        
      }
 
 }

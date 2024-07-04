@@ -41,11 +41,53 @@
                                             <div>
                                             </div>
                                             <div>
-                                                <a href="{{ route('coupons.create') }}" class="icon-link common-color"
-                                                    title="Create Coupon">
+                                                <a href="{{ route('coupons.create') }}"  class="icon-link common-color"
+                                                    title="Create Coupon"   data-bs-toggle="modal" data-bs-target="#exampleModal">
                                                     <i class="mdi mdi-plus-box" style="font-size: 22px;"></i>
                                                 </a>
                                             </div>
+
+
+                                            <!-- Button trigger modal -->
+<!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  Launch demo modal
+</button> -->
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Coupon Type</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+    <form action="{{ route('coupon.process') }}" method="POST">
+    @csrf
+    <label for="coupon_type" class="col-sm-3 col-form-label mandatory">Coupon Type</label>
+    <div class="col-sm-6 mb-8">
+        <select name="coupon_type" class="form-control" id="coupon_type">
+            <option value="">Select</option>
+            @foreach($coupon_type as $item)
+            <option value="{{ $item->id }}">{{ $item->name }}</option>
+            @endforeach
+        </select>
+        @error('shipping_rule')
+        <span class="error" style="color: red;">{{ $message }}</span>
+        @enderror
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary">Continue</button>
+    </div>
+</form>
+
+    </div>
+  </div>
+</div>
+
+
+
                                         </div>
                                         <div class="card-body">
                                             <table id="users-table"
@@ -54,6 +96,7 @@
                                                 <thead>
                                                     <tr>
                                                         <th>ID</th>
+                                                        <th>Coupon Type</th>
                                                         <th>Name</th>
                                                         <th>Code</th>
                                                         <th>Discount</th>
@@ -119,6 +162,10 @@
                         name: 'id'
                     },
                     {
+                        data: 'coupon_type_name',
+                        name: 'coupon_type_name'
+                    },
+                    {
                         data: 'name',
                         name: 'name'
                     },
@@ -168,11 +215,10 @@
 
         });
 
-        function editCoupons(id) {
-            console.log("inside");
-            // Redirect to the user edit page or open a modal for editing
-            window.location.href = 'coupon-edit/' + id;
-        }
+       function editCoupons(couponId) {
+    window.location.href = '/coupon-edit/' + couponId;
+}
+
 
         function deleteCoupons(id) {
             // Send an AJAX request to delete the user
@@ -185,12 +231,7 @@
                     },
                     success: function(result) {
                         // Show success message
-                        $('.alert-success').show();
-
-                        // Hide success message after 5 seconds
-                        setTimeout(function() {
-                            $('.alert-success').alert('close');
-                        }, 5000);
+                        toastr.success(result);
 
                         // Reload the DataTable after success message is shown
                         table.ajax.reload(); // Reload the DataTable

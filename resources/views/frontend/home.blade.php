@@ -240,24 +240,28 @@
                               </div>
                           </div>
                       </div>
-                      <div class="p-2">
-                          <div class="">
-                              <img class="card-img-top " src="{{ asset('storage/' . $showCaseProduct->product->image) }}" alt="Card image cap object-fit-cover" width="75%" />
-                          </div>
-                      </div>
+                     <div class="p-2">
+    <div class="">
+        @if($showCaseProduct->product->image)
+            <img class="card-img-top" src="{{ asset('storage/' . $showCaseProduct->product->image) }}" alt="Card image cap object-fit-cover" width="75%" />
+        @else
+            <img class="card-img-top" src="{{ asset('images/products/default-image.jpg') }}" alt="Default image" width="75%" />
+        @endif
+    </div>
+</div>
+
                       <div class="card-body">
                           <h6 class="card-title">{{ $showCaseProduct->product->title }}</h6>
                           <div class="d-flex justify-content-between align-items-center my-2">
-                              <div>
-                                  <a href="{{ route('single.product', $showCaseProduct->id) }}">
-                                      <button class="btn btn-black" style="z-index: 99999;">Shop Now</button>
-                                  </a>
-                              </div>
+                                       <form action="{{ route('buy.now', $showCaseProduct->product->id) }}" method="POST">
+                                @csrf
+                                <button class="btn btn-black">Buy Now</button>
+                            </form>
                               <div class="d-flex flex-column align-items-end">
-                                  <span>Rs. {{ $showCaseProduct->product->offer_price }}</span>
-                                  <span class="product-card-old-price fw-600">M.R.P :
-                                      <del>{{ $showCaseProduct->product->price }}</del></span>
-                                      
+                                   
+                    <span class="product-card-old-price fw-600">
+                        <del>{{ $currencySymbol }} {{ $showCaseProduct->getPriceInSelectedCurrency() }}</del></span>
+                                      <span>{{ $currencySymbol }} {{ $showCaseProduct->getOfferPriceInSelectedCurrency() }}</span>
                               </div>
                           </div>
                       </div>

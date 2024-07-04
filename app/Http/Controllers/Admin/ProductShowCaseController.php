@@ -39,6 +39,7 @@ class ProductShowCaseController extends Controller
         //   dd($request);
         $request->validate([
             'title' => 'required',
+            'description'=>'required'
 
             
         ]);
@@ -89,6 +90,9 @@ class ProductShowCaseController extends Controller
          $ProductShowCases = ProductShowCase::find($id);
 
          $ProductShowCases->delete();
+
+         $result = "Productshowcase deleted successfully";
+         return $result;
 
         return redirect()->route('product_show_cases.index')->with('success', 'Product Show Case Deleted successfully!');
 
