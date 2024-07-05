@@ -1,5 +1,4 @@
 @extends('Admin.layouts.app')
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
 @section('content')
     @include('Admin.links.css.datatable.datatable-css')
     @include('Admin.links.css.table.custom-css')
@@ -13,12 +12,11 @@
                         <div class="page-title-box">
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item">Product Management</li>
-                                    <li class="breadcrumb-item"><a href="{{ route('product.index') }}"> Product </a></li>
+                                    <li class="breadcrumb-item"><a href="{{ route('colors.index') }}">Color</a></li>
                                     <li class="breadcrumb-item active">List</li>
                                 </ol>
                             </div>
-                            <h4 class="page-title">Product </h4>
+                            <h4 class="page-title">Color</h4>
                         </div>
                     </div>
                 </div>
@@ -26,50 +24,48 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header py-1 pt-2">
-                                <a href="#" title="Product List">
-                                    <button class="header-title btn btn_primary_color">Product List</button>
-                                </a>
-                                <a href="{{ route('product.create') }}" title="Create Product">
-                                    <button class="header-title btn btn-gery"> <i class="mdi mdi-plus-box  pe-1"></i>Create
-                                        Product</button>
-                                </a>
+                            <div class="card-header">
+                                <h4 class="header-title">Color List</h4>
                             </div>
                             <div class="alert alert-success alert-dismissible fade show" role="alert"
                                 style="display:none;">
-                                {{-- <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
-                                </button> --}}
-                                <strong></strong> Product deleted successfully.
+                                </button>
+                                <strong></strong>Color deleted successfully.
                             </div>
                             <div class="card-body pt-0">
                                 <div class="row">
                                     <div class="col-md-12 rightsetup-details">
-                                        <div class="d-flex justify-content-between bd-highlight">
-
+                                        <div class="d-flex justify-content-between p-2 bd-highlight">
+                                            <div>
+                                            </div>
+                                            <div>
+                                                <a href="{{ route('colors.create') }}" class="icon-link common-color"
+                                                    title="Create Color">
+                                                    <i class="mdi mdi-plus-box" style="font-size: 22px;"></i>
+                                                </a>
+                                            </div>
                                         </div>
-                                        <div class="card-body data_table_border_style">
-                                            <table id="product-table"
+                                        <div class="card-body">
+                                            <table id="users-table"
                                                 class="table table-striped table-bordered dt-responsive nowrap"
                                                 style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                 <thead>
                                                     <tr>
                                                         <th>ID</th>
-
-                                                        {{-- <th>slug</th> --}}
-                                                        <th>category </th>
-                                                        <th>SubCategory</th>
-                                                        <th>ChildCategory</th>
-
-                                                        <th>Brand</th>
-                                                        <th>Product Name</th>
-                                                        <th>Image</th>
+                                                        <th>Name</th>
+                                                        <th>Code</th>
+                                                        <th>Status</th>
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <tr>
-
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
                                                     </tr>
                                             </table>
                                         </div>
@@ -112,58 +108,38 @@
 
         $(document).ready(function() {
 
-            table = $('#product-table').DataTable({
+            table = $('#users-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{{ route('product.data') }}',
+                ajax: '{{ route('colors.data') }}',
                 columns: [{
                         data: 'id',
                         name: 'id'
                     },
                     {
-                        data: 'category_name',
-                        name: 'category_name'
+                        data: 'name',
+                        name: 'name'
                     },
                     {
-                        data: 'subcategory_name',
-                        name: 'subcategory_name'
+                        data: 'code',
+                        name: 'code'
                     },
-
                     {
-                        data: 'childcategory_name',
-                        name: 'childcategory_name'
+                        data: 'status',
+                        name: 'status'
                     },
+                    
 
-                    {
-                        data: 'brand',
-                        name: 'brand'
-                    },
 
-                    {
-                        data: 'title',
-                        name: 'title'
-                    },
-
-                  {
-            data: 'single_image',
-            name: 'single_image',
-            render: function(data, type, row) {
-                if (data !== 'N/A') {
-                    return `<img src="${data}" width="50" height="50"/>`;
-                }
-                return data;
-            }
-        },
                     {
                         data: null,
                         orderable: false,
                         searchable: false,
-
                         render: function(data, type, row) {
                             return `
-                           <button class="btn py-0 px-0" onclick="editUsers(${row.id})"><i class="ri-edit-box-line text_danger_blue " style="font-size: 20px;"></i></button>
-                           <button  class="btn py-0" onclick="deleteUsers(${row.id})"><i class="mdi mdi-delete text_danger_red" style="font-size: 20px;"></i></button>
-
+                           <button onclick="editColors(${row.id})" class="icon-link common-color"><i class="ri-edit-box-line" style="font-size: 18px;"></i></button>
+                           <button onclick="deleteColors(${row.id})" class="icon-link common-color"><i class="mdi mdi-delete" style="font-size: 18px;"></i></button>
+                                                 
                        `;
                         }
 
@@ -183,27 +159,26 @@
 
         });
 
-        function editUsers(id) {
+        function editColors(id) {
             console.log("inside");
-
-            window.location.href = '/product/edit/' + id;
+            // Redirect to the user edit page or open a modal for editing
+            window.location.href = '/color/edit/' + id;
         }
 
-        function deleteUsers(id) {
-
-            if (confirm('Are you sure you want to delete this category?')) {
+        function deleteColors(id) {
+            // Send an AJAX request to delete the user
+            if (confirm('Are you sure you want to delete this Color?')) {
                 $.ajax({
-                    url: '/product/delete/' + id,
+                    url: '/color/delete/' + id,
                     type: 'get',
                     data: {
                         _token: '{{ csrf_token() }}',
                     },
                     success: function(result) {
-
-                       
+                        // Show success message
                         toastr.success(result);
-
-                        table.ajax.reload();
+                        // Reload the DataTable after success message is shown
+                        table.ajax.reload(); // Reload the DataTable
                     }
                 });
             }

@@ -56,10 +56,19 @@ class HomeController extends Controller
     public function about()
     {
         $cart = Cart::get();
-        $about_section = AboutSection::with('images')->get();
-        // dd($about_section);
-        return view('frontend.about', compact('cart', 'about_section'));
+        $about_sections = AboutSection::with('images')->get();
+
+        // Separate and sort the sections
+        $first_is_left = $about_sections->where('is_left', 1)->first();
+        $is_left_zero = $about_sections->where('is_left', 0);
+        $remaining_is_left = $about_sections->where('is_left', 1)->skip(1);
+
+        // Combine the sorted sections
+        $sorted_about_sections = collect([$first_is_left])->merge($is_left_zero)->merge($remaining_is_left);
+
+        return view('frontend.about', compact('cart', 'sorted_about_sections'));
     }
+
     public function termsCondition()
     {
         $cart = Cart::get();

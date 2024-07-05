@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\UserManagement\UserController;
 use App\Http\Controllers\Admin\UserManagement\RoleController;
 use App\Http\Controllers\Admin\UserManagement\PermissionController;
 use App\Http\Controllers\Admin\UserManagement\PermissionGroupController;
+use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\Admin\ProductSMLShareController;
@@ -502,7 +503,6 @@ Route::PUT('/faq/update/{id}', [FaqController::class, 'update'])->name('faq.upda
 Route::get('/faq/delete/{id}', [FaqController::class, 'delete'])->name('faq.delete');
 
     //About Section
-
     Route::get('about_section/index', [AboutSectioncontroller::class, 'index'])->name('about_sections.index');
     Route::get('about_section/create', [AboutSectioncontroller::class, 'create'])->name('about_sections.create');
     Route::get('about_section/indexData', [AboutSectioncontroller::class, 'indexData'])->name('about_sections.data');
@@ -510,6 +510,15 @@ Route::get('/faq/delete/{id}', [FaqController::class, 'delete'])->name('faq.dele
     Route::get('about_section/edit/{id}', [AboutSectioncontroller::class, 'edit'])->name('about_sections.edit');
     Route::post('about_section/update/{id}', [AboutSectioncontroller::class, 'update'])->name('about_sections.update');
     Route::get('about_section/delete/{id}', [AboutSectioncontroller::class, 'delete'])->name('about_sections.delete');
+
+// Color
+    Route::get('color/index', [ColorController::class, 'index'])->name('colors.index');
+    Route::get('color/create', [ColorController::class, 'create'])->name('colors.create');
+    Route::get('color/indexData', [ColorController::class, 'indexData'])->name('colors.data');
+    Route::post('color/store', [ColorController::class, 'store'])->name('colors.store');
+    Route::get('color/edit/{id}', [ColorController::class, 'edit'])->name('colors.edit');
+    Route::post('color/update/{id}', [ColorController::class, 'update'])->name('colors.update');
+    Route::get('color/delete/{id}', [ColorController::class, 'delete'])->name('colors.delete');
 
 
 Route::get('subscriber/index', [SubscriberController::class, 'index'])->name('subscriber.index');

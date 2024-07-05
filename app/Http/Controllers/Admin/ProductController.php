@@ -6,9 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\ChildCategory;
+use App\Models\Color;
 use App\Models\MetaKey;
 use App\Models\MetaType;
 use App\Models\Product;
+use App\Models\ProductColor;
+use App\Models\ProductColorImage;
 use App\Models\ProductMeta;
 use App\Models\ProductMultipleImage;
 use App\Models\ProductSpecification;
@@ -28,8 +31,7 @@ class ProductController extends Controller
     }
     public function indexData()
     {
-
-        $product = Product::with('category', 'subcategory', 'childcategory', 'brand')->get();
+        $product = Product::with('category', 'subcategory', 'childcategory', 'brand', 'colors')->get();
 
         return DataTables::of($product)
             ->addColumn('category_name', function ($row) {
@@ -38,11 +40,9 @@ class ProductController extends Controller
             ->addColumn('subcategory_name', function ($row) {
                 return $row->subcategory ? $row->subcategory->name : 'N/A';
             })
-
             ->addColumn('childcategory_name', function ($row) {
                 return $row->childcategory ? $row->childcategory->name : 'N/A';
             })
-
             ->addColumn('brand', function ($row) {
                 return $row->brand ? $row->brand->name : 'N/A';
             })
@@ -62,9 +62,18 @@ class ProductController extends Controller
                 }
                 return $labels;
             })
+            ->addColumn('single_image', function ($row) {
+                if ($row->colors->isNotEmpty()) {
+                    $color = $row->colors->first(); // Change this to get the desired color image
+                    $imagePath = 'storage/' . $color->single_image;
+                    return url($imagePath); // Return the URL of the image
+                }
+                return 'N/A';
+            })
             ->rawColumns(['labels'])
             ->make(true);
     }
+
 
 
 
@@ -75,8 +84,9 @@ class ProductController extends Controller
         $productspecificationkey = ProductSpecificationKey::all();
         $meta_type = MetaType::all();
         $meta_key = MetaKey::all();
+        $color = Color::all();
 
-        return view('Admin.product.create', compact('brand', 'category', 'productspecificationkey', 'meta_type', 'meta_key'));
+        return view('Admin.product.create', compact('brand', 'category', 'productspecificationkey', 'meta_type', 'meta_key','color'));
     }
 
     public function getSubcategories($categoryId)
@@ -101,73 +111,62 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-
+        // Validate the incoming request
         $validatedData = $request->validate([
-
             'title' => 'required',
+            'color_id' => 'required', // Assuming color_id should be validated instead of color
             'main_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'category_id' => 'required',
             'short_description' => 'required',
             'long_description' => 'required',
-            'price' => 'required',
-            // 'offer_price' => 'required',
-            'brand_id'=>'required',
-            'qty' => 'required',
-            'status'=>'required'
+            'price' => 'required|numeric',
+            'offer_price' => 'required|numeric',
+            'brand_id' => 'required',
+            'status' => 'required'
         ]);
 
-
+        // Create and save the product
         $product = new Product();
-        $product->title = $request->input('title');
+        $product->fill($validatedData); // Using mass assignment
         $product->slug = Str::slug($request->input('title'));
-        $product->category_id = $request->input('category_id');
         $product->subcategory_id = $request->input('subcategory_id') ?? null;
         $product->childcategory_id = $request->input('childcategory_id') ?? null;
-
-        $product->brand_id = $request->input('brand_id');
-        $product->short_description = $request->input('short_description');
-        $product->long_description = $request->input('long_description');
         $product->sku = $request->input('sku');
-        $product->price = $request->input('price');
-        $product->offer_price = $request->input('offer_price');
-        $product->qty = $request->input('qty');
         $product->is_top = $request->has('is_top') ? 1 : 0;
         $product->new_product = $request->has('new_product') ? 1 : 0;
         $product->is_best = $request->has('is_best') ? 1 : 0;
         $product->is_featured = $request->has('is_featured') ? 1 : 0;
-        $product->status = $request->input('status');
-        if ($request->hasFile('main_image')) {
-            $mainImagePath = $request->file('main_image')->store('Product Images/thumbnail', 'public');
-            $product->image = $mainImagePath;
-        }
-
-
         $product->save();
 
+        // Create and save the product color
+        $productColor = new ProductColor();
+        $productColor->product_id = $product->id;
+        $productColor->color_id = $request->input('color_id');
+        $productColor->price = $request->input('price');
+        $productColor->qty = $request->input('qty');
+        $productColor->offer_price = $request->input('offer_price');
+        if ($request->hasFile('main_image')) {
+            $mainImagePath = $request->file('main_image')->store('Product Images/thumbnail', 'public');
+            $productColor->single_image = $mainImagePath;
+        }
+        $productColor->save();
+
+        // Save multiple images for the product color
         if ($request->hasFile('multiple_images')) {
             foreach ($request->file('multiple_images') as $image) {
-                $imagePath = $image->store('Product Images', 'public');
-                $productImage = new ProductMultipleImage();
-                $productImage->product_id = $product->id;
-                $productImage->image = $imagePath;
-                $productImage->save();
+                $imagePath = $image->store('Product Color Images', 'public');
+                ProductColorImage::create([
+                    'product_color_id' => $productColor->id,
+                    'multi_image' => $imagePath,
+                ]);
             }
         }
 
-        $productSpecificationKeys = $request->input('product_specification_key_id');
-        $productSpecifications = $request->input('specification');
+        // Save product specifications
+        $productSpecificationKeys = array_filter($request->input('product_specification_key_id', []));
+        $productSpecifications = array_filter($request->input('specification', []));
 
-        // Filter out null values from the arrays
-        $productSpecificationKeys = array_filter($productSpecificationKeys, function ($value) {
-            return !is_null($value);
-        });
-
-        $productSpecifications = array_filter($productSpecifications, function ($value) {
-            return !is_null($value);
-        });
-
-        // Ensure both arrays are not empty and have the same length
-        if (!empty($productSpecificationKeys) && !empty($productSpecifications) && count($productSpecificationKeys) === count($productSpecifications)) {
+        if (count($productSpecificationKeys) === count($productSpecifications)) {
             foreach ($productSpecificationKeys as $index => $specificationKeyId) {
                 ProductSpecification::create([
                     'product_id' => $product->id,
@@ -177,34 +176,19 @@ class ProductController extends Controller
             }
         }
 
+        // Save product meta keys
+        $productMetaKeys = array_filter($request->input('meta_keys_id', []));
+        $content = array_filter($request->input('content', []));
 
-        //metakey
-
-        $productmetakey = $request->input('meta_keys_id');
-        $content = $request->input('content');
-
-        // Filter out null values from the arrays
-        $productmetakey = array_filter($productmetakey, function ($value) {
-            return !is_null($value);
-        });
-
-        $content = array_filter($content, function ($value) {
-            return !is_null($value);
-        });
-
-        // Ensure both arrays are not empty and have the same length
-        if (!empty($productmetakey) && !empty($content) && count($productmetakey) === count($content)) {
-            foreach ($productmetakey as $index => $metakeyid) {
+        if (count($productMetaKeys) === count($content)) {
+            foreach ($productMetaKeys as $index => $metaKeyId) {
                 ProductMeta::create([
                     'product_id' => $product->id,
-                    'meta_keys_id' => $metakeyid,
+                    'meta_keys_id' => $metaKeyId,
                     'content' => $content[$index],
                 ]);
             }
         }
-
-
-
 
         return redirect()->route('product.index')->with('success', 'Product created successfully');
     }
