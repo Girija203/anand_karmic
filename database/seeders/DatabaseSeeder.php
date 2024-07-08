@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use League\CommonMark\Extension\Footnote\Node\FootnoteBackref;
 
 class DatabaseSeeder extends Seeder
 {
@@ -36,6 +37,9 @@ class DatabaseSeeder extends Seeder
             SubCategorySeeder::class,
             ChildCategorySeeder::class,
             ProductSpecificationKeySeeder::class,
+            FooterSeeder::class,
+            SocialMediaLinkSeeder::class,
+            FooterLinkSeeder::class
 
             // ProductSeeder::class,
              

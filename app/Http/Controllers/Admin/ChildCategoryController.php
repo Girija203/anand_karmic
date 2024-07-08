@@ -9,107 +9,116 @@ use App\Models\SubCategory;
 use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ChildCategoryController extends Controller
 {
     public function index()
     {
-       $childcategory = ChildCategory::with('category','subcategory')->get();
-       return view('Admin.childcategory.index',compact('childcategory'));
+        $childcategory = ChildCategory::with('category', 'subcategory')->get();
+        return view('Admin.childcategory.index', compact('childcategory'));
     }
-     public function indexData()
-   {
-       
-    $childcategory = ChildCategory::with('category','subcategory')->get();
-       
-       return DataTables::of($childcategory)
-       ->addColumn('category_name', function($row) {
-        return $row->category ? $row->category->name : 'N/A';
-    })
-    ->addColumn('subcategory_name', function($row) {
-        return $row->subcategory ? $row->subcategory->name : 'N/A';
-    })
-       ->make(true);
-   }
+    public function indexData()
+    {
 
-   public function create(){
+        $childcategory = ChildCategory::with('category', 'subcategory')->get()->slice(1);
 
-    $category=Category::all();
-    // $subcategory=SubCategory::all();
+        return DataTables::of($childcategory)
+            ->addColumn('category_name', function ($row) {
+                return $row->category ? $row->category->name : 'N/A';
+            })
+            ->addColumn('subcategory_name', function ($row) {
+                return $row->subcategory ? $row->subcategory->name : 'N/A';
+            })
+            ->make(true);
+    }
 
-    return view('Admin.childcategory.create',compact('category'));
-   }
+    public function create()
+    {
 
-   public function getSubcategories($categoryId)
-{
-    $subcategories = SubCategory::where('category_id', $categoryId)->get();
-    return response()->json($subcategories);
-}
+        $category = Category::all();
+        // $subcategory=SubCategory::all();
 
-   public function store(Request $request){
+        return view('Admin.childcategory.create', compact('category'));
+    }
 
-    $request->validate([
-        'category_id'=>'required',
-        'subcategory_id'=>'required',
-        'name' => 'required|string|max:255',
-        'status'=>'required',
- 
-    ]);
+    public function getSubcategories($categoryId)
+    {
+        $subcategories = SubCategory::where('category_id', $categoryId)->get();
+        return response()->json($subcategories);
+    }
 
-    $childcategory=new ChildCategory();
-    $childcategory->category_id=$request->input('category_id');
-    $childcategory->subcategory_id=$request->input('subcategory_id');
-    $childcategory->name=$request->input('name');
-    $childcategory->slug = Str::slug($request->input('name'));
-    $childcategory->status=$request->input('status');
-    $childcategory->save();
+    public function store(Request $request)
+    {
 
-    return redirect()->route('childcategory.index')->with('success','childcategory created successfully');
+        $request->validate([
+            'category_id' => 'required',
+            'subcategory_id' => 'required',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('child_categories')->where(function ($query) use ($request) {
+                    return $query->where('category_id', $request->category_id)
+                        ->where('subcategory_id', $request->subcategory_id);
+                }),
+            ],
+        ]);
 
-   }
+        $childcategory = new ChildCategory();
+        $childcategory->category_id = $request->input('category_id');
+        $childcategory->subcategory_id = $request->input('subcategory_id');
+        $childcategory->name = $request->input('name');
+        $childcategory->slug = Str::slug($request->input('name'));
+        $childcategory->status = $request->input('status');
+        $childcategory->save();
 
-   public function edit($id){
+        if ($request->action === 'save') {
+            return redirect()->route('childcategory.index')->with('success', 'Sub Category created successfully');
+        } elseif ($request->action === 'save_and_new') {
+            return redirect()->route('childcategory.create')->with('success', 'Sub Category created successfully');
+        }
+    }
 
-    $category=Category::where('status',1)->get();
-    $subcategory=SubCategory::where('status',1)->get();
-    $childcategory=ChildCategory::findOrfail($id);
+    public function edit($id)
+    {
 
-    return view('Admin.childcategory.edit',compact('category','childcategory','subcategory'));
+        $category = Category::where('status', 1)->get();
+        $subcategory = SubCategory::where('status', 1)->get();
+        $childcategory = ChildCategory::findOrfail($id);
 
-   }
+        return view('Admin.childcategory.edit', compact('category', 'childcategory', 'subcategory'));
+    }
 
-   public function update(Request $request,$id){
+    public function update(Request $request, $id)
+    {
 
-    $request->validate([
+        $request->validate([
 
-        'category_id'=>'required',
-        'name' => 'required|string|max:255',
-        'status'=>'required',
- 
-    ]);
+            'category_id' => 'required',
+            'name' => 'required|string|max:255',
+            'status' => 'required',
 
-    $childcategory= ChildCategory::findOrfail($id);
-    $childcategory->category_id=$request->input('category_id');
-    $childcategory->subcategory_id=$request->input('subcategory_id');
-    $childcategory->name=$request->input('name');
-    $childcategory->slug = Str::slug($request->input('name'));
-    $childcategory->status=$request->input('status');
-    $childcategory->save();
+        ]);
 
-    return redirect()->route('childcategory.index')->with('success','childcategory updated successfully');
+        $childcategory = ChildCategory::findOrfail($id);
+        $childcategory->category_id = $request->input('category_id');
+        $childcategory->subcategory_id = $request->input('subcategory_id');
+        $childcategory->name = $request->input('name');
+        $childcategory->slug = Str::slug($request->input('name'));
+        $childcategory->status = $request->input('status');
+        $childcategory->save();
 
-   }
+        return redirect()->route('childcategory.index')->with('success', 'childcategory updated successfully');
+    }
 
-   public function delete($id){
+    public function delete($id)
+    {
 
-    $childcategory= ChildCategory::findOrfail($id);
+        $childcategory = ChildCategory::findOrfail($id);
 
-    $childcategory->delete();
-    $result = "ChildCategory deleted successfully";
-    return $result;
-
-   
-   }
-
-   
+        $childcategory->delete();
+        $result = "ChildCategory deleted successfully";
+        return $result;
+    }
 }

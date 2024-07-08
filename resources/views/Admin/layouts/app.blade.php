@@ -320,6 +320,14 @@
                             </ul>
                         </div>
                     </li>
+                    {{-- color --}}
+                     <li class="side-nav-item">
+                        <a href="{{ route('colors.index') }}" class="side-nav-link">
+                            <i class="ri-dashboard-3-line"></i>
+                            <span>Color</span>
+                        </a>
+                    </li>
+                    
                     {{-- Manage Product --}}
                     <li class="side-nav-item">
                         <a data-bs-toggle="collapse" href="#productpages" aria-expanded="false"
@@ -599,6 +607,12 @@
                                         Contact Page
                                     </a>
                                 </li>
+                                 <li>
+                                    <a href="{{ route('about_sections.index') }}">
+
+                                        About Section
+                                    </a>
+                                </li>
                                 <li>
                                     <a href="{{ route('terms.index') }}">Terms & Condition</a>
                                 </li>
@@ -710,6 +724,7 @@
                 let newCount = notifyCount == null ? 1 : (currentCount > 4 ? currentCount : currentCount + 1);
                 if (notifyCount != null) {
                     notifyCount.textContent = newCount;
+                    notifyCount.removeAttribute('hidden');
                 }
                 contact_Notify_Count > 4 ? (notificationList.removeChild(notificationList.lastElementChild)) : '';
                 let notificationTime = new Date();

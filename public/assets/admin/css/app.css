@@ -4378,6 +4378,7 @@ fieldset:disabled .btn {
 .nav-pills .show > .nav-link {
     color: var(--tz-nav-pills-link-active-color);
     background-color: var(--tz-nav-pills-link-active-bg);
+    cursor: default;
 }
 
 .nav-underline {

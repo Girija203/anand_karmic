@@ -12,13 +12,13 @@ use Illuminate\Queue\SerializesModels;
 class ContactReplyMail extends Mailable
 {
     use Queueable, SerializesModels;
-
+    public $mailData;
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct($mailData)
     {
-        //
+        $this->mailData = $mailData;
     }
 
     /**
@@ -27,7 +27,7 @@ class ContactReplyMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Contact Reply Mail',
+            subject: 'Thank You for Contacting ' . config('app.name'),
         );
     }
 

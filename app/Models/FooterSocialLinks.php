@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class FooterSocialLinks extends Model
 {
     use HasFactory;
+    protected $fillable = [
+
+        'product_id',
+        'stock_in'
+    ];
 }

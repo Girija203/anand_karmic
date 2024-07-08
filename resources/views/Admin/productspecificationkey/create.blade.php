@@ -28,7 +28,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header py-1 pt-2">
+                            <div class="card-header m-0 p-0">
                                 <a href="{{ route('productspecificationkey.index') }}" title="Product Specification List">
                                     <button class="header-title btn btn-gery">Product Specification List</button>
                                 </a>
@@ -59,7 +59,8 @@
 
                                                     <div class="row">
                                                         <div class="col-md-6">
-                                                            <label for="name" class=" col-form-label">Name<span class="text text-danger">*</span>
+                                                            <label for="name" class=" col-form-label">Name<span
+                                                                    class="text text-danger">*</span>
                                                             </label>
                                                             <div class="">
                                                                 <input class="form-control" type="text" name="name"
@@ -71,10 +72,9 @@
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
-                                                            <label for="status"
-                                                                class=" col-form-label">Status<span class="text text-danger">*</span></label>
-                                                            <select id="inputState" class="form-control" name="status"
-                                                               >
+                                                            <label for="status" class=" col-form-label">Status<span
+                                                                    class="text text-danger">*</span></label>
+                                                            <select id="inputState" class="form-control" name="status">
                                                                 <option value="">select option</option>
                                                                 <option value="1">Active</option>
                                                                 <option value="0">Inactive</option>

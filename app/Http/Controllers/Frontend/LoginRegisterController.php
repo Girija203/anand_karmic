@@ -19,163 +19,157 @@ use Illuminate\Support\Facades\Cookie;
 
 class LoginRegisterController extends Controller
 {
-   public function register(){
+    public function register()
+    {
 
-  
 
-    $cartItems = Cart::with('product')->get();
-            $cart = $cartItems->map(function($item) {
-                $product = $item->product;
-                $discount = 0;
 
-                if ($product->offer_price && $product->price > $product->offer_price) {
-                    $discount = $product->price - $product->offer_price;
-                }
+        $cartItems = Cart::with('product')->get();
+        $cart = $cartItems->map(function ($item) {
+            $product = $item->product;
+            $discount = 0;
 
-                $item->discount = $discount;
-                return $item;
-            });
-
-            // Calculate the total amount and discount amount
-            $totalAmount = 0;
-            $discountAmount = 0;
-
-            foreach ($cart as $item) {
-                $itemAmount = $item->quantity * $item->price;
-                $totalAmount += $itemAmount;
-                $discountAmount += $item->discount;
+            if ($product->offer_price && $product->price > $product->offer_price) {
+                $discount = $product->price - $product->offer_price;
             }
 
-    return view('frontend.register',compact('cartItems','cart'));
+            $item->discount = $discount;
+            return $item;
+        });
 
-   }
+        // Calculate the total amount and discount amount
+        $totalAmount = 0;
+        $discountAmount = 0;
 
-   public function store(Request $request){
+        foreach ($cart as $item) {
+            $itemAmount = $item->quantity * $item->price;
+            $totalAmount += $itemAmount;
+            $discountAmount += $item->discount;
+        }
 
-
- $request->validate([
-        'name' => 'required|max:255',
-        'email' => 'required|email|unique:users',
-        'password' => 'required|min:6|',
-         'g-recaptcha-response' => 'required|recaptcha',
-       
-    ]);
-    // dd($validated);
-
-    $user=new User();
-    $user->name=$request->input('name');
-    $user->email=$request->input('email');
-    $user->password=Hash::make($request->input('password'));
-  
-    $user->save();
-
-    return redirect()->route('myaccount')->with('success','registered successfully,you can login now');
-
-
-
-   }
-
-   public function userLogin(Request $request)
-   {
-       $credentials = [
-           "email" => $request['email'],
-           "password" => $request['password'],
-       ];
-   
-       $remember = true;
-       if (Auth::attempt($credentials,$remember)) {
-           $user = auth()->user();
-         
-                   return redirect()->route('myaccount')->with('success', 'You have successfully logged in');
-               } 
-               
-               else {
-                   return redirect()->back()->with('error', 'wrong credential');
-               
-           }
-
-
-}
-
-    public function forgotpassword(){
-        $cart=Cart::all();
-
-    return view('frontend.forgotpassword',compact('cart'));
-
+        return view('frontend.register', compact('cartItems', 'cart'));
     }
 
-public function submitForgetPasswordForm(Request $request)
-{
+    public function store(Request $request)
+    {
 
-    // dd($request);
-    $request->validate([
-        'email' => 'required|email|exists:users',
-    ]);
 
-    $token = Str::random(64);
+        $request->validate([
+            'name' => 'required|max:255',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6|',
+        ]);
 
-    $alreadysend = DB::table('password_reset_tokens')->where(['email' => $request->email])->first();
+        if (!app()->environment('local')) {
+            $validationRules['g-recaptcha-response'] = 'required|captcha';
+        }
+        // dd($validated);
 
-    if (!empty($alreadysend)) {
-        DB::table('password_reset_tokens')->where(['email' => $request->email])->delete();
+        $user = new User();
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->password = Hash::make($request->input('password'));
+
+        $user->save();
+
+        return redirect()->route('myaccount')->with('success', 'registered successfully,you can login now');
     }
-    DB::table('password_reset_tokens')->insert([
-        'email' => $request->email,
-        'token' => $token,
-        'created_at' => Carbon::now()
-    ]);
-    Mail::send('frontend.forgotemaillink', ['token' => $token], function ($message) use ($request) {
-        $message->to($request->email);
-        $message->subject('Reset Password');
-    });
 
-    return back()->with('success', 'We have e-mailed your password reset link!');
-}
+    public function userLogin(Request $request)
+    {
+        $credentials = [
+            "email" => $request['email'],
+            "password" => $request['password'],
+        ];
 
-public function showResetPasswordForm($token)
-{
+        $remember = true;
+        if (Auth::attempt($credentials, $remember)) {
+            $user = auth()->user();
 
-    return view('frontend.forgotresetpage', ['token' => $token]);
-}
+            return redirect()->route('myaccount')->with('success', 'You have successfully logged in');
+        } else {
+            return redirect()->back()->with('error', 'wrong credential');
+        }
+    }
 
-public function submitResetPasswordForm(Request $request)
-{
+    public function forgotpassword()
+    {
+        $cart = Cart::all();
 
-//   dd('hai');
-  $request->validate([
-    'email' => 'required|email|exists:users,email',
-    'password' => 'required|min:6|confirmed', // 'confirmed' rule checks if 'password' matches 'password_confirmation'
-    'password_confirmation' => 'required|min:6',
-    ]);
-    // dd($request->all());
+        return view('frontend.forgotpassword', compact('cart'));
+    }
 
-    $updatePassword = DB::table('password_reset_tokens')
-        ->where([
+    public function submitForgetPasswordForm(Request $request)
+    {
+
+        // dd($request);
+        $request->validate([
+            'email' => 'required|email|exists:users',
+        ]);
+
+        $token = Str::random(64);
+
+        $alreadysend = DB::table('password_reset_tokens')->where(['email' => $request->email])->first();
+
+        if (!empty($alreadysend)) {
+            DB::table('password_reset_tokens')->where(['email' => $request->email])->delete();
+        }
+        DB::table('password_reset_tokens')->insert([
             'email' => $request->email,
-            'token' => $request->token
-        ])
-        ->first();
-    // dd($updatePassword);
-    if (!$updatePassword) {
-        return back()->with('error', 'Invalid Email!');
+            'token' => $token,
+            'created_at' => Carbon::now()
+        ]);
+        Mail::send('frontend.forgotemaillink', ['token' => $token], function ($message) use ($request) {
+            $message->to($request->email);
+            $message->subject('Reset Password');
+        });
+
+        return back()->with('success', 'We have e-mailed your password reset link!');
     }
 
-    $user = User::where('email', $request->email)
-        ->update(['password' => Hash::make($request->password)]);
+    public function showResetPasswordForm($token)
+    {
 
-    DB::table('password_reset_tokens')->where(['email' => $request->email])->delete();
+        return view('frontend.forgotresetpage', ['token' => $token]);
+    }
 
-    return redirect()->to(route('normaluser.register'))->with('success', 'Your password has been changed,now login!');
-}
+    public function submitResetPasswordForm(Request $request)
+    {
 
-public function logout()
-{
-    Session::flush();
-    Auth::logout();
+        //   dd('hai');
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|min:6|confirmed', // 'confirmed' rule checks if 'password' matches 'password_confirmation'
+            'password_confirmation' => 'required|min:6',
+        ]);
+        // dd($request->all());
 
-    Cookie::queue(Cookie::forget('remember_web'));
+        $updatePassword = DB::table('password_reset_tokens')
+            ->where([
+                'email' => $request->email,
+                'token' => $request->token
+            ])
+            ->first();
+        // dd($updatePassword);
+        if (!$updatePassword) {
+            return back()->with('error', 'Invalid Email!');
+        }
 
-    return redirect()->to(route('normaluser.register'));
-}
+        $user = User::where('email', $request->email)
+            ->update(['password' => Hash::make($request->password)]);
 
+        DB::table('password_reset_tokens')->where(['email' => $request->email])->delete();
+
+        return redirect()->to(route('normaluser.register'))->with('success', 'Your password has been changed,now login!');
+    }
+
+    public function logout()
+    {
+        Session::flush();
+        Auth::logout();
+
+        Cookie::queue(Cookie::forget('remember_web'));
+
+        return redirect()->to(route('normaluser.register'));
+    }
 }
