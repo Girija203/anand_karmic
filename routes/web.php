@@ -255,8 +255,16 @@ Route::get('product/data', [ProductController::class, 'indexData'])->name('produ
 Route::get('product/edit/{id}', [ProductController::class, 'edit'])->name('product.edit');
 
 Route::PUT('/product/update/{id}', [ProductController::class, 'update'])->name('product.update');
+    Route::post('/product/update', [ProductController::class, 'productUpdate'])->name('product.color.update');
 Route::get('/product/delete/{id}', [ProductController::class, 'delete'])->name('product.delete');
 Route::get('/meta-keys/{metaTypeId}', [ProductController::class, 'getMetaKeys']);
+Route::get('/products/{id}', [ProductController::class, 'getProduct']);
+    Route::get('/products/colors/{product_id}', [ProductController::class, 'getProductColorsByProductId']);
+    Route::post('/products/update', [ProductController::class, 'productsUpdate'])->name('products.color.update');
+    Route::post('/products/delete', [ProductController::class, 'productsDelete'])->name('products.delete');
+
+
+
 
 
 

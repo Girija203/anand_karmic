@@ -20,6 +20,7 @@ use App\Models\SubCategory;
 use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -27,8 +28,119 @@ class ProductController extends Controller
     public function index()
     {
         $product = Product::with('category', 'subcategory', 'childcategory', 'brand')->get();
-        return view('Admin.product.index', compact('product'));
+        $color = Color::all();
+        $productcolors = ProductColor::with('product', 'color', 'images')->get();
+
+        return view('Admin.product.index', compact('product', 'color', 'productcolors'));
     }
+    public function getProduct($id)
+    {
+        $product = Product::find($id);
+        return response()->json($product);
+    }
+
+
+    public function productUpdate(Request $request)
+    {
+
+        $product = Product::findOrFail($request->product_id);
+
+
+        $productColor = new ProductColor();
+        $productColor->product_id = $product->id;
+        $productColor->color_id = $request->input('color_id');
+        $productColor->price = $request->input('price');
+        $productColor->sku = $request->input('sku');
+        $productColor->qty = $request->input('qty');
+        $productColor->offer_price = $request->input('offer_price');
+
+        if ($request->hasFile('main_image')) {
+            $mainImagePath = $request->file('main_image')->store('Product Images/thumbnail', 'public');
+            $productColor->single_image = $mainImagePath;
+        }
+
+        $productColor->save();
+
+        if ($request->hasFile('multiple_images')) {
+            foreach ($request->file('multiple_images') as $image) {
+                $imagePath = $image->store('Product Color Images', 'public');
+                ProductColorImage::create([
+                    'product_color_id' => $productColor->id,
+                    'multi_image' => $imagePath,
+                ]);
+            }
+        }
+
+        return redirect()->route('product.index')->with('success', 'Product updated successfully');
+    }
+
+    public function getProductColorsByProductId($productId)
+    {
+        $productColors = ProductColor::with('color', 'images')->where('product_id', $productId)->get();
+        return response()->json($productColors);
+    }
+    public function productsUpdate(Request $request)
+    {
+
+        // $productColor = ProductColor::find($request->input('id')) ?? new ProductColor();
+        // dd($productColor);
+        // $productColor->product_id = $request->input('product_id');
+        // $productColor->color_id = $request->input('color_id'); // Ensure color_id is an integer
+        $productColor = ProductColor::where('product_id', $request->input('product_id'))->where('id', $request->input('id'))->first();
+        $productColor->price = $request->input('price');
+        $productColor->sku = $request->input('sku');
+        $productColor->qty = $request->input('qty');
+        $productColor->offer_price = $request->input('offer_price');
+
+        if ($request->hasFile('single_image')) {
+            $mainImagePath = $request->file('single_image')->store('Product Images/thumbnail', 'public');
+            $productColor->single_image = $mainImagePath;
+        }
+
+        $productColor->save();
+
+        if ($request->hasFile('multi_images')) {
+            // Delete old images if needed
+            ProductColorImage::where('product_color_id', $productColor->id)->delete();
+
+            // Add new images
+            foreach ($request->file('multi_images') as $image) {
+                $imagePath = $image->store('Product Color Images', 'public');
+                ProductColorImage::create([
+                    'product_color_id' => $productColor->id,
+                    'multi_image' => $imagePath,
+                ]);
+            }
+        }
+
+        return redirect()->route('product.index')->with('success', 'Product updated successfully');
+    }
+
+    public function productsDelete(Request $request)
+    {
+        $productColor = ProductColor::find($request->input('id'));
+
+        if ($productColor) {
+            // Delete related images if needed
+            foreach ($productColor->images as $image) {
+                Storage::disk('public')->delete($image->multi_image);
+                $image->delete();
+            }
+
+            // Delete the single image
+            Storage::disk('public')->delete($productColor->single_image);
+
+            // Delete the product color
+            $productColor->delete();
+
+            $result = "Product Color deleted successfully";
+            return $result;
+        }
+
+        return response()->json(['error' => 'Product color not found'], 404);
+    }
+
+
     public function indexData()
     {
         $product = Product::with('category', 'subcategory', 'childcategory', 'brand', 'colors')->get();
@@ -131,7 +243,6 @@ class ProductController extends Controller
         $product->slug = Str::slug($request->input('title'));
         $product->subcategory_id = $request->input('subcategory_id') ?? null;
         $product->childcategory_id = $request->input('childcategory_id') ?? null;
-        $product->sku = $request->input('sku');
         $product->is_top = $request->has('is_top') ? 1 : 0;
         $product->new_product = $request->has('new_product') ? 1 : 0;
         $product->is_best = $request->has('is_best') ? 1 : 0;
@@ -144,6 +255,7 @@ class ProductController extends Controller
         $productColor->color_id = $request->input('color_id');
         $productColor->price = $request->input('price');
         $productColor->qty = $request->input('qty');
+        $productColor->sku = $request->input('sku');
         $productColor->offer_price = $request->input('offer_price');
         if ($request->hasFile('main_image')) {
             $mainImagePath = $request->file('main_image')->store('Product Images/thumbnail', 'public');

@@ -12,4 +12,8 @@ class ProductColorImage extends Model
         'product_color_id',
         'multi_image'
     ];
+    public function productColor()
+    {
+        return $this->belongsTo(ProductColor::class, 'product_color_id');
+    }
 }

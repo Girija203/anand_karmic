@@ -18,6 +18,7 @@ return new class extends Migration
             $table->double('price')->nullable();
             $table->double('offer_price')->nullable();
             $table->integer('qty');
+            $table->string('sku')->nullable();
             $table->string('single_image')->nullable();  
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->foreign('color_id')->references('id')->on('colors')->onDelete('cascade');

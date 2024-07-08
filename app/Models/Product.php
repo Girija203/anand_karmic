@@ -20,7 +20,6 @@ class Product extends Model
         'brand_id',
         'short_description',
         'long_description',
-        'sku',
         'is_top',
         'new_product',
         'is_best',
