@@ -13,9 +13,7 @@
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
                                     <li class="breadcrumb-item">Category Management</li>
-                                    <li class="breadcrumb-item"><a
-                                            href="{{ route('childcategory.index') }}">ChildCategory</a></li>
-                                    <li class="breadcrumb-item active">List</li>
+                                    <li class="breadcrumb-item active">ChildCategory</li>
                                 </ol>
                             </div>
                             <h4 class="page-title">ChildCategory</h4>
@@ -27,27 +25,21 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header m-0 p-0">
-                                <a href="#" title="Child Category List">
-                                    <button class="header-title btn btn_primary_color">Child category List</button>
-                                </a>
-                                <a href="{{ route('childcategory.create') }}" title="Child Category Create">
-                                    <button class="header-title btn btn-gery"> <i class="mdi mdi-plus-box  pe-1"></i>Create
-                                        ChildCategory</button>
-                                </a>
-                            </div>
-                            <div class="alert alert-success alert-dismissible fade show" role="alert"
-                                style="display:none;">
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                                <strong></strong> ChildCategory deleted successfully.
+                                <ul class="nav nav-pills">
+                                    <li class="nav-item">
+                                        <a class="nav-link active rounded-0 pt-2 pb-2" aria-current="page"
+                                            href="#">Child Category List</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link rounded-0 pt-2 pb-2"
+                                            href="{{ route('childcategory.create') }}">Create
+                                            Child Category</a>
+                                    </li>
+                                </ul>
                             </div>
                             <div class="card-body pt-0">
                                 <div class="row">
                                     <div class="col-md-12 rightsetup-details">
-                                        <div class="d-flex justify-content-between bd-highlight">
-
-                                        </div>
                                         <div class="card-body data_table_border_style">
                                             <table id="childcategory-table"
                                                 class="table table-striped table-bordered dt-responsive nowrap"
@@ -57,10 +49,8 @@
                                                         <th>ID</th>
                                                         <th>Category Name</th>
                                                         <th>Subcategory Name</th>
-                                                        <th> Name</th>
-
+                                                        <th>Name</th>
                                                         <th>Slug</th>
-                                                        {{-- <th>Status</th> --}}
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>

@@ -61,7 +61,7 @@
                                                     <div class="row justify-content-center">
                                                         <div class="col-md-6">
                                                             <label for="status"
-                                                                class="col-form-label mandatory">Status</label>
+                                                                class="col-form-label">Status</label>
                                                             <select id="inputState" class="form-control" name="status">
                                                                 <option value="1">Active</option>
                                                                 <option value="0">Inactive</option>

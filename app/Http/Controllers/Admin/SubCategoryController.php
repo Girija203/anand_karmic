@@ -8,6 +8,7 @@ use App\Models\SubCategory;
 use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class SubCategoryController extends Controller
 {
@@ -38,10 +39,15 @@ class SubCategoryController extends Controller
    public function store(Request $request){
 
     $request->validate([
-        'category_id'=>'required',
-        'name' => 'required|string|unique:sub_categories|max:255',
-       
- 
+        'category_id' => 'required',
+        'name' => [
+            'required',
+            'string',
+            'max:255',
+            Rule::unique('sub_categories')->where(function ($query) use ($request) {
+                return $query->where('category_id', $request->category_id);
+            }),
+        ],
     ]);
 
     $subcategory=new SubCategory();
