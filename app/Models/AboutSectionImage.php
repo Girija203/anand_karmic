@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class FooterSocialLinks extends Model
+class AboutSectionImage extends Model
 {
     use HasFactory;
     protected $fillable = [
-
-        'product_id',
-        'stock_in'
+        'about_section_id',
+        'image',
+        
     ];
 }

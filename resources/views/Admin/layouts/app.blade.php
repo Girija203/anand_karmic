@@ -320,6 +320,14 @@
                             </ul>
                         </div>
                     </li>
+                    {{-- color --}}
+                     <li class="side-nav-item">
+                        <a href="{{ route('colors.index') }}" class="side-nav-link">
+                            <i class="ri-dashboard-3-line"></i>
+                            <span>Color</span>
+                        </a>
+                    </li>
+                    
                     {{-- Manage Product --}}
                     <li class="side-nav-item">
                         <a data-bs-toggle="collapse" href="#productpages" aria-expanded="false"
@@ -597,6 +605,12 @@
                                     <a href="{{ route('contactpage.index') }}">
 
                                         Contact Page
+                                    </a>
+                                </li>
+                                 <li>
+                                    <a href="{{ route('about_sections.index') }}">
+
+                                        About Section
                                     </a>
                                 </li>
                                 <li>

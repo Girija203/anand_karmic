@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\UserManagement\UserController;
 use App\Http\Controllers\Admin\UserManagement\RoleController;
 use App\Http\Controllers\Admin\UserManagement\PermissionController;
 use App\Http\Controllers\Admin\UserManagement\PermissionGroupController;
+use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\Admin\ProductSMLShareController;
@@ -39,7 +40,7 @@ use App\Http\Controllers\Admin\PaymentMethodController;
 use App\Http\Controllers\Admin\CurrencyController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\CouponTypeController;
-
+use App\Http\Controllers\Admin\AboutSectioncontroller;
 use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PrivacyPolicyController;
@@ -254,8 +255,16 @@ Route::get('product/data', [ProductController::class, 'indexData'])->name('produ
 Route::get('product/edit/{id}', [ProductController::class, 'edit'])->name('product.edit');
 
 Route::PUT('/product/update/{id}', [ProductController::class, 'update'])->name('product.update');
+    Route::post('/product/update', [ProductController::class, 'productUpdate'])->name('product.color.update');
 Route::get('/product/delete/{id}', [ProductController::class, 'delete'])->name('product.delete');
 Route::get('/meta-keys/{metaTypeId}', [ProductController::class, 'getMetaKeys']);
+Route::get('/products/{id}', [ProductController::class, 'getProduct']);
+    Route::get('/products/colors/{product_id}', [ProductController::class, 'getProductColorsByProductId']);
+    Route::post('/products/update', [ProductController::class, 'productsUpdate'])->name('products.color.update');
+    Route::post('/products/delete', [ProductController::class, 'productsDelete'])->name('products.delete');
+
+
+
 
 
 
@@ -501,6 +510,24 @@ Route::get('/faq/edit/{id}', [FaqController::class, 'edit'])->name('faq.edit');
 Route::PUT('/faq/update/{id}', [FaqController::class, 'update'])->name('faq.update');
 Route::get('/faq/delete/{id}', [FaqController::class, 'delete'])->name('faq.delete');
 
+    //About Section
+    Route::get('about_section/index', [AboutSectioncontroller::class, 'index'])->name('about_sections.index');
+    Route::get('about_section/create', [AboutSectioncontroller::class, 'create'])->name('about_sections.create');
+    Route::get('about_section/indexData', [AboutSectioncontroller::class, 'indexData'])->name('about_sections.data');
+    Route::post('about_section/store', [AboutSectioncontroller::class, 'store'])->name('about_sections.store');
+    Route::get('about_section/edit/{id}', [AboutSectioncontroller::class, 'edit'])->name('about_sections.edit');
+    Route::post('about_section/update/{id}', [AboutSectioncontroller::class, 'update'])->name('about_sections.update');
+    Route::get('about_section/delete/{id}', [AboutSectioncontroller::class, 'delete'])->name('about_sections.delete');
+
+// Color
+    Route::get('color/index', [ColorController::class, 'index'])->name('colors.index');
+    Route::get('color/create', [ColorController::class, 'create'])->name('colors.create');
+    Route::get('color/indexData', [ColorController::class, 'indexData'])->name('colors.data');
+    Route::post('color/store', [ColorController::class, 'store'])->name('colors.store');
+    Route::get('color/edit/{id}', [ColorController::class, 'edit'])->name('colors.edit');
+    Route::post('color/update/{id}', [ColorController::class, 'update'])->name('colors.update');
+    Route::get('color/delete/{id}', [ColorController::class, 'delete'])->name('colors.delete');
+
 
 Route::get('subscriber/index', [SubscriberController::class, 'index'])->name('subscriber.index');
 
@@ -525,7 +552,8 @@ Route::get('myaccount', [HomeController::class, 'myaccount'])->name('myaccount')
 Route::get('/', [HomeController::class, 'home'])->name('home');
 Route::get('about', [HomeController::class, 'about'])->name('about');
 Route::get('contact', [HomeController::class, 'contact'])->name('contact');
-
+Route::get('terms_condition', [HomeController::class, 'termsCondition'])->name('terms.condition');
+Route::get('privacy_policy', [HomeController::class, 'privacyPolicy'])->name('privacy.policy');
 Route::get('shop', [HomeController::class, 'shop'])->name('shop');
 
 

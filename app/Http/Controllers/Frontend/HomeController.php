@@ -11,6 +11,8 @@ use App\Mail\ContactFormMail;
 use App\Mail\ContactReplyMail;
 use App\Models\ProductSMLShare;
 use App\Models\Contact;
+use App\Models\AboutSection;
+use App\Models\PrivacyPolicy;
 use App\Models\SocialMediaLink;
 use App\Models\Wishlist;
 use Illuminate\Http\Request;
@@ -28,6 +30,7 @@ use App\Models\Notification;
 use App\Models\OrderItem;
 use App\Models\ProductShowCase;
 use App\Models\ShowCaseProduct;
+use App\Models\TermsAndCondition;
 use App\Models\User;
 use App\Notifications\ContactNotification;
 use Illuminate\Support\Carbon;
@@ -53,7 +56,30 @@ class HomeController extends Controller
     public function about()
     {
         $cart = Cart::get();
-        return view('frontend.about', compact('cart'));
+        $about_sections = AboutSection::with('images')->get();
+
+        // Separate and sort the sections
+        $first_is_left = $about_sections->where('is_left', 1)->first();
+        $is_left_zero = $about_sections->where('is_left', 0);
+        $remaining_is_left = $about_sections->where('is_left', 1)->skip(1);
+
+        // Combine the sorted sections
+        $sorted_about_sections = collect([$first_is_left])->merge($is_left_zero)->merge($remaining_is_left);
+
+        return view('frontend.about', compact('cart', 'sorted_about_sections'));
+    }
+
+    public function termsCondition()
+    {
+        $cart = Cart::get();
+        $termConditions = TermsAndCondition::get();
+        return view('frontend.terms_condition', compact('cart', 'termConditions'));
+    }
+    public function privacyPolicy()
+    {
+        $cart = Cart::get();
+        $privacyPolicies = PrivacyPolicy::get();
+        return view('frontend.privacy_policy', compact('cart', 'privacyPolicies'));
     }
 
     public function contact()

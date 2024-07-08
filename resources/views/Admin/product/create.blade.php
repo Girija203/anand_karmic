@@ -74,6 +74,22 @@
                                                                 @enderror
                                                             </div>
                                                         </div>
+                                                        <div class="col-md-12">
+                                                            <label for="color_id">Color<span
+                                                                    class="text text-danger">*</span></label>
+                                                            <select id="color_id" class="form-control" name="color_id"
+                                                                value="{{ old('color_id') }}">
+                                                                <option value="">Select color</option>
+                                                                @foreach ($color as $item)
+                                                                    <option value="{{ $item->id }}">
+                                                                        {{ $item->name }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            @error('color_id')
+                                                                <span class="error"
+                                                                    style="color: red;">{{ $message }}</span>
+                                                            @enderror
+                                                        </div>
 
                                                         <div class="col-md-12">
                                                             <label for="main_image">Thumbnail image<span

@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('slug');   
-            $table->string('image')->nullable();   
+            $table->string('slug');    
             $table->string('video')->nullable(); 
             $table->unsignedBigInteger('category_id');
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
@@ -27,10 +26,6 @@ return new class extends Migration
             $table->foreign('brand_id')->references('id')->on('brands')->onDelete('cascade');
             $table->text('short_description');
             $table->longText('long_description');
-            $table->string('sku')->nullable();
-            $table->double('price');
-            $table->double('offer_price')->nullable();
-            $table->integer('qty');
             $table->boolean('is_top', [0, 1])->default(0);
             $table->boolean('new_product', [0, 1])->default(0);
             $table->boolean('is_best', [0, 1])->default(0);

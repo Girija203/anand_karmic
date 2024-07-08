@@ -13,7 +13,6 @@ class Product extends Model
 
         'title',
         'slug',
-        'image',
         'video',
         'category_id',
         'subcategory_id',
@@ -21,10 +20,6 @@ class Product extends Model
         'brand_id',
         'short_description',
         'long_description',
-        'sku',
-        'price',
-        'offer_price',
-        'qty',
         'is_top',
         'new_product',
         'is_best',
@@ -61,6 +56,12 @@ class Product extends Model
     {
         return $this->hasMany(ProductMultipleImage::class, 'product_id');
     }
+    public function colors()
+    {
+        return $this->hasMany(ProductColor::class, 'product_id');
+    }
+
+    
      public function specifications()
     {
         return $this->hasMany(ProductSpecification::class);
