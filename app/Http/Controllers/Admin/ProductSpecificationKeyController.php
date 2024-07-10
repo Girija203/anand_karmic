@@ -11,75 +11,74 @@ class ProductSpecificationKeyController extends Controller
 {
     public function index()
     {
-       $specificationkey = ProductSpecificationKey::all();
-       return view('Admin.productspecificationkey.index',compact('specificationkey'));
+        $specificationkey = ProductSpecificationKey::all();
+        return view('Admin.productspecificationkey.index', compact('specificationkey'));
     }
-     public function indexData()
-   {
-       
-    $specificationkey = ProductSpecificationKey::get();
-       
-       return DataTables::of($specificationkey)->make(true);
-   }
+    public function indexData()
+    {
 
-   public function create(){
+        $specificationkey = ProductSpecificationKey::get();
 
-    return view('Admin.productspecificationkey.create');
-   }
+        return DataTables::of($specificationkey)->make(true);
+    }
 
-   public function store(Request $request){
+    public function create()
+    {
 
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'status'=>'required',
- 
-    ]);
+        return view('Admin.productspecificationkey.create');
+    }
 
-    $specificationkey=new ProductSpecificationKey();
-    $specificationkey->name=$request->input('name');
-   
-    $specificationkey->status=$request->input('status');
-    $specificationkey->save();
+    public function store(Request $request)
+    {
 
-    return redirect()->route('productspecificationkey.index')->with('success','category created successfully');
+        $request->validate([
+            'name' => 'required|string|unique:product_specification_keys|max:255',
+        ]);
 
-   }
+        $specificationkey = new ProductSpecificationKey();
+        $specificationkey->name = $request->input('name');
+        $specificationkey->status = $request->input('status');
+        $specificationkey->save();
 
-   public function edit($id){
+        if ($request->action === 'save') {
+            return redirect()->route('productspecificationkey.index')->with('success', 'Product Specification Key created successfully');
+        } elseif ($request->action === 'save_and_new') {
+            return redirect()->route('productspecificationkey.create')->with('success', 'Product Specification Key created successfully');
+        }
+    }
 
-    $specificationkey=ProductSpecificationKey::findOrfail($id);
+    public function edit($id)
+    {
 
-    return view('Admin.productspecificationkey.edit',compact('specificationkey'));
+        $specificationkey = ProductSpecificationKey::findOrfail($id);
 
-   }
+        return view('Admin.productspecificationkey.edit', compact('specificationkey'));
+    }
 
-   public function update(Request $request,$id){
+    public function update(Request $request, $id)
+    {
 
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'status'=>'required',
- 
-    ]);
+        $request->validate([
+            'name' => 'required|string|unique:product_specification_keys,name,' . $id . '|max:255',
+        ]);
 
-    $specificationkey= ProductSpecificationKey::findOrfail($id);
-    $specificationkey->name=$request->input('name');
-  
-    $specificationkey->status=$request->input('status');
-    $specificationkey->save();
+        $specificationkey = ProductSpecificationKey::findOrfail($id);
+        $specificationkey->name = $request->input('name');
 
-    return redirect()->route('productspecificationkey.index')->with('success','category updated successfully');
+        $specificationkey->status = $request->input('status');
+        $specificationkey->save();
 
-   }
+        return redirect()->route('productspecificationkey.index')->with('success', 'Product Specification Key updated successfully');
+    }
 
-   public function delete($id){
+    public function delete($id)
+    {
 
-    $specificationkey= ProductSpecificationKey::findOrfail($id);
+        $specificationkey = ProductSpecificationKey::findOrfail($id);
 
-    $specificationkey->delete();
+        $specificationkey->delete();
 
-    $result = "ProductSpecification deleted successfully";
-    return $result;
-
-    return redirect()->route('productspecificationkey.index')->with('success','category deleted successfully');
-   }
+        $result = "Product Specification deleted successfully";
+        return $result;
+    }
 }

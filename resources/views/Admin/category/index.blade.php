@@ -95,8 +95,6 @@
 
     <script>
         var table;
-
-
         $(document).ready(function() {
 
             table = $('#category-table').DataTable({
@@ -154,7 +152,7 @@
 
         function deleteUsers(id) {
 
-            if (confirm('Are you sure you want to delete this category?')) {
+            if (confirm('Are you sure you want to delete this Category?')) {
                 $.ajax({
                     url: 'category/delete/' + id,
                     type: 'get',

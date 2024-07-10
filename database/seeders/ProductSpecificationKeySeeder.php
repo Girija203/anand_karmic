@@ -14,7 +14,6 @@ class ProductSpecificationKeySeeder extends Seeder
     public function run(): void
     {
          $productSpecificationKeys = [
-            ['name' => 'Color'],
             ['name' => 'Size'],
         ];
 

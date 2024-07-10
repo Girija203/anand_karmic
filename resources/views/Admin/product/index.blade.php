@@ -1,6 +1,4 @@
 @extends('Admin.layouts.app')
-<meta name="csrf-token" content="{{ csrf_token() }}">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
 @section('content')
     @include('Admin.links.css.datatable.datatable-css')
     @include('Admin.links.css.table.custom-css')
@@ -14,12 +12,12 @@
                         <div class="page-title-box">
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item">Product Management</li>
-                                    <li class="breadcrumb-item"><a href="{{ route('product.index') }}"> Product </a></li>
+                                    <li class="breadcrumb-item">Manage Products</li>
+                                    <li class="breadcrumb-item"><a href="{{ route('product.index') }}"> Products </a></li>
                                     <li class="breadcrumb-item active">List</li>
                                 </ol>
                             </div>
-                            <h4 class="page-title">Product </h4>
+                            <h4 class="page-title">Products </h4>
                         </div>
                     </div>
                 </div>
@@ -28,27 +26,20 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header m-0 p-0">
-                                <a href="#" title="Product List">
-                                    <button class="header-title btn btn_primary_color">Product List</button>
-                                </a>
-                                <a href="{{ route('product.create') }}" title="Create Product">
-                                    <button class="header-title btn btn-gery"> <i class="mdi mdi-plus-box  pe-1"></i>Create
-                                        Product</button>
-                                </a>
-                            </div>
-                            <div class="alert alert-success alert-dismissible fade show" role="alert"
-                                style="display:none;">
-                                {{-- <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button> --}}
-                                <strong></strong> Product deleted successfully.
+                                <ul class="nav nav-pills">
+                                    <li class="nav-item">
+                                        <a class="nav-link active rounded-0 pt-2 pb-2" aria-current="page"
+                                            href="#">Products List</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link rounded-0 pt-2 pb-2" href="{{ route('product.create') }}">Create
+                                            Product</a>
+                                    </li>
+                                </ul>
                             </div>
                             <div class="card-body pt-0">
                                 <div class="row">
                                     <div class="col-md-12 rightsetup-details">
-                                        <div class="d-flex justify-content-between bd-highlight">
-
-                                        </div>
                                         <div class="card-body data_table_border_style">
                                             <table id="product-table"
                                                 class="table table-striped table-bordered dt-responsive nowrap"
@@ -56,15 +47,9 @@
                                                 <thead>
                                                     <tr>
                                                         <th>ID</th>
-
-                                                        {{-- <th>slug</th> --}}
-                                                        <th>category </th>
-                                                        <th>SubCategory</th>
-                                                        <th>ChildCategory</th>
-
-                                                        <th>Brand</th>
                                                         <th>Product Name</th>
                                                         <th>Image</th>
+                                                        <th>Total Varient</th>
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>
@@ -297,26 +282,11 @@
                 serverSide: true,
                 ajax: '{{ route('product.data') }}',
                 columns: [{
-                        data: 'id',
-                        name: 'id'
-                    },
-                    {
-                        data: 'category_name',
-                        name: 'category_name'
-                    },
-                    {
-                        data: 'subcategory_name',
-                        name: 'subcategory_name'
-                    },
-
-                    {
-                        data: 'childcategory_name',
-                        name: 'childcategory_name'
-                    },
-
-                    {
-                        data: 'brand',
-                        name: 'brand'
+                        data: null,
+                        name: 'auto_increment_id',
+                        render: function(data, type, row, meta) {
+                            return meta.row + 1;
+                        }
                     },
 
                     {
@@ -328,10 +298,9 @@
                         data: 'single_image',
                         name: 'single_image',
                         render: function(data, type, row) {
-                            if (data !== 'N/A') {
-                                return `<img src="${data}" width="50" height="50"/>`;
-                            }
-                            return data;
+                            let imagePath = data ? `${data}` :
+                                '{{ url('assets/admin/images/no_image.png') }}';
+                            return `<img src="${imagePath}"height="60" width="auto"/>`;
                         }
                     },
                     {
@@ -484,25 +453,12 @@
             var row = button.closest('tr');
             var cells = row.getElementsByTagName('td');
             var id = cells[0].innerText;
-            var colorId = cells[1].dataset.colorId; 
+            var colorId = cells[1].dataset.colorId;
             var sku = cells[2].innerText;
             var qty = cells[3].innerText;
             var price = cells[4].innerText;
             var offer_price = cells[5].innerText;
 
-            // Populate the color dropdown dynamically
-            // var colorOptions = `
-        //     <option value="1" ${colorId == 1 ? 'selected' : ''}>Red</option>
-        //     <option value="2" ${colorId == 2 ? 'selected' : ''}>Green</option>
-        //     <option value="3" ${colorId == 3 ? 'selected' : ''}>Blue</option>
-        //     <!-- Add other color options here -->
-        // `;
-
-            // cells[1].innerHTML = `
-        //     <select name="color_id" class="form-control">
-        //         ${colorOptions}
-        //     </select>
-        // `;
             cells[2].innerHTML = `<input type="text" name="sku" value="${sku}" class="form-control">`;
             cells[3].innerHTML = `<input type="number" name="qty" value="${qty}" class="form-control">`;
             cells[4].innerHTML = `<input type="number" name="price" value="${price}" class="form-control">`;
@@ -517,13 +473,13 @@
             ${multiImagesHTML.split('\n').map((imgTag, index) => {
                 if (imgTag.trim() !== '') {
                     return `
-                                <div class="multi-image-item" data-index="${index}">
-                                    ${imgTag}
-                                    <button type="button" class="btn btn-danger btn-sm mt-2" onclick="removeMultiImage(this)">
-                                        <span class="mdi mdi-delete"></span>
-                                    </button>
-                                </div>
-                            `;
+                                                        <div class="multi-image-item" data-index="${index}">
+                                                            ${imgTag}
+                                                            <button type="button" class="btn btn-danger btn-sm mt-2" onclick="removeMultiImage(this)">
+                                                                <span class="mdi mdi-delete"></span>
+                                                            </button>
+                                                        </div>
+                                                    `;
                 }
                 return '';
             }).join('')}
@@ -577,29 +533,8 @@
                 processData: false,
                 contentType: false,
                 success: function(response) {
-    
-                    // cells[2].innerText = sku;
-                    // cells[3].innerText = qty;
-                    // cells[4].innerText = price;
-                    // cells[5].innerText = offer_price;
-                    // if (singleImageInput.files[0]) {
-                    //     cells[6].innerHTML =
-                    //         `<img src="${URL.createObjectURL(singleImageInput.files[0])}" alt="Single Image" width="50">`;
-                    //     }
-                    //     if (multiImagesInput.files.length > 0) {
-                    //     var multiImagesHTML = '';
-                    //     for (var file of multiImagesInput.files) {
-                    //         multiImagesHTML +=
-                    //         `<img src="${URL.createObjectURL(file)}" alt="Multi Image" width="50">`;
-                    //     }
-                    //     cells[7].innerHTML = multiImagesHTML;
-                    // }
 
-                    // button.innerHTML = `<span class="mdi mdi-pencil"></span>`;
-                    // button.onclick = function() {
-                    //     editRow(this);
-                    // };
-                    window.location.href='';
+                    window.location.href = '';
                 },
                 error: function(err) {
                     console.error(err);
@@ -607,39 +542,41 @@
                 }
             });
         }
- function deleteRow(button) {
-        var row = button.closest('tr');
-        var cells = row.getElementsByTagName('td');
-        var id = cells[0].innerText; // Assuming the ID is in the first cell
 
-        // Ask for confirmation
-        if (confirm('Are you sure you want to delete this product color?')) {
-            var formData = new FormData();
-            formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
-            formData.append('id', id);
+        function deleteRow(button) {
+            var row = button.closest('tr');
+            var cells = row.getElementsByTagName('td');
+            var id = cells[0].innerText; // Assuming the ID is in the first cell
 
-            $.ajax({
-                url: '/products/delete', // Your delete route here
-                method: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    // Remove the row from the table
-                    row.parentNode.removeChild(row);
-                    // alert('Product color deleted successfully');
-                     toastr.success(result);
-                },
-                error: function(err) {
-                    console.error(err);
-                    alert('Failed to delete product color');
-                }
-            });
-        } else {
-            // Do nothing if the user cancels the deletion
-            return false;
+            // Ask for confirmation
+            if (confirm('Are you sure you want to delete this product color?')) {
+                var formData = new FormData();
+                formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+                formData.append('id', id);
+
+                $.ajax({
+                    url: '/products/delete', // Your delete route here
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        // Remove the row from the table
+                        row.parentNode.removeChild(row);
+                        // alert('Product color deleted successfully');
+                        toastr.success(result);
+                    },
+                    error: function(err) {
+                        console.error(err);
+                        alert('Failed to delete product color');
+                    }
+                });
+            } else {
+                // Do nothing if the user cancels the deletion
+                return false;
+            }
         }
-    }
+
         function removeMultiImage(button) {
             var imageItem = button.closest('.multi-image-item');
             imageItem.parentNode.removeChild(imageItem);

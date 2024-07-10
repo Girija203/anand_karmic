@@ -302,7 +302,7 @@
                     <li class="side-nav-item">
                         <a data-bs-toggle="collapse" href="#categorypages" aria-expanded="false"
                             aria-controls="categorypages" class="side-nav-link">
-                            <i class="ri-pages-line"></i>
+                            <i class="mdi mdi-monitor-shimmer"></i>
                             <span> Manage Categories </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -320,19 +320,12 @@
                             </ul>
                         </div>
                     </li>
-                    {{-- color --}}
-                     <li class="side-nav-item">
-                        <a href="{{ route('colors.index') }}" class="side-nav-link">
-                            <i class="ri-dashboard-3-line"></i>
-                            <span>Color</span>
-                        </a>
-                    </li>
-                    
+
                     {{-- Manage Product --}}
                     <li class="side-nav-item">
                         <a data-bs-toggle="collapse" href="#productpages" aria-expanded="false"
                             aria-controls="productpages" class="side-nav-link">
-                            <i class="ri-pages-line"></i>
+                            <i class="ri-product-hunt-line"></i>
                             <span> Manage Products </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -342,6 +335,9 @@
                                     <a href="{{ route('brand.index') }}">Brand</a>
                                 </li>
                                 <li>
+                                    <a href="{{ route('colors.index') }}">Color</a>
+                                </li>
+                                <li>
                                     <a href="{{ route('productspecificationkey.index') }}">Product Specification
                                         Key</a>
                                 </li>
@@ -349,20 +345,17 @@
                                     <a href="{{ route('product.create') }}">Product create</a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('product.index') }}">Product </a>
+                                    <a href="{{ route('product.index') }}">Product</a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('products.outOfStock') }}">Stock Out </a>
+                                    <a href="{{ route('products.outOfStock') }}">Stock Out</a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('review.index') }}">Product review </a>
+                                    <a href="{{ route('review.index') }}">Product Review</a>
                                 </li>
                                 <li>
                                     <a href="{{ route('report.index') }}">Product Report </a>
                                 </li>
-                                {{-- <li>
-                                    <a href="{{ route('productmeta.index') }}">Product Meta </a>
-                                </li> --}}
                                 <li>
                                     <a href="{{ route('product_show_cases.index') }}">Product Show Case </a>
                                 </li>
@@ -376,7 +369,7 @@
                     <li class="side-nav-item">
                         <a data-bs-toggle="collapse" href="#orders" aria-expanded="false" aria-controls="orders"
                             class="side-nav-link">
-                            <i class="ri-pages-line"></i>
+                            <i class="ri-order-play-line"></i>
                             <span>Manage Order </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -410,7 +403,7 @@
                     {{-- Inventory Managment --}}
                     <li class="side-nav-item">
                         <a href="{{ route('inventory.index') }}" class="side-nav-link">
-                            <i class="ri-dashboard-3-line"></i>
+                            <i class="mdi mdi-account-cash"></i>
                             <span>Inventory</span>
                         </a>
                     </li>
@@ -425,20 +418,19 @@
                         <div class="collapse" id="productspages">
                             <ul class="side-nav-second-level">
                                 <li>
-
                                     <a href="{{ route('shippings.index') }}">Shipping Rule</a>
                                 </li>
                                 <li>
                                     <a href="{{ route('payment_methods.index') }}">Payment Method</a>
                                 </li>
-                                 <li>
+                                <li>
                                     <a href="{{ route('coupon_types.index') }}">Coupon Type</a>
                                 </li>
 
                                 <li>
                                     <a href="{{ route('coupons.index') }}">Coupon</a>
                                 </li>
-                                
+
                             </ul>
                         </div>
                         {{-- 
@@ -607,7 +599,7 @@
                                         Contact Page
                                     </a>
                                 </li>
-                                 <li>
+                                <li>
                                     <a href="{{ route('about_sections.index') }}">
 
                                         About Section
