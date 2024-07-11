@@ -49,7 +49,7 @@
                                                         <th>ID</th>
                                                         <th>Product Name</th>
                                                         <th>Image</th>
-                                                        <th>Total Varient</th>
+                                                        <th>Color Varient</th>
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>
@@ -288,7 +288,6 @@
                             return meta.row + 1;
                         }
                     },
-
                     {
                         data: 'title',
                         name: 'title'
@@ -304,18 +303,25 @@
                         }
                     },
                     {
+                        data: 'colors',
+                        name: 'colors',
+                        render: function(data, type, row, meta) {
+                            return ` ${data}<button class="btn py-0 px-0" onclick="addVariantModal(${row.id})" class="icon-button custom-color">
+                            <i class="mdi mdi-plus-box text_danger_blue" style="font-size: 22px;"></i>
+                            </button>`;
+                        }
+                    },
+                    {
                         data: null,
                         orderable: false,
                         searchable: false,
 
                         render: function(data, type, row) {
                             return `
-                    <button class="btn py-0 px-0" onclick="addVariantModal(${row.id})" class="icon-button custom-color">
-    <i class="mdi mdi-plus-box text_danger_blue" style="font-size: 22px;"></i>
-</button>
-                    <button class="btn py-0 px-0" onclick="editVariantModal(${row.id})" class="icon-button custom-color">
-    <i class="ri-edit-box-line text_danger_blue " style="font-size: 20px;"></i>
-</button>
+                            
+                            <button class="btn py-0 px-0" onclick="editVariantModal(${row.id})" class="icon-button custom-color">
+                            <i class="ri-edit-box-line text_danger_blue " style="font-size: 20px;"></i>
+                            </button>
 
                            <button class="btn py-0 px-0" onclick="editUsers(${row.id})"><i class="ri-edit-box-line text_danger_blue " style="font-size: 20px;"></i></button>
                            <button  class="btn py-0" onclick="deleteUsers(${row.id})"><i class="mdi mdi-delete text_danger_red" style="font-size: 20px;"></i></button>
@@ -473,13 +479,13 @@
             ${multiImagesHTML.split('\n').map((imgTag, index) => {
                 if (imgTag.trim() !== '') {
                     return `
-                                                        <div class="multi-image-item" data-index="${index}">
-                                                            ${imgTag}
-                                                            <button type="button" class="btn btn-danger btn-sm mt-2" onclick="removeMultiImage(this)">
-                                                                <span class="mdi mdi-delete"></span>
-                                                            </button>
-                                                        </div>
-                                                    `;
+                                                                            <div class="multi-image-item" data-index="${index}">
+                                                                                ${imgTag}
+                                                                                <button type="button" class="btn btn-danger btn-sm mt-2" onclick="removeMultiImage(this)">
+                                                                                    <span class="mdi mdi-delete"></span>
+                                                                                </button>
+                                                                            </div>
+                                                                        `;
                 }
                 return '';
             }).join('')}

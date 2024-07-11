@@ -144,7 +144,6 @@ class ProductController extends Controller
     public function indexData()
     {
         $product = Product::with('category', 'subcategory', 'childcategory', 'brand', 'colors')->get();
-
         return DataTables::of($product)
             ->addColumn('category_name', function ($row) {
                 return $row->category ? $row->category->name : 'N/A';
@@ -157,6 +156,18 @@ class ProductController extends Controller
             })
             ->addColumn('brand', function ($row) {
                 return $row->brand ? $row->brand->name : 'N/A';
+            })
+            ->addColumn('color_count', function ($row) {
+                return $row->colors ? $row->colors->count() : 0;
+            })
+            ->addColumn('colors', function ($row) {
+                if ($row->colors->isNotEmpty()) {
+                    $colorNames = $row->colors->map(function ($colors) {
+                        return $colors->color ? $colors->color->code : 'N/A';
+                    });
+                    return $colorNames->implode(', ');
+                }
+                return 'N/A';
             })
             ->addColumn('labels', function ($row) {
                 $labels = '';
@@ -198,7 +209,7 @@ class ProductController extends Controller
         $meta_key = MetaKey::all();
         $color = Color::all();
 
-        return view('Admin.product.create', compact('brand', 'category', 'productspecificationkey', 'meta_type', 'meta_key','color'));
+        return view('Admin.product.create', compact('brand', 'category', 'productspecificationkey', 'meta_type', 'meta_key', 'color'));
     }
 
     public function getSubcategories($categoryId)
@@ -433,7 +444,5 @@ class ProductController extends Controller
         $product->delete();
         $result = "Product deleted successfully";
         return $result;
-
-       
     }
 }

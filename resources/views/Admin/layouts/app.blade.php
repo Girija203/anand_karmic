@@ -648,7 +648,7 @@
     <script src="{{ asset('assets/admin/vendor/daterangepicker/daterangepicker.js') }}"></script>
 
     <!-- Apex Charts js -->
-    <script src="{{ asset('assets/admin/vendor/apexcharts/apexcharts.min.js') }}"></script>
+    {{-- <script src="{{ asset('assets/admin/vendor/apexcharts/apexcharts.min.js') }}"></script> --}}
 
     <!-- Vector Map js -->
     <script src="{{ asset('assets/admin/vendor/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js') }}">
@@ -657,8 +657,7 @@
         src="{{ asset('assets/admin/vendor/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js') }}">
     </script>
 
-    <!-- Dashboard App js -->
-    <script src="{{ asset('assets/admin/js/pages/dashboard.js') }}"></script>
+
 
 
     <!-- App js -->
@@ -703,7 +702,7 @@
     {{-- For Contact Notification --}}
     <script>
         var contact_Notify_Count = @json($contact_Notify_Count);
-        Pusher.logToConsole = true;
+        Pusher.logToConsole = false;
         var pusher = new Pusher('f6700b65ed665872ec5e', {
             cluster: 'ap2'
         });
@@ -738,7 +737,7 @@
     {{-- For Order Notification --}}
     <script>
         var order_Notify_Count = @json($order_Notify_Count);
-        Pusher.logToConsole = true;
+        Pusher.logToConsole = false;
         var pusher = new Pusher('f6700b65ed665872ec5e', {
             cluster: 'ap2'
         });

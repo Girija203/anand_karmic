@@ -1,5 +1,6 @@
 @extends('Admin.layouts.app')
-
+<!-- Dashboard App js -->
+<script src="{{ asset('assets/admin/js/pages/dashboard.js') }}"></script>
 @section('content')
     <div class="content-page">
         <div class="content">
