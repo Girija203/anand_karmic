@@ -28,6 +28,7 @@ use App\Models\Shipping;
 use App\Models\Coupon;
 use App\Models\Notification;
 use App\Models\OrderItem;
+use App\Models\ProductColor;
 use App\Models\ProductShowCase;
 use App\Models\ShowCaseProduct;
 use App\Models\TermsAndCondition;
@@ -239,6 +240,8 @@ class HomeController extends Controller
 
 
         //  dd($products);
+        $productColors = ProductColor::where('product_id', $id)->with('color')->get();
+
         $specifications = ProductSpecification::where('product_id', $id)->with('key')->get();
 
         // Fetch related products from the same category
@@ -270,7 +273,7 @@ class HomeController extends Controller
 
 
 
-        return view('frontend.single_product', compact('products', 'specifications', 'relatedProducts', 'reviews', 'cart','product_sml_share','exchangeRate','currencySymbol','wishlistProductIds'));
+        return view('frontend.single_product', compact('products', 'specifications', 'relatedProducts', 'reviews', 'cart','product_sml_share','exchangeRate','currencySymbol','wishlistProductIds','productColors'));
 
     }
 

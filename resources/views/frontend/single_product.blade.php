@@ -170,17 +170,14 @@
                             <fieldset class="product-color-radio-wrap">
                                 <h6 class="mb-0 title">Color</h6>
                                 <div class="product-color-radio-buttons">
-                                    <input type="radio" id="color-lable-black" name="color" value="black" checked="">
-                                    <label class="color-lable color-lable-black" for="color-lable-black"></label>
-
-                                    <input type="radio" id="color-lable-green" name="color" value="green">
-                                    <label class="color-lable color-lable-green" for="color-lable-green"></label>
-
-                                    <input type="radio" id="color-lable-gray" name="color" value="gray">
-                                    <label class="color-lable color-lable-gray" for="color-lable-gray"></label>
+                                    @foreach($productColors as $productColor)
+                                        <input type="radio" id="color-lable-{{ $productColor->color->name }}" name="color" value="{{ $productColor->color->name }}" {{ $loop->first ? 'checked' : '' }}>
+                                        <label class="color-lable color-lable-{{ $productColor->color->name }}" for="color-lable-{{ $productColor->color->name }}"></label>
+                                    @endforeach
                                 </div>
                             </fieldset>
                         </form>
+                        
 
                         <div class="product-item-stock in-stock mb-3">
                             <span class="stock-label visually-hidden">Availability:</span>
