@@ -13,7 +13,7 @@
                         <div class="page-title-box">
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item">Product Management</li>
+                                    <li class="breadcrumb-item">Manage Product</li>
                                     <li class="breadcrumb-item"><a href="{{ route('product.index') }}">Product</a></li>
                                     <li class="breadcrumb-item active">Create</li>
                                 </ol>
@@ -28,44 +28,30 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header m-0 p-0">
-                                <a href="{{ route('product.index') }}" title="Product List">
-                                    <button class="header-title btn btn-gery">Product List</button>
-                                </a>
-                                <a href="#" title="Create Product">
-                                    <button class="header-title btn  btn_primary_color"> <i
-                                            class="mdi mdi-plus-box  pe-1"></i>Create
-                                        Product</button>
-                                </a>
+                                <ul class="nav nav-pills">
+                                    <li class="nav-item">
+                                        <a class="nav-link rounded-0 pt-2 pb-2" aria-current="page"
+                                            href="{{ route('product.index') }}">Products List</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link active rounded-0 pt-2 pb-2" href="#">Create
+                                            Product</a>
+                                    </li>
+                                </ul>
                             </div>
                             <div class="card-body pt-0">
                                 <div class="row">
                                     <div class="col-md-12 rightsetup-details">
-                                        <div class="d-flex justify-content-between p-2 bd-highlight">
-
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="m-b-30">
-                                                <form class="row g-3" method="post" action="{{ route('product.store') }}"
-                                                    enctype="multipart/form-data">
-                                                    @csrf
-
-                                                    {{-- @if ($errors->any())
-                                                        <div class="alert alert-danger">
-                                                            <ul>
-                                                                @foreach ($errors->all() as $error)
-                                                                    <li>{{ $error }}</li>
-                                                                @endforeach
-                                                            </ul>
-                                                        </div>
-                                                    @endif --}}
-
-                                                    <div class="row">
-
-
-                                                        <div class="col-md-12">
-                                                            <label for="name" class=""> Product Name<span
-                                                                    class="text text-danger">*</span> </label>
-                                                            <div class="">
+                                        <div class="card-body p-0 pt-4 justify-content-center">
+                                            <form class="row" method="post" action="{{ route('product.store') }}"
+                                                enctype="multipart/form-data">
+                                                @csrf
+                                                <div class="row">
+                                                    <div class="col-md-9">
+                                                        <div class="border rounded-1 p-2">
+                                                            <div class="col-md-12">
+                                                                <label for="name" class="col-form-label mandatory">
+                                                                    Product Name</label>
                                                                 <input class="form-control" type="text" name="title"
                                                                     id="title" value="{{ old('title') }}">
                                                                 @error('title')
@@ -73,295 +59,352 @@
                                                                         style="color: red;">{{ $message }}</span>
                                                                 @enderror
                                                             </div>
-                                                        </div>
-                                                        <div class="col-md-12">
-                                                            <label for="color_id">Color<span
-                                                                    class="text text-danger">*</span></label>
-                                                            <select id="color_id" class="form-control" name="color_id"
-                                                                value="{{ old('color_id') }}">
-                                                                <option value="">Select color</option>
-                                                                @foreach ($color as $item)
-                                                                    <option value="{{ $item->id }}">
-                                                                        {{ $item->name }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                            @error('color_id')
-                                                                <span class="error"
-                                                                    style="color: red;">{{ $message }}</span>
-                                                            @enderror
-                                                        </div>
 
-                                                        <div class="col-md-12">
-                                                            <label for="main_image">Thumbnail image<span
-                                                                    class="text text-danger">*</span></label>
-
-                                                            <input class="form-control" type="file" name="main_image"
-                                                                id="main_image" value="{{ old('image') }}">
-
-                                                            @error('main_image')
-                                                                <span class="error"
-                                                                    style="color: red;">{{ $message }}</span>
-                                                            @enderror
-                                                        </div>
-
-
-                                                        <div class="col-md-12">
-                                                            <label for="multiple_images"> Select Multiple image<span
-                                                                    class="text text-danger">*</span></label>
-
-                                                            <input class="form-control" type="file"
-                                                                name="multiple_images[]" id="multiple_images" multiple
-                                                                value="{{ old('image') }}">
-
-                                                            @error('multiple_images')
-                                                                <span class="error"
-                                                                    style="color: red;">{{ $message }}</span>
-                                                            @enderror
-                                                        </div>
-
-
-                                                        <div class="col-md-12">
-                                                            <label for="category_id">Category<span
-                                                                    class="text text-danger">*</span></label>
-                                                            <select id="category_id" class="form-control" name="category_id"
-                                                                value="{{ old('category_id') }}">
-                                                                <option value="">Select Category</option>
-                                                                @foreach ($category as $categories)
-                                                                    <option value="{{ $categories->id }}">
-                                                                        {{ $categories->name }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                            @error('category_id')
-                                                                <span class="error"
-                                                                    style="color: red;">{{ $message }}</span>
-                                                            @enderror
-                                                        </div>
-
-                                                        <div class="col-md-12">
-                                                            <label for="subcategory_id">SubCategory</label>
-                                                            <select id="subcategory_id" class="form-control"
-                                                                name="subcategory_id" value="{{ old('subcategory_id') }}">
-                                                                <option value="">Select SubCategory</option>
-                                                            </select>
-                                                            @error('subcategory_id')
-                                                                <span class="error"
-                                                                    style="color: red;">{{ $message }}</span>
-                                                            @enderror
-                                                        </div>
-
-                                                        <div class="col-md-12">
-                                                            <label for="childcategory_id">ChildCategory</label>
-                                                            <select id="childcategory_id" class="form-control"
-                                                                name="childcategory_id"
-                                                                value="{{ old('childcategory_id') }}">
-                                                                <option value="">Select ChildCategory</option>
-                                                            </select>
-                                                            @error('childcategory_id')
-                                                                <span class="error"
-                                                                    style="color: red;">{{ $message }}</span>
-                                                            @enderror
-                                                        </div>
-
-                                                        <div class="col-md-12">
-                                                            <label for="category_id">Brand<span
-                                                                    class="text text-danger">*</span></label>
-
-                                                            <select id="brand_id" class="form-control" name="brand_id"
-                                                                value="{{ old('brand_id') }}">
-                                                                <option value="">select Brand</option>
-                                                                @foreach ($brand as $brands)
-                                                                    <option value="{{ $brands->id }}">
-                                                                        {{ $brands->name }}</option>
-                                                                @endforeach
-
-                                                            </select>
-
-                                                            @error('brand_id')
-                                                                <span class="error"
-                                                                    style="color: red;">{{ $message }}</span>
-                                                            @enderror
-                                                        </div>
-
-                                                        <div class="col-md-12">
-                                                            <label for="name">Short description<span
-                                                                    class="text text-danger">*</span> </label>
-                                                            <div class="">
-                                                                <textarea class="form-control" rows="3" name="short_description" value="{{ old('short_description') }}"></textarea>
-                                                                @error('short_description')
-                                                                    <span class="error"
-                                                                        style="color: red;">{{ $message }}</span>
-                                                                @enderror
+                                                            <div class="col-md-12">
+                                                                <label for="name" class="col-form-label mandatory">Short
+                                                                    description </label>
+                                                                <div class="">
+                                                                    <textarea class="form-control" rows="3" name="short_description" value="{{ old('short_description') }}"></textarea>
+                                                                    @error('short_description')
+                                                                        <span class="error"
+                                                                            style="color: red;">{{ $message }}</span>
+                                                                    @enderror
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <div class="col-md-12">
-                                                            <label for="name">Long description<span
-                                                                    class="text text-danger">*</span> </label>
-                                                            <div class="">
-                                                                <textarea id="summernote" name="long_description" value="{{ old('long_description') }}"></textarea>
-                                                                @error('long_description')
-                                                                    <span class="error"
-                                                                        style="color: red;">{{ $message }}</span>
-                                                                @enderror
+                                                            <div class="col-md-12">
+                                                                <label for="name" class="col-form-label">Long
+                                                                    description</label>
+                                                                <div class="">
+                                                                    <textarea id="summernote" name="long_description" value="{{ old('long_description') }}"></textarea>
+                                                                    @error('long_description')
+                                                                        <span class="error"
+                                                                            style="color: red;">{{ $message }}</span>
+                                                                    @enderror
+                                                                </div>
                                                             </div>
+                                                            <div class="row mt-4">
+                                                                <hr class="hr-text" data-content="PRODUCT VARIENT">
+                                                                <div class="col-md-6">
+                                                                    <label for="color_id"
+                                                                        class="col-form-label">Color</label>
+                                                                    <select id="color_id" class="form-control"
+                                                                        name="color_id" value="{{ old('color_id') }}">
+                                                                        @foreach ($color as $item)
+                                                                            <option value="{{ $item->id }}">
+                                                                                {{ $item->name }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                    @error('color_id')
+                                                                        <span class="error"
+                                                                            style="color: red;">{{ $message }}</span>
+                                                                    @enderror
+
+                                                                    <label for="main_image" class="col-form-label">Thumbnail
+                                                                        Image</label>
+
+                                                                    <input class="form-control" type="file"
+                                                                        name="main_image" id="main_image"
+                                                                        value="{{ old('image') }}">
+
+                                                                    @error('main_image')
+                                                                        <span class="error"
+                                                                            style="color: red;">{{ $message }}</span>
+                                                                    @enderror
+
+                                                                    <label for="multiple_images" class="col-form-label">
+                                                                        Select Multiple
+                                                                        Image</label>
+
+                                                                    <input class="form-control" type="file"
+                                                                        name="multiple_images[]" id="multiple_images"
+                                                                        multiple value="{{ old('image') }}">
+
+                                                                    @error('multiple_images')
+                                                                        <span class="error"
+                                                                            style="color: red;">{{ $message }}</span>
+                                                                    @enderror
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <h5> Image Preview</h5>
+                                                                    <div class="row">
+                                                                        <div class="col-md-4">
+                                                                            Thumbnail
+                                                                            <img id="thumbnail" src="#"
+                                                                                alt="Image Preview"
+                                                                                style="display: none; width: 100px; height: auto;">
+                                                                        </div>
+                                                                        <div class="col-md-8" id="image-preview">
+                                                                            Multiple
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <label for="price"
+                                                                        class="col-form-label mandatory">Price (₹)</label>
+                                                                    <input type="text" class="form-control"
+                                                                        name="price" value="{{ old('price') }}">
+                                                                    @error('price')
+                                                                        <span class="error"
+                                                                            style="color: red;">{{ $message }}</span>
+                                                                    @enderror
+                                                                </div>
+
+                                                                <div class="col-md-6">
+                                                                    <label for="offer_price" class="col-form-label">Offer
+                                                                        Price (₹)</label>
+                                                                    <input type="text" class="form-control"
+                                                                        name="offer_price"
+                                                                        value="{{ old('offer_price') }}">
+                                                                    @error('offer_price')
+                                                                        <span class="error"
+                                                                            style="color: red;">{{ $message }}</span>
+                                                                    @enderror
+                                                                </div>
+
+                                                                <div class="col-md-6">
+                                                                    <label for="sku"
+                                                                        class="col-form-label">SKU</label>
+                                                                    <input type="text" class="form-control"
+                                                                        name="sku" value="{{ old('sku') }}">
+                                                                    @error('sku')
+                                                                        <span class="error"
+                                                                            style="color: red;">{{ $message }}</span>
+                                                                    @enderror
+                                                                </div>
+
+                                                                <div class="col-md-6">
+                                                                    <label class="col-form-label"> Quantity</label>
+                                                                    <input type="number" min="0"
+                                                                        class="form-control" name="qty"
+                                                                        value="{{ old('qty') }}">
+                                                                    @error('qty')
+                                                                        <span class="error"
+                                                                            style="color: red;">{{ $message }}</span>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row mt-4">
+                                                                <hr class="hr-text" data-content="ADVANCE SETTINGS">
+                                                                <div class="col-md-12">
+                                                                    <ul class="nav nav-tabs" id="myTab"
+                                                                        role="tablist">
+                                                                        <li class="nav-item" role="presentation">
+                                                                            <button class="nav-link active"
+                                                                                id="specification-key-tab"
+                                                                                data-bs-toggle="tab"
+                                                                                data-bs-target="#specification-key"
+                                                                                type="button" role="tab"
+                                                                                aria-controls="specification-key"
+                                                                                aria-selected="true">Specification
+                                                                                Keys</button>
+                                                                        </li>
+                                                                        <li class="nav-item" role="presentation">
+                                                                            <button class="nav-link" id="seo-tab"
+                                                                                data-bs-toggle="tab" data-bs-target="#seo"
+                                                                                type="button" role="tab"
+                                                                                aria-controls="seo"
+                                                                                aria-selected="false">SEO</button>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="tab-content" id="myTabContent">
+                                                                <div class="tab-pane fade show active"
+                                                                    id="specification-key" role="tabpanel"
+                                                                    aria-labelledby="specification-key-tab">
+                                                                    <div id="meta-fields-container">
+                                                                        <div class="form-group row meta-fields">
+                                                                            <div class="col-sm-4 mb-4">
+                                                                                <label class="col-form-label">Key</label>
+                                                                                <select class="form-control select2"
+                                                                                    name="product_specification_key_id[]"
+                                                                                    id="meta_typeproduct_specification_key_id">
+                                                                                    <option value="">Select Key
+                                                                                    </option>
+                                                                                    @foreach ($productspecificationkey as $item)
+                                                                                        <option
+                                                                                            value="{{ $item->id }}">
+                                                                                            {{ $item->name }}</option>
+                                                                                    @endforeach
+                                                                                </select>
+                                                                                @error('product_specification_key_id')
+                                                                                    <span class="error"
+                                                                                        style="color: red;">{{ $message }}</span>
+                                                                                @enderror
+                                                                            </div>
+                                                                            <div class="col-sm-4 mb-4">
+                                                                                <label
+                                                                                    class="col-form-label">Specification</label>
+                                                                                <input type="text" class="form-control"
+                                                                                    name="specification[]" value="">
+                                                                                @error('specification')
+                                                                                    <span class="error"
+                                                                                        style="color: red;">{{ $message }}</span>
+                                                                                @enderror
+                                                                            </div>
+                                                                            <div
+                                                                                class="col-sm-1 mb-4 d-flex align-items-end">
+                                                                                <button type="button"
+                                                                                    class="btn btn-primary add-meta-fields">+</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="tab-pane fade" id="seo" role="tabpanel"
+                                                                    aria-labelledby="seo-tab">
+                                                                    <div id="meta-fields">
+                                                                        <div class="form-group row meta-fields">
+                                                                            <div class="col-sm-2 mb-2">
+                                                                                <label class="col-form-label">Meta
+                                                                                    Type</label>
+                                                                                <select class="form-control select2"
+                                                                                    name="meta_types_id[]" id="meta_type">
+                                                                                    <option value="">Select meta type
+                                                                                    </option>
+                                                                                    @foreach ($meta_type as $item)
+                                                                                        <option
+                                                                                            value="{{ $item->id }}">
+                                                                                            {{ $item->name }}</option>
+                                                                                    @endforeach
+                                                                                </select>
+                                                                            </div>
+                                                                            <div class="col-sm-4 mb-4">
+                                                                                <label class="col-form-label">Meta
+                                                                                    Key</label>
+                                                                                <select
+                                                                                    class="form-control select2 meta_keys"
+                                                                                    id="metakey" name="meta_keys_id[]">
+                                                                                    <option value="">Select Meta Key
+                                                                                    </option>
+                                                                                </select>
+                                                                            </div>
+                                                                            <div class="col-sm-4 mb-4">
+                                                                                <label
+                                                                                    class="col-form-label">Content</label>
+                                                                                <input type="text" class="form-control"
+                                                                                    name="content[]" value="">
+                                                                                @error('content')
+                                                                                    <span class="error"
+                                                                                        style="color: red;">{{ $message }}</span>
+                                                                                @enderror
+                                                                            </div>
+                                                                            <div
+                                                                                class="col-sm-1 mb-4 d-flex align-items-end">
+                                                                                <button type="button"
+                                                                                    class="btn btn-primary add-meta-fields">+</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+
+
+
+
                                                         </div>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="border rounded-1 p-2">
 
-                                                        <div class="col-md-12">
-                                                            <label>SKU</label>
-                                                            <input type="text" class="form-control" name="sku"
-                                                                value="{{ old('sku') }}">
-                                                            @error('sku')
-                                                                <span class="error"
-                                                                    style="color: red;">{{ $message }}</span>
-                                                            @enderror
-                                                        </div>
-
-                                                        <div class="col-md-12">
-                                                            <label>Price &#40;₹&#41;<span
-                                                                    class="text text-danger">*</span></label>
-                                                            <input type="text" class="form-control" name="price"
-                                                                value="{{ old('price') }}">
-                                                            @error('price')
-                                                                <span class="error"
-                                                                    style="color: red;">{{ $message }}</span>
-                                                            @enderror
-                                                        </div>
-
-                                                        <div class="col-md-12">
-                                                            <label>Offer Price &#40;₹&#41;<span
-                                                                    class="text text-danger">*</span></label>
-                                                            <input type="text" class="form-control" name="offer_price"
-                                                                value="{{ old('offer_price') }}">
-                                                            @error('offer_price')
-                                                                <span class="error"
-                                                                    style="color: red;">{{ $message }}</span>
-                                                            @enderror
-                                                        </div>
-
-                                                        <div class="col-md-12">
-                                                            <label> Quantity<span class="text text-danger">*</span></label>
-                                                            <input type="number" min="0" class="form-control"
-                                                                name="qty" value="{{ old('qty') }}">
-                                                            @error('qty')
-                                                                <span class="error"
-                                                                    style="color: red;">{{ $message }}</span>
-                                                            @enderror
-                                                        </div>
-
-
-                                                        {{-- <div class="form-group col-md-12">
-                                                            <label>Specification</label>
                                                             <div>
-                                                                <input type="checkbox" name="top_product" id="is_specification"> <label for="is_specification" class="mr-3"></label>
-                        
-                                                               
+                                                                Required to Create Product
+
+                                                                Product name
+                                                                Short Description
+                                                                Price
                                                             </div>
-                                                        </div> --}}
 
-                                                        <div class="col-md-12">
-                                                            <label for="status" class=" col-form-label">Status<span
-                                                                    class="text text-danger">*</span></label>
-                                                            <select id="inputState" class="form-control" name="status">
-                                                                <option value="">select option</option>
-                                                                <option value="1">Active</option>
-                                                                <option value="0">Inactive</option>
-                                                            </select>
-
-                                                            @error('status')
-                                                                <span class="error"
-                                                                    style="color: red;">{{ $message }}</span>
-                                                            @enderror
-                                                        </div>
-                                                    </div>
-
-                                                    <div id="meta-fields-container">
-                                                        <div class="form-group row meta-fields">
-                                                            <div class="col-sm-4 mb-4">
-                                                                <label class="col-form-label">Key</label>
-                                                                <select class="form-control select2"
-                                                                    name="product_specification_key_id[]"
-                                                                    id="meta_typeproduct_specification_key_id">
-                                                                    <option value="">Select Key</option>
-                                                                    @foreach ($productspecificationkey as $item)
-                                                                        <option value="{{ $item->id }}">
-                                                                            {{ $item->name }}</option>
+                                                            <div class="form-group">
+                                                                <div class="d-flex justify-content-evenly">
+                                                                    <button type="submit"
+                                                                        class="btn btn-light waves-effect waves-light"
+                                                                        name="action" value="save_and_new">
+                                                                        Save Draft
+                                                                    </button>
+                                                                    <button type="submit"
+                                                                        class="btn btn-primary waves-effect waves-light"
+                                                                        name="action" value="save">
+                                                                        Publish
+                                                                    </button>
+                                                                    <a href="{{ route('product.index') }}"
+                                                                        class="btn btn-secondary waves-effect m-l-5">
+                                                                        Clear
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <label for="category_id"
+                                                                    class="col-form-label">Category</label>
+                                                                <select id="category_id" class="form-control"
+                                                                    name="category_id" value="{{ old('category_id') }}">
+                                                                    @foreach ($category as $categories)
+                                                                        <option value="{{ $categories->id }}">
+                                                                            {{ $categories->name }}</option>
                                                                     @endforeach
                                                                 </select>
-                                                                @error('product_specification_key_id')
+                                                                @error('category_id')
                                                                     <span class="error"
                                                                         style="color: red;">{{ $message }}</span>
                                                                 @enderror
                                                             </div>
-                                                            <div class="col-sm-4 mb-4">
-                                                                <label class="col-form-label">Specification</label>
-                                                                <input type="text" class="form-control"
-                                                                    name="specification[]" value="">
-                                                                @error('specification')
+
+                                                            <div class="col-md-12">
+                                                                <label for="subcategory_id"
+                                                                    class="col-form-label">SubCategory</label>
+                                                                <select id="subcategory_id" class="form-control"
+                                                                    name="subcategory_id"
+                                                                    value="{{ old('subcategory_id') }}">
+                                                                    <option value="">Select SubCategory</option>
+                                                                </select>
+                                                                @error('subcategory_id')
                                                                     <span class="error"
                                                                         style="color: red;">{{ $message }}</span>
                                                                 @enderror
                                                             </div>
-                                                            <div class="col-sm-1 mb-4 d-flex align-items-end">
-                                                                <button type="button"
-                                                                    class="btn btn-primary add-meta-fields">+</button>
+
+                                                            <div class="col-md-12">
+                                                                <label for="childcategory_id"
+                                                                    class="col-form-label">ChildCategory</label>
+                                                                <select id="childcategory_id" class="form-control"
+                                                                    name="childcategory_id"
+                                                                    value="{{ old('childcategory_id') }}">
+                                                                    <option value="">Select ChildCategory
+                                                                    </option>
+                                                                </select>
+                                                                @error('childcategory_id')
+                                                                    <span class="error"
+                                                                        style="color: red;">{{ $message }}</span>
+                                                                @enderror
                                                             </div>
-                                                        </div>
-                                                    </div>
 
-
-                                                    <div id="meta-fields">
-                                                        <div class="form-group row meta-fields">
-                                                            <div class="col-sm-2 mb-2">
-                                                                <label class="col-form-label">Meta Type</label>
-                                                                <select class="form-control select2"
-                                                                    name="meta_types_id[]" id="meta_type">
-                                                                    <option value="">Select meta type</option>
-                                                                    @foreach ($meta_type as $item)
-                                                                        <option value="{{ $item->id }}">
-                                                                            {{ $item->name }}</option>
+                                                            <div class="col-md-12">
+                                                                <label for="category_id">Brand</label>
+                                                                <select id="brand_id" class="form-control"
+                                                                    name="brand_id" value="{{ old('brand_id') }}">
+                                                                    @foreach ($brand as $brands)
+                                                                        <option value="{{ $brands->id }}">
+                                                                            {{ $brands->name }}</option>
                                                                     @endforeach
+
                                                                 </select>
-                                                            </div>
-                                                            <div class="col-sm-4 mb-4">
-                                                                <label class="col-form-label">Meta Key</label>
-                                                                <select class="form-control select2 meta_keys"
-                                                                    id="metakey" name="meta_keys_id[]">
-                                                                    <option value="">Select Meta Key</option>
-                                                                </select>
-                                                            </div>
-                                                            <div class="col-sm-4 mb-4">
-                                                                <label class="col-form-label">Content</label>
-                                                                <input type="text" class="form-control"
-                                                                    name="content[]" value="">
-                                                                @error('content')
+
+                                                                @error('brand_id')
                                                                     <span class="error"
                                                                         style="color: red;">{{ $message }}</span>
                                                                 @enderror
                                                             </div>
-                                                            <div class="col-sm-1 mb-4 d-flex align-items-end">
-                                                                <button type="button"
-                                                                    class="btn btn-primary add-meta-fields">+</button>
-                                                            </div>
                                                         </div>
                                                     </div>
+                                                </div>
+                                            </form>
+                                            {{-- <div class="m-b-30">
 
-
-
-                                                    <div class="form-group">
-                                                        <div class="d-flex justify-content-evenly">
-
-
-                                                            <button type="submit"
-                                                                class="btn btn_primary_color waves-effect waves-light">
-                                                                Submit
-                                                            </button>
-                                                            <a href="{{ route('product.index') }}"
-                                                                class="btn btn-secondary waves-effect m-l-5">
-                                                                Cancel
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
+                                            </div> --}}
                                         </div>
                                     </div>
                                 </div>
@@ -390,7 +433,6 @@
 
     </div>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
@@ -398,9 +440,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote-bs4.js"></script>
     <script>
         $('textarea#summernote').summernote({
-            placeholder: 'Hello bootstrap 4',
+            placeholder: '',
             tabsize: 2,
-            height: 100,
+            height: 300,
             toolbar: [
                 ['style', ['style']],
                 ['font', ['bold', 'italic', 'underline', 'clear']],
@@ -422,6 +464,57 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        document.getElementById('main_image').addEventListener('change', function(event) {
+            var reader = new FileReader();
+            reader.onload = function() {
+                var imgElement = document.getElementById('thumbnail');
+                imgElement.src = reader.result;
+                imgElement.style.display = 'block';
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        });
+
+        document.getElementById('multiple_images').addEventListener('change', function() {
+            var preview = document.getElementById('image-preview');
+            preview.innerHTML = 'Multiple'; // Clear existing content except the title
+
+            var files = this.files;
+            if (files) {
+                Array.from(files).forEach((file, index) => {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        var imgContainer = document.createElement('div');
+                        imgContainer.style.display = 'inline-block';
+                        imgContainer.style.position = 'relative';
+                        imgContainer.style.margin = '10px';
+
+                        var img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.style.width = '100px'; // Adjust the size as needed
+
+                        var removeButton = document.createElement('button');
+                        removeButton.innerText = 'Remove';
+                        removeButton.style.position = 'absolute';
+                        removeButton.style.top = '5px';
+                        removeButton.style.right = '5px';
+                        removeButton.style.background = 'red';
+                        removeButton.style.color = 'white';
+                        removeButton.style.border = 'none';
+                        removeButton.style.cursor = 'pointer';
+
+                        removeButton.addEventListener('click', function() {
+                            imgContainer.remove();
+                        });
+
+                        imgContainer.appendChild(img);
+                        imgContainer.appendChild(removeButton);
+                        preview.appendChild(imgContainer);
+                    }
+                    reader.readAsDataURL(file);
+                });
+            }
+        });
+
         $(document).ready(function() {
             $('#category_id').change(function() {
                 var categoryId = $(this).val();

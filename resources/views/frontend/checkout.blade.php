@@ -310,8 +310,15 @@ use App\Models\Addresses; // Move the 'use' statement here
 
   @foreach ($cart as $item)
   @php
-  // Calculate the total amount for each item
-  $totalAmount += $item->quantity * $item->product->offer_price;
+   $offerPrice = \App\Models\ProductColor::where('product_id', $item->product_id)
+                  ->min('offer_price'); 
+
+        // If no offer price is found, fallback to product's offer price
+        if (!$offerPrice) {
+            $offerPrice = $item->product->offer_price;
+        }
+                     // Calculate the total amount for each item
+                $totalAmount += $item->quantity * $offerPrice;
 
 
 
@@ -328,7 +335,7 @@ use App\Models\Addresses; // Move the 'use' statement here
 
   @php
       $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
-      $currencySymbol = session('currency_symbol', '$');
+      $currencySymbol = session('currency_symbol', '₹');
 
       // Convert prices to selected currency
       $totalAmount *= $exchangeRate;

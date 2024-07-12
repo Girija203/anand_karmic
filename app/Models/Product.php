@@ -89,5 +89,6 @@ public function getOfferPriceInSelectedCurrency()
     $offerPriceInSelectedCurrency = $this->offer_price * $exchangeRate;
     return $offerPriceInSelectedCurrency;
 }
+
 }
 

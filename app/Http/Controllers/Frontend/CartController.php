@@ -6,48 +6,57 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Cart;
+use App\Models\ProductColor;
 use Illuminate\Support\Facades\Cookie;
 
 class CartController extends Controller
 {
-    public function addToCart($productId, Request $request)
-{
-    $cart = json_decode(Cookie::get('cart', '[]'), true);
-    $product = Product::findOrFail($productId);
-
-    $existingCartItem = Cart::where('product_id', $product->id)->first();
-    $quantity = $request->input('quantity', 1); 
-
-    if ($existingCartItem) {
-        // Check if the updated quantity exceeds available stock
-        if (($existingCartItem->quantity + $quantity) > $product->qty) {
-            return redirect()->back()->with('info', 'The requested quantity exceeds available stock.');
+    public function addToCart($productColorId, Request $request)
+    {
+        // Decode the cart from the cookie or initialize an empty array if the cookie does not exist
+        $cart = json_decode(Cookie::get('cart', '[]'), true);
+        
+        // Fetch the product color information
+        $productColor = ProductColor::findOrFail($productColorId);
+        $product = $productColor->product;
+    
+        // Check if the product color already exists in the cart
+        $existingCartItem = Cart::where('product_id', $product->id)->first();
+        $quantity = $request->input('quantity', 1);
+    
+        if ($existingCartItem) {
+            // Check if the updated quantity exceeds available stock for the specific product color
+            if (($existingCartItem->quantity + $quantity) > $productColor->qty) {
+                return redirect()->back()->with('info', 'The requested quantity exceeds available stock.');
+            }
+    
+            // If the product color is already in the cart, update the quantity
+            $existingCartItem->quantity += $quantity;
+            $existingCartItem->save();
+    
+            return redirect()->route('cart')->with('success', 'Product quantity updated in the cart');
+        } else {
+            // Check if the new quantity exceeds available stock for the specific product color
+            if ($quantity > $productColor->qty) {
+                return redirect()->back()->with('info', 'The requested quantity exceeds available stock.');
+            }
+    
+            // Create a new cart item with the product color information
+            Cart::create([
+                'product_id' => $product->id,
+                'product_color_id' => $productColor->id,
+                'name' => $product->title,
+                'price' => $productColor->offer_price,
+                'image' => $productColor->single_image,
+                'quantity' => $quantity,
+            ]);
+    
+            Cookie::queue('cart', json_encode($cart), 60 * 24 * 30); // 30 days
+    
+            return redirect()->route('cart')->with('success', 'Product added to cart successfully');
         }
-
-        // If the product is already in the cart, update the quantity
-        $existingCartItem->quantity += $quantity;
-        $existingCartItem->save();
-
-        return redirect()->route('cart')->with('info', 'Product quantity updated in the cart');
-    } else {
-        // Check if the new quantity exceeds available stock
-        if ($quantity > $product->qty) {
-            return redirect()->back()->with('info', 'The requested quantity exceeds available stock.');
-        }
-
-        Cart::create([
-            'product_id' => $product->id,
-            'name' => $product->title,
-            'price' => $product->offer_price,
-            'image' => $product->image,
-            'quantity' => $quantity,
-        ]);
-
-        Cookie::queue('cart', json_encode($cart), 60 * 24 * 30); // 30 days
-
-        return redirect()->route('cart')->with('success', 'Product added to cart successfully');
     }
-}
+    
 
     
       public function updateCart(Request $request)
@@ -58,11 +67,12 @@ class CartController extends Controller
     foreach ($request->quantity as $key => $quantity) {
         // Find the cart item by its ID
         $cartItem = Cart::findOrFail($request->item_id[$key]);
-        $product = Product::findOrFail($cartItem->product_id);
+        $productColor = ProductColor::findOrFail($cartItem->product_id);
+       
 
         // Check if the updated quantity exceeds available stock
-        if ($quantity > $product->qty) {
-            return redirect()->back()->with('info', 'The requested quantity for '.$product->title.' exceeds available stock.');
+        if ($quantity > $productColor->qty) {
+            return redirect()->back()->with('info', 'The requested quantity for '.$productColor->title.' exceeds available stock.');
         }
 
         // Update the quantity

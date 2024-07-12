@@ -106,46 +106,56 @@
                     <div class="products-wrapper shop-view-item-grid">
                         <div id="product-list" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 mb-15 mt-4">
 
-
-
                             @foreach($products as $product)
-                            <div class="col-md-6 col-lg-4 ">
+                            <div class="col-md-6 col-lg-4">
                                 <!-- Product Card Start -->
                                 <div class="card position-relative box-shad mb-4">
-                                    <!-- <div class="position-absolute r-0 card_icon">
-
-                                    </div> -->
                                     <div class="p-2">
-    <a href="{{ route('single.product', $product->id) }}" class="card_height">
-        @if($product->image)
-            <img class="card-img-top object-fit-cover" src="{{ asset('storage/' . $product->image) }}" alt="Card image cap" width="100%">
-        @else
-            <img class="card-img-top object-fit-cover" src="{{ asset('images/products/default-image.jpg') }}" alt="Default image" width="100%">
-        @endif
-    </a>
-</div>
-
+                                        <a href="{{ route('single.product', $product->id) }}" class="card_height">
+                                            @if($product->image)
+                                                <img class="card-img-top object-fit-cover" src="{{ asset('storage/' . $product->image) }}" alt="Card image cap" width="100%">
+                                            @else
+                                                <img class="card-img-top object-fit-cover" src="{{ asset('images/products/default-image.jpg') }}" alt="Default image" width="100%">
+                                            @endif
+                                        </a>
+                                    </div>
+                        
                                     <div class="card-body">
                                         <h6 class="card-title">{{ $product->title }}</h6>
-                                        <span> 2colors </span>
+                                        <span>{{ $product->colors->count() }} colors</span>
                                         <div class="d-flex justify-content-between align-items-center my-2">
-                                             <form action="{{ route('buy.now', $product->id) }}" method="POST">
-                                @csrf
-                                <button class="btn btn-black">Buy Now</button>
-                            </form>
-
-                                           <div class="d-flex flex-column">
-                                           <span class="product-card-old-price"><del>{{ $currencySymbol }}{{ number_format($product->getPriceInSelectedCurrency(), 2) }}</del></span>
-                                           <span class="product-card-regular-price fw-600">{{ $currencySymbol }}{{ number_format($product->getOfferPriceInSelectedCurrency(), 2) }}</span>
-                                           </div>
-                                           
-
+                                            <form action="{{ route('buy.now', $product->id) }}" method="POST">
+                                                @csrf
+                                                <button class="btn btn-black">Buy Now</button>
+                                            </form>
+                        
+                                            <div class="d-flex flex-column">
+                                                @php
+                                                    $productColor = $product->colors->first(); // Assuming you want the first color, adjust as necessary
+                                                @endphp
+                                                @if($productColor)
+                                                    <span class="product-card-old-price">
+                                                        <del>{{ $currencySymbol }}{{ number_format($productColor->price * $exchangeRate, 2) }}</del>
+                                                    </span>
+                                                    <span class="product-card-regular-price fw-600">
+                                                        {{ $currencySymbol }}{{ number_format($productColor->offer_price * $exchangeRate, 2) }}
+                                                    </span>
+                                                @else
+                                                    <span class="product-card-old-price">
+                                                        <del>{{ $currencySymbol }}0.00</del>
+                                                    </span>
+                                                    <span class="product-card-regular-price fw-600">
+                                                        {{ $currencySymbol }}0.00
+                                                    </span>
+                                                @endif
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                                 <!-- Product Card End -->
                             </div>
-                            @endforeach
+                        @endforeach
+                        
 
 
                         </div>

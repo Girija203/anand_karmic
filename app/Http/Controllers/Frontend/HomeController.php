@@ -91,47 +91,50 @@ class HomeController extends Controller
     }
 
     public function shop(Request $request)
-{
-    // Define how many products you want per page
-    $perPage = 12;
-
-    // Fetch all products with pagination
-    $products = Product::paginate($perPage);
-    $totalProducts = Product::count();
-
-    $cart = Cart::get();
-    $categories = Category::all();
-    $specifications = ProductSpecification::where('product_specification_key_id', 2)->get();
-
-    $cartItems = Cart::with('product')->get();
-    $cart = $cartItems->map(function ($item) {
-        $product = $item->product;
-        $discount = 0;
-
-        if ($product->offer_price && $product->price > $product->offer_price) {
-            $discount = $product->price - $product->offer_price;
+    {
+        // Define how many products you want per page
+        $perPage = 12;
+    
+        // Fetch all products with pagination
+        $products = Product::paginate($perPage);
+        $totalProducts = Product::count();
+    
+        $cart = Cart::get();
+        $categories = Category::all();
+        $specifications = ProductSpecification::where('product_specification_key_id', 2)->get();
+    
+        $cartItems = Cart::with(['product.colors'])->get();
+        $cart = $cartItems->map(function ($item) {
+            $product = $item->product;
+            $productColor = $product->colors->first(); // Assuming you want the first color, adjust as necessary
+    
+            $discount = 0;
+    
+            if ($productColor && $productColor->offer_price && $productColor->price > $productColor->offer_price) {
+                $discount = $productColor->price - $productColor->offer_price;
+            }
+    
+            $item->discount = $discount;
+            $item->price = $productColor ? $productColor->price : 0;
+            return $item;
+        });
+    
+        // Calculate the total amount and discount amount
+        $totalAmount = 0;
+        $discountAmount = 0;
+    
+        foreach ($cart as $item) {
+            $itemAmount = $item->quantity * $item->price;
+            $totalAmount += $itemAmount;
+            $discountAmount += $item->discount;
         }
-
-        $item->discount = $discount;
-        return $item;
-    });
-
-    // Calculate the total amount and discount amount
-    $totalAmount = 0;
-    $discountAmount = 0;
-
-    foreach ($cart as $item) {
-        $itemAmount = $item->quantity * $item->price;
-        $totalAmount += $itemAmount;
-        $discountAmount += $item->discount;
+    
+        $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
+        $currencySymbol = session('currency_symbol', '₹'); // Default to $ if not set
+    
+        return view('frontend.shop', compact('products', 'categories', 'specifications', 'cart', 'cartItems', 'exchangeRate', 'currencySymbol', 'totalProducts'));
     }
-
-    $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
-    $currencySymbol = session('currency_symbol', '$'); // Default to $ if not set
-
-    return view('frontend.shop', compact('products', 'categories', 'specifications', 'cart', 'cartItems', 'exchangeRate', 'currencySymbol', 'totalProducts'));
-}
-
+    
 
     public function filter(Request $request)
     {
@@ -233,49 +236,39 @@ class HomeController extends Controller
     }
 
     public function singleProduct($id)
-    {
-        // Fetch the current product along with its images and specifications
-        $products = Product::with('images', 'category')->findOrFail($id);
+{
+    // Fetch the current product along with its images and specifications
+    $products = Product::with('images', 'category')->findOrFail($id);
 
+    // Fetch product colors and related color data
+    $productColors = ProductColor::where('product_id', $id)->with('color')->get();
 
+    $specifications = ProductSpecification::where('product_id', $id)->with('key')->get();
 
-        //  dd($products);
-        $productColors = ProductColor::where('product_id', $id)->with('color')->get();
+    // Fetch related products from the same category
+    $relatedProducts = Product::where('category_id', $products->category_id)
+        ->where('id', '!=', $products->id)
+        ->with('images')
+        ->take(4)
+        ->get();
 
-        $specifications = ProductSpecification::where('product_id', $id)->with('key')->get();
+    $reviews = $products->reviews()->where('status', 1)->get();
 
-        // Fetch related products from the same category
-        $relatedProducts = Product::where('category_id', $products->category_id)
-            ->where('id', '!=', $products->id)
-            ->with('images')
-            ->take(4)
-            ->get();
+    $cart = Cart::where('product_id', $id)->get();
 
-        $reviews = $products->reviews()->where('status', 1)->get();
+    $product_sml_share = [];
 
-
-
-        $cart = Cart::get();
-
-        $product_sml_share = [];
-
-        // Check if the product is shareable
-        if ($products->is_shareable) {
-            $product_sml_share = ProductSMLShare::all();
-        }
-
-
-        
-    $wishlistProductIds = Wishlist::pluck('product_id')->toArray();
-        //   dd($relatedProducts);
-        $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
-        $currencySymbol = session('currency_symbol', '$');
-
-
-
-        return view('frontend.single_product', compact('products', 'specifications', 'relatedProducts', 'reviews', 'cart','product_sml_share','exchangeRate','currencySymbol','wishlistProductIds','productColors'));
-
+    // Check if the product is shareable
+    if ($products->is_shareable) {
+        $product_sml_share = ProductSMLShare::all();
     }
+
+    $wishlistProductIds = Wishlist::pluck('product_id')->toArray();
+    $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
+    $currencySymbol = session('currency_symbol', '₹');
+
+    return view('frontend.single_product', compact('products', 'specifications', 'relatedProducts', 'reviews', 'cart', 'product_sml_share', 'exchangeRate', 'currencySymbol', 'wishlistProductIds', 'productColors'));
+}
 
     public function wishlist()
     {
@@ -291,7 +284,7 @@ class HomeController extends Controller
             $cart->product_id = $product->id;
             $cart->name = $product->title;
             $cart->price = $product->offer_price;
-            $cart->quantity = 1; // Default quantity or get from request
+            $cart->quantity = 1; 
             $cart->image = $product->image;
             $cart->save();
 
@@ -344,127 +337,100 @@ class HomeController extends Controller
 }
 
 
+public function cart(Request $request)
+{
+    $cartcount = Cart::count();
+    // Fetch cart items with associated products
+    $cart = Cart::with('product')->get();
 
-    public function cart(Request $request)
-    {
+    // Initialize variables
+    $totalAmount = 0;
+    $shippingFee = 0;
+    $res_coupon = 0;
 
-        $cartcount = Cart::count();
-        $cart = Cart::with('product')->get();
+    // Iterate through each item in the cart
+    foreach ($cart as $item) {
+        // Fetch the lowest offer price for the product based on product_id
+        $offerPrice = ProductColor::where('product_id', $item->product_id)
+            ->min('offer_price');
 
-        // Calculate the total amount
-        $totalAmount = 0;
-
-        foreach ($cart as $item) {
-            $totalAmount += $item->quantity * $item->product->offer_price;
-
-            $singleAmount = $item->product->offer_price;
-        }
-        // dd($totalAmount );
-     
-
-        $exchangeRate = session('exchange_rate', 1);
-        $currencySymbol = session('currency_symbol', '$');
-
-        // Convert totalAmount to country-based currency
-        $totalAmountInCountryCurrency = $totalAmount * $exchangeRate;
-
-
-        // dd($totalAmountInCountryCurrency);
-
-        // Fetch shipping rules
-        $shippingRules = Shipping::all();
-
-        // Determine the applicable shipping fee
-        $shippingFee = 0;
-        foreach ($shippingRules as $rule) {
-
-            $conditionFromInCountryCurrency = $rule->condition_from * $exchangeRate;
-            $conditionToInCountryCurrency = $rule->condition_to * $exchangeRate;
-            // dd( $conditionFromInCountryCurrency);
-            // dd( $conditionToInCountryCurrency);
-
-            if ($totalAmountInCountryCurrency >= $conditionFromInCountryCurrency && $totalAmountInCountryCurrency <= $conditionToInCountryCurrency) {
-                $shippingFee = $rule->shipping_fee * $exchangeRate;
-                break;
-            }
+        // If no offer price is found, fallback to product's offer price
+        if (!$offerPrice) {
+            $offerPrice = $item->product->offer_price;
         }
 
-        //  dd($shippingFee);
+        // Calculate total amount for this item
+        $totalAmount += $item->quantity * $offerPrice;
+    }
 
+    // dd($totalAmount);
 
-        // Initialize coupon discount
-        $couponDiscount = 0;
-        $couponCode = $request->input('coupon');
-        $appliedCoupon = null;
-        $res_coupon = "";
+    // Fetch exchange rate from session (default to 1 if not set)
+    $exchangeRate = session('exchange_rate', 1);
 
-        $exchangeRate = session('exchange_rate', 1);
-        $currencySymbol = session('currency_symbol', '$');
+    // Convert total amount to selected currency
+    $totalAmountConverted = $totalAmount * $exchangeRate;
 
+    // Fetch shipping rules (assuming Shipping model exists)
+    $shippingRules = Shipping::all();
 
-        $totalAmountConverted = $totalAmount * $exchangeRate;
+    // Determine applicable shipping fee based on total amount
+    foreach ($shippingRules as $rule) {
+        $conditionFromInCountryCurrency = $rule->condition_from * $exchangeRate;
+        $conditionToInCountryCurrency = $rule->condition_to * $exchangeRate;
 
-        // dd($totalAmountConverted);
+        if ($totalAmountConverted >= $conditionFromInCountryCurrency && $totalAmountConverted <= $conditionToInCountryCurrency) {
+            $shippingFee = $rule->shipping_fee * $exchangeRate;
+            break;
+        }
+    }
 
-        // Check for coupon code in the request
+    // Apply coupon if provided in the request
+    $couponCode = $request->input('coupon');
+    if ($couponCode) {
+        $coupon = Coupon::where('code', $couponCode)
+            ->where('status', 1)
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->first();
 
-        if ($couponCode) {
-            $coupon = Coupon::where('code', $couponCode)
-                ->where('status', 1)
-                ->where('start_date', '<=', now())
-                ->where('end_date', '>=', now())
-                ->first();
+        if ($coupon) {
+            $totalAmountAfterDiscount = $totalAmountConverted;
 
-            // dd($coupon);
-
-            if ($coupon) {
-                // Convert coupon's minimum_purchase_price and discount_value to the target currency
-                $mini_price_converted = $coupon->minimum_purchase_price * $exchangeRate;
-                $discount_value_converted = $coupon->discount_value * $exchangeRate;
-
-                // dd($mini_price_converted);
-                // dd($discount_value_converted);
-
-                if ($totalAmountConverted <= $mini_price_converted) {
-                    $res_coupon = "Not Applied";
-                } else {
-                    if ($coupon->discount_type == 'percentage') {
-                        $discount = ($totalAmountConverted * $coupon->discount_value) / 100;
-                        $totalAmountConverted -= $discount;
-                        $res_coupon = $discount;
-                    } elseif ($coupon->discount_type == 'fixed') {
-                        $totalAmountConverted -= $discount_value_converted;
-                        $res_coupon = $discount_value_converted;
-                    }
-                    //    dd($discount_value_converted);
-
+            if ($totalAmountConverted >= $coupon->minimum_purchase_price * $exchangeRate) {
+                if ($coupon->discount_type == 'percentage') {
+                    $discount = ($totalAmountConverted * $coupon->discount_value) / 100;
+                    $totalAmountAfterDiscount -= $discount;
+                    $res_coupon = $discount / $exchangeRate; // Convert discount back to original currency
+                } elseif ($coupon->discount_type == 'fixed') {
+                    $totalAmountAfterDiscount -= $coupon->discount_value * $exchangeRate;
+                    $res_coupon = $coupon->discount_value; // Already in original currency
                 }
             }
+
+            // Update total amount after applying coupon
+            $totalAmountConverted = $totalAmountAfterDiscount;
         }
-
-        // dd($res_coupon);
-        // Convert the final totalAmount back to the original currency for further use
-        $totalAmount = $totalAmountConverted / $exchangeRate;
-
-
-        session(['res_coupon' => $res_coupon]);
-
-
-        $exchangeRate = session('exchange_rate', 1);
-        $currencySymbol = session('currency_symbol', '$');
-
-        $finalTotalAmount = $totalAmount  + $shippingFee;
-
-
-        // Convert individual item prices to selected currency
-        foreach ($cart as $item) {
-            $item->price *= $exchangeRate;
-        }
-
-
-
-        return view('frontend.cart', compact('cart', 'totalAmount', 'shippingFee', 'couponDiscount', 'appliedCoupon', 'res_coupon', 'finalTotalAmount', 'cartcount', 'exchangeRate', 'currencySymbol'));
     }
+    session(['res_coupon' => $res_coupon]);
+
+
+    $exchangeRate = session('exchange_rate', 1);
+    $currencySymbol = session('currency_symbol', '₹');
+
+
+    // Calculate final total amount including shipping and coupon discount
+    $finalTotalAmount = $totalAmountConverted + $shippingFee - $res_coupon;
+
+    // Convert final total amount back to original currency for display or further processing
+    $finalTotalAmount /= $exchangeRate;
+
+    // Assuming you pass data to a view or process further here...
+    // For example, you might return a view with the calculated totals and cart items
+    return view('frontend.cart', compact('cart', 'totalAmount', 'shippingFee', 'res_coupon', 'finalTotalAmount','cartcount','exchangeRate','currencySymbol'));
+}
+
+
 
 
 
@@ -478,8 +444,19 @@ class HomeController extends Controller
         $totalAmount = 0;
 
         foreach ($cart as $item) {
-            $totalAmount += $item->quantity * $item->product->offer_price;
+            // Fetch the lowest offer price for the product based on product_id
+            $offerPrice = ProductColor::where('product_id', $item->product_id)
+                ->min('offer_price');
+    
+            // If no offer price is found, fallback to product's offer price
+            if (!$offerPrice) {
+                $offerPrice = $item->product->offer_price;
+            }
+    
+            // Calculate total amount for this item
+            $totalAmount += $item->quantity * $offerPrice;
         }
+    
         // dd($totalAmount );
 
         $user = auth()->user();
@@ -626,14 +603,12 @@ class HomeController extends Controller
             // dd($finalTotalAmount);
 
             $exchangeRate = session('exchange_rate', 1);
-            $currencySymbol = session('currency_symbol', '$');
+            $currencySymbol = session('currency_symbol', '₹');
 
 
             // dd($totalAmountInCountryCurrency);
             // Convert individual item prices to selected currency
-            foreach ($cart as $item) {
-                $item->price *= $exchangeRate;
-            }
+           
         }
         return view('frontend.checkout', compact('cart', 'totalAmount', 'shippingFee', 'finalTotalAmount', 'res_coupon', 'billingAddress', 'shippingAddress', 'userHasShippingAddress', 'Address', 'exchangeRate', 'currencySymbol'));
     }

@@ -237,23 +237,21 @@ class ProductController extends Controller
         // Validate the incoming request
         $validatedData = $request->validate([
             'title' => 'required',
-            'color_id' => 'required', // Assuming color_id should be validated instead of color
-            'main_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'category_id' => 'required',
+            'main_image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'short_description' => 'required',
-            'long_description' => 'required',
             'price' => 'required|numeric',
-            'offer_price' => 'required|numeric',
-            'brand_id' => 'required',
-            'status' => 'required'
         ]);
-
+        // dd($request);
         // Create and save the product
         $product = new Product();
         $product->fill($validatedData); // Using mass assignment
         $product->slug = Str::slug($request->input('title'));
+        $product->brand_id = $request->input('brand_id') ?? null;
+        $product->brand_id = $request->input('brand_id') ?? null;
+        $product->category_id = $request->input('category_id') ?? null;
         $product->subcategory_id = $request->input('subcategory_id') ?? null;
         $product->childcategory_id = $request->input('childcategory_id') ?? null;
+        $product->long_description = $request->input('long_description') ?? null;
         $product->is_top = $request->has('is_top') ? 1 : 0;
         $product->new_product = $request->has('new_product') ? 1 : 0;
         $product->is_best = $request->has('is_best') ? 1 : 0;
@@ -265,7 +263,7 @@ class ProductController extends Controller
         $productColor->product_id = $product->id;
         $productColor->color_id = $request->input('color_id');
         $productColor->price = $request->input('price');
-        $productColor->qty = $request->input('qty');
+        $productColor->qty = $request->input('qty') ?? 0;
         $productColor->sku = $request->input('sku');
         $productColor->offer_price = $request->input('offer_price');
         if ($request->hasFile('main_image')) {

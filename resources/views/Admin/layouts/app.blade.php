@@ -342,9 +342,6 @@
                                         Key</a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('product.create') }}">Product create</a>
-                                </li>
-                                <li>
                                     <a href="{{ route('product.index') }}">Product</a>
                                 </li>
                                 <li>
