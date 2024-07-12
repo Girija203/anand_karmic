@@ -131,7 +131,7 @@ class HomeController extends Controller
     
         $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
         $currencySymbol = session('currency_symbol', '₹'); // Default to $ if not set
-    
+        // dd($products[1]->colors[0]->single_image);
         return view('frontend.shop', compact('products', 'categories', 'specifications', 'cart', 'cartItems', 'exchangeRate', 'currencySymbol', 'totalProducts'));
     }
     
