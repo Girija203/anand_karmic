@@ -131,8 +131,8 @@
                         searchable: false,
                         render: function(data, type, row) {
                             return `
-                           <button class="btn py-0 px-0" onclick="editUsers(${row.id})"><i class="ri-edit-box-line text_danger_blue " style="font-size: 20px;"></i></button>
-                           <button  class="btn py-0" onclick="deleteUsers(${row.id})"><i class="mdi mdi-delete text_danger_red" style="font-size: 20px;"></i></button>
+                           <button class="btn btn-edit py-0 px-0" onclick="editUsers(${row.id})"><i class="ri-edit-line" style="font-size: 20px;"></i></button>
+                           <button  class="btn btn-delete py-0" onclick="deleteUsers(${row.id})"><i class="mdi mdi-delete-outline" style="font-size: 20px;"></i></button>
 
                        `;
                         }

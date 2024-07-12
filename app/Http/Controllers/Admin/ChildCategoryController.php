@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\SlugHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\ChildCategory;
@@ -37,8 +38,6 @@ class ChildCategoryController extends Controller
     {
 
         $category = Category::all();
-        // $subcategory=SubCategory::all();
-
         return view('Admin.childcategory.create', compact('category'));
     }
 
@@ -69,8 +68,8 @@ class ChildCategoryController extends Controller
         $childcategory->category_id = $request->input('category_id');
         $childcategory->subcategory_id = $request->input('subcategory_id');
         $childcategory->name = $request->input('name');
-        $childcategory->slug = Str::slug($request->input('name'));
         $childcategory->status = $request->input('status');
+        $childcategory->slug = SlugHelper::generateUniqueSlug(ChildCategory::class, $request->input('name'));
         $childcategory->save();
 
         if ($request->action === 'save') {
@@ -96,8 +95,15 @@ class ChildCategoryController extends Controller
         $request->validate([
 
             'category_id' => 'required',
-            'name' => 'required|string|max:255',
-            'status' => 'required',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('child_categories')->where(function ($query) use ($request, $id) {
+                    return $query->where('category_id', $request->category_id)->where('id', '<>', $id);
+                }),
+            ],
+            'slug' => 'required|string|unique:child_categories,slug,' . $id . '|max:255',
 
         ]);
 

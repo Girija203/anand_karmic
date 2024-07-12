@@ -142,8 +142,6 @@
             $(".side-nav a").each(function () {
                 var pageUrl = window.location.href.split(/[?#]/)[0];
                 pageUrl = getFirstSubdirectory(pageUrl);
-                console.log("pageUrl");
-                console.log(pageUrl);
                 function getFirstSubdirectory(url) {
                     // Parse the URL to get its components
                     let urlParts = url.split('/');

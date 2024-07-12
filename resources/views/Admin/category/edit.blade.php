@@ -62,11 +62,22 @@
                                                     </div>
                                                     <div class="row justify-content-center">
                                                         <div class="col-md-6">
-                                                            <label for="status"
-                                                                class="col-form-label mandatory">Status</label>
-                                                            <select id="inputState" class="form-control" name="status"
-                                                                required>
-                                                                <option>select option</option>
+                                                            <label for="name" class="col-form-label mandatory">Slug
+                                                            </label>
+                                                            <div class="">
+                                                                <input class="form-control" type="text" name="slug"
+                                                                    id="slug" value="{{ $category->slug }}">
+                                                                @error('slug')
+                                                                    <span class="error"
+                                                                        style="color: red;">{{ $message }}</span>
+                                                                @enderror
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row justify-content-center">
+                                                        <div class="col-md-6">
+                                                            <label for="status" class="col-form-label">Status</label>
+                                                            <select id="inputState" class="form-control" name="status">
                                                                 <option value="1"
                                                                     {{ $category->status == 1 ? 'selected' : '' }}>Active
                                                                 </option>
@@ -102,16 +113,7 @@
                         </div> <!-- end card -->
                     </div><!-- end col-->
                 </div> <!-- end row-->
-
-
-
-
-
-
-
-
             </div> <!-- container -->
-
         </div> <!-- content -->
 
         <!-- Footer Start -->

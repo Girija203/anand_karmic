@@ -29,40 +29,31 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header m-0 p-0">
-                                <a href="{{ route('productspecificationkey.index') }}" title="Product Specification List">
-                                    <button class="header-title btn btn-gery">Product Specification List</button>
-                                </a>
-                                <a href="#" title="Product Specification Create">
-                                    <button class="header-title btn  btn_primary_color"> <i
-                                            class="mdi mdi-plus-box  pe-1"></i>Create
-                                        Product Specification</button>
-                                </a>
+                                <ul class="nav nav-pills">
+                                    <li class="nav-item">
+                                        <a class="nav-link rounded-0 pt-2 pb-2"
+                                            href="{{ route('productspecificationkey.index') }}" aria-current="page"
+                                            href="#">Product Specification List</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link active rounded-0 pt-2 pb-2">Create
+                                            Product Specification</a>
+                                    </li>
+                                </ul>
                             </div>
                             <div class="card-body pt-0">
                                 <div class="row">
                                     <div class="col-md-12 rightsetup-details">
-                                        <div class="d-flex justify-content-between p-2 bd-highlight">
-                                            {{-- <div>
-
-                                            </div>
-                                            <div>
-
-                                            </div> --}}
-                                        </div>
                                         <div class="card-body">
                                             <div class="m-b-30">
                                                 <form class="row g-3" method="POST"
                                                     action="{{ route('productspecificationkey.store') }}">
                                                     @csrf
-
-
-
-                                                    <div class="row">
+                                                    <div class="row justify-content-center">
                                                         <div class="col-md-6">
-                                                            <label for="name" class=" col-form-label">Name<span
-                                                                    class="text text-danger">*</span>
+                                                            <label for="name" class="col-form-label mandatory">Name
                                                             </label>
-                                                            <div class="">
+                                                            <div class="col-form-label">
                                                                 <input class="form-control" type="text" name="name"
                                                                     id="name" required>
                                                                 @error('name')
@@ -71,15 +62,14 @@
                                                                 @enderror
                                                             </div>
                                                         </div>
+                                                    </div>
+                                                    <div class="row justify-content-center">
                                                         <div class="col-md-6">
-                                                            <label for="status" class=" col-form-label">Status<span
-                                                                    class="text text-danger">*</span></label>
+                                                            <label for="status" class="col-form-label">Status</label>
                                                             <select id="inputState" class="form-control" name="status">
-                                                                <option value="">select option</option>
                                                                 <option value="1">Active</option>
                                                                 <option value="0">Inactive</option>
                                                             </select>
-
                                                             @error('status')
                                                                 <span class="error"
                                                                     style="color: red;">{{ $message }}</span>
@@ -87,14 +77,17 @@
                                                         </div>
                                                     </div>
 
-
                                                     <div class="form-group">
                                                         <div class="d-flex justify-content-evenly">
-
-
                                                             <button type="submit"
-                                                                class="btn btn_primary_color waves-effect waves-light">
-                                                                Submit
+                                                                class="btn btn-primary waves-effect waves-light"
+                                                                name="action" value="save">
+                                                                Save
+                                                            </button>
+                                                            <button type="submit"
+                                                                class="btn btn-light waves-effect waves-light"
+                                                                name="action" value="save_and_new">
+                                                                Save and New
                                                             </button>
                                                             <a href="{{ route('productspecificationkey.index') }}"
                                                                 class="btn btn-secondary waves-effect m-l-5">

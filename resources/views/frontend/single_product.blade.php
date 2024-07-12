@@ -143,9 +143,13 @@
                         <h4 class="product-item-details-title">{{ $products->title }}</h4>
                         <div class="d-flex justify-content-between my-3">
                             <div class="product-card-price mt-2">
-                                <span class="product-card-old-price"><del>{{ $currencySymbol }}{{ number_format($products->getPriceInSelectedCurrency(), 2) }}</del></span>
-                                <span class="product-card-regular-price">{{ $currencySymbol }}{{ number_format($products->getOfferPriceInSelectedCurrency(), 2) }}</span>
-
+                                @php
+                                    $selectedColor = $productColors->first(); // Default to the first color
+                                    $price = $selectedColor ? $selectedColor->price * $exchangeRate : 0;
+                                    $offerPrice = $selectedColor ? $selectedColor->offer_price * $exchangeRate : 0;
+                                @endphp
+                                <span class="product-card-old-price"><del>{{ $currencySymbol }}{{ number_format($price, 2) }}</del></span>
+                                <span class="product-card-regular-price">{{ $currencySymbol }}{{ number_format($offerPrice, 2) }}</span>
                             </div>
                             <div class="product-item-details-rating d-flex align-items-center gap-2 text-black">
                                 <div class="product-item-details-rating-list d-flex">
@@ -157,35 +161,33 @@
                                 </div>
                             </div>
                         </div>
-
+    
                         <p class="product-item-details-description mt-2" id="product-description">
                             {{ Str::limit($products->short_description, 150) }} <!-- Initial short description -->
                             <span id="more-text" style="display: none;">{{ substr($products->short_description, 150) }}</span>
-                            <a href="javascript:void(0);" id="toggle-description" onclick="toggleDescription()">Show
-                                More</a>
+                            <a href="javascript:void(0);" id="toggle-description" onclick="toggleDescription()">Show More</a>
                         </p>
-
-
+    
                         <form class="product-color-radio-form">
                             <fieldset class="product-color-radio-wrap">
                                 <h6 class="mb-0 title">Color</h6>
                                 <div class="product-color-radio-buttons">
-                                    <input type="radio" id="color-lable-black" name="color" value="black" checked="">
-                                    <label class="color-lable color-lable-black" for="color-lable-black"></label>
-
-                                    <input type="radio" id="color-lable-green" name="color" value="green">
-                                    <label class="color-lable color-lable-green" for="color-lable-green"></label>
-
-                                    <input type="radio" id="color-lable-gray" name="color" value="gray">
-                                    <label class="color-lable color-lable-gray" for="color-lable-gray"></label>
+                                    @foreach($productColors as $productColor)
+                                        <input type="radio" id="color-lable-{{ $productColor->color->name }}" name="color" value="{{ $productColor->color->name }}" {{ $loop->first ? 'checked' : '' }} data-price="{{ $productColor->price }}" data-offer-price="{{ $productColor->offer_price }}">
+                                        <label class="color-lable color-lable-{{ $productColor->color->name }}" for="color-lable-{{ $productColor->color->name }}">
+                                            
+                                        </label>
+                                    @endforeach
                                 </div>
                             </fieldset>
                         </form>
-
+                        
+                       
                         <div class="product-item-stock in-stock mb-3">
                             <span class="stock-label visually-hidden">Availability:</span>
-                            <span class="product-item-stock-in">{{ $products->qty }}In Stock</span>
+                            <span class="product-item-stock-in">{{  $productColor->qty}} In Stock</span>
                         </div>
+                    
                         <form action="{{ route('cart.add', $products->id) }}" method="post" id="addToCartForm">
                             @csrf
 
@@ -194,7 +196,7 @@
                             <div class="product-item-action-box d-flex gap-2 align-items-center">
                                 <div class="quantity">
                                     <button class="quantity__minus product-item-quantity-decrement product-item-quantity-button"><span>-</span></button>
-                                    <input type="number" class="quantity__input" name="quantity" id="quantity" min="1" value="1">
+                                    <input type="number" class="quantity__input" name="quantity" id="quantity" min="1" value="{{ $cart->where('product_id', $products->id)->first()->quantity ?? '' }}">
                                     <button class="quantity__plus product-item-quantity-increment product-item-quantity-button"><span>+</span></button>
                                 </div>
                                 <a href="">
@@ -202,14 +204,6 @@
                                 </a>
                             </div>
                             {{-- test Ends --}}
-
-
-
-                            {{-- <input type="number" calss="form-control" name="quantity" id="quantity" min="1"
-                                    value="1"> --}}
-                            {{-- <a href="">
-                                    <button type="submit" class="btn btn-primary btn-lg">Add to cart</button>
-                                </a> --}}
                         </form>
                     </div>
                     <div>

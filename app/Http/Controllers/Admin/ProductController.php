@@ -144,7 +144,6 @@ class ProductController extends Controller
     public function indexData()
     {
         $product = Product::with('category', 'subcategory', 'childcategory', 'brand', 'colors')->get();
-
         return DataTables::of($product)
             ->addColumn('category_name', function ($row) {
                 return $row->category ? $row->category->name : 'N/A';
@@ -157,6 +156,18 @@ class ProductController extends Controller
             })
             ->addColumn('brand', function ($row) {
                 return $row->brand ? $row->brand->name : 'N/A';
+            })
+            ->addColumn('color_count', function ($row) {
+                return $row->colors ? $row->colors->count() : 0;
+            })
+            ->addColumn('colors', function ($row) {
+                if ($row->colors->isNotEmpty()) {
+                    $colorNames = $row->colors->map(function ($colors) {
+                        return $colors->color ? $colors->color->code : 'N/A';
+                    });
+                    return $colorNames->implode(', ');
+                }
+                return 'N/A';
             })
             ->addColumn('labels', function ($row) {
                 $labels = '';
@@ -198,7 +209,7 @@ class ProductController extends Controller
         $meta_key = MetaKey::all();
         $color = Color::all();
 
-        return view('Admin.product.create', compact('brand', 'category', 'productspecificationkey', 'meta_type', 'meta_key','color'));
+        return view('Admin.product.create', compact('brand', 'category', 'productspecificationkey', 'meta_type', 'meta_key', 'color'));
     }
 
     public function getSubcategories($categoryId)
@@ -226,23 +237,21 @@ class ProductController extends Controller
         // Validate the incoming request
         $validatedData = $request->validate([
             'title' => 'required',
-            'color_id' => 'required', // Assuming color_id should be validated instead of color
-            'main_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'category_id' => 'required',
+            'main_image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'short_description' => 'required',
-            'long_description' => 'required',
             'price' => 'required|numeric',
-            'offer_price' => 'required|numeric',
-            'brand_id' => 'required',
-            'status' => 'required'
         ]);
-
+        // dd($request);
         // Create and save the product
         $product = new Product();
         $product->fill($validatedData); // Using mass assignment
         $product->slug = Str::slug($request->input('title'));
+        $product->brand_id = $request->input('brand_id') ?? null;
+        $product->brand_id = $request->input('brand_id') ?? null;
+        $product->category_id = $request->input('category_id') ?? null;
         $product->subcategory_id = $request->input('subcategory_id') ?? null;
         $product->childcategory_id = $request->input('childcategory_id') ?? null;
+        $product->long_description = $request->input('long_description') ?? null;
         $product->is_top = $request->has('is_top') ? 1 : 0;
         $product->new_product = $request->has('new_product') ? 1 : 0;
         $product->is_best = $request->has('is_best') ? 1 : 0;
@@ -254,7 +263,7 @@ class ProductController extends Controller
         $productColor->product_id = $product->id;
         $productColor->color_id = $request->input('color_id');
         $productColor->price = $request->input('price');
-        $productColor->qty = $request->input('qty');
+        $productColor->qty = $request->input('qty') ?? 0;
         $productColor->sku = $request->input('sku');
         $productColor->offer_price = $request->input('offer_price');
         if ($request->hasFile('main_image')) {
@@ -433,7 +442,5 @@ class ProductController extends Controller
         $product->delete();
         $result = "Product deleted successfully";
         return $result;
-
-       
     }
 }

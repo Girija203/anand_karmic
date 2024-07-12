@@ -9,10 +9,10 @@ use Illuminate\Http\Request;
 
 class ColorController extends Controller
 {
-     public function index()
-     {
+    public function index()
+    {
         return view('Admin.color.index');
-     }
+    }
 
     public function indexData()
     {
@@ -33,33 +33,32 @@ class ColorController extends Controller
 
     public function store(Request $request)
     {
-
-        //   dd($request);
         $request->validate([
             'name' => 'required',
-             'code'=>'required'
+            'code' => 'required'
         ]);
 
         $color = new Color();
         $color->name = $request->input('name');
         $color->code = $request->input('code');
         $color->status = 1;
-
         $color->save();
 
-        return redirect()->route('colors.index')->with('success', 'color added successfully!');
+        if ($request->action === 'save') {
+            return redirect()->route('colors.index')->with('success', 'Color added successfully!');
+        } elseif ($request->action === 'save_and_new') {
+            return redirect()->route('colors.create')->with('success', 'Color created successfully');
+        }
     }
 
     public function edit($id)
     {
         $color = Color::find($id);
-        return view('Admin.color.edit',compact('color'));
+        return view('Admin.color.edit', compact('color'));
     }
 
-    public function Update(Request $request,$id)
+    public function Update(Request $request, $id)
     {
-
-        //   dd($request);
         $request->validate([
             'name' => 'required',
             'code' => 'required'
@@ -78,9 +77,9 @@ class ColorController extends Controller
     public function delete($id)
     {
 
-    
+
         $color = Color::find($id);
-      
+
 
         $color->delete();
 
