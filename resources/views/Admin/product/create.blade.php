@@ -312,11 +312,13 @@
                                                         <div class="border rounded-1 p-2">
 
                                                             <div>
-                                                                Required to Create Product
+                                                                <h5> Required to Create Product</h5>
 
-                                                                Product name
-                                                                Short Description
-                                                                Price
+                                                                <ul>
+                                                                    <li>Product name</li>
+                                                                    <li>Short Description</li>
+                                                                    <li>Price</li>
+                                                                </ul>
                                                             </div>
 
                                                             <div class="form-group">
@@ -464,6 +466,35 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const titleInput = document.getElementById("title");
+            const shortDescriptionInput = document.getElementById("short_description");
+            const priceInput = document.getElementById("price");
+            const saveDraftButton = document.querySelector("button[value='save_and_new']");
+            const publishButton = document.querySelector("button[value='save']");
+
+            function checkInputs() {
+                const isTitleFilled = titleInput.value.trim() !== "";
+                const isShortDescriptionFilled = shortDescriptionInput.value.trim() !== "";
+                const isPriceFilled = priceInput.value.trim() !== "";
+
+                if (isTitleFilled && isShortDescriptionFilled && isPriceFilled) {
+                    saveDraftButton.disabled = false;
+                    publishButton.disabled = false;
+                } else {
+                    saveDraftButton.disabled = true;
+                    publishButton.disabled = true;
+                }
+            }
+
+            titleInput.addEventListener("input", checkInputs);
+            shortDescriptionInput.addEventListener("input", checkInputs);
+            priceInput.addEventListener("input", checkInputs);
+
+            checkInputs(); // Initial check on page load
+        });
+
+
         document.getElementById('main_image').addEventListener('change', function(event) {
             var reader = new FileReader();
             reader.onload = function() {
@@ -478,41 +509,54 @@
             var preview = document.getElementById('image-preview');
             preview.innerHTML = 'Multiple'; // Clear existing content except the title
 
-            var files = this.files;
-            if (files) {
-                Array.from(files).forEach((file, index) => {
-                    var reader = new FileReader();
-                    reader.onload = function(e) {
-                        var imgContainer = document.createElement('div');
-                        imgContainer.style.display = 'inline-block';
-                        imgContainer.style.position = 'relative';
-                        imgContainer.style.margin = '10px';
+            var files = Array.from(this.files);
+            var dataTransfer = new DataTransfer(); // To manage files to be uploaded
 
-                        var img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.style.width = '100px'; // Adjust the size as needed
+            files.forEach((file, index) => {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var imgContainer = document.createElement('div');
+                    imgContainer.style.display = 'inline-block';
+                    imgContainer.style.position = 'relative';
+                    imgContainer.style.margin = '10px';
 
-                        var removeButton = document.createElement('button');
-                        removeButton.innerText = 'Remove';
-                        removeButton.style.position = 'absolute';
-                        removeButton.style.top = '5px';
-                        removeButton.style.right = '5px';
-                        removeButton.style.background = 'red';
-                        removeButton.style.color = 'white';
-                        removeButton.style.border = 'none';
-                        removeButton.style.cursor = 'pointer';
+                    var img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.width = '100px'; // Adjust the size as needed
 
-                        removeButton.addEventListener('click', function() {
-                            imgContainer.remove();
-                        });
+                    var removeButton = document.createElement('button');
+                    removeButton.innerText = 'X';
+                    removeButton.style.position = 'absolute';
+                    removeButton.style.top = '-10px';
+                    removeButton.style.right = '-10px';
+                    removeButton.style.background = 'red';
+                    removeButton.style.color = 'white';
+                    removeButton.style.border = 'none';
+                    removeButton.style.cursor = 'pointer';
+                    removeButton.style.borderRadius = '50%';
 
-                        imgContainer.appendChild(img);
-                        imgContainer.appendChild(removeButton);
-                        preview.appendChild(imgContainer);
-                    }
-                    reader.readAsDataURL(file);
-                });
+                    removeButton.addEventListener('click', function() {
+                        imgContainer.remove();
+                        files.splice(index, 1); // Remove the file from the array
+                        updateInputFiles();
+                    });
+
+                    imgContainer.appendChild(img);
+                    imgContainer.appendChild(removeButton);
+                    preview.appendChild(imgContainer);
+
+                    dataTransfer.items.add(file); // Add file to DataTransfer
+                }
+                reader.readAsDataURL(file);
+            });
+
+            function updateInputFiles() {
+                dataTransfer.items.clear(); // Clear the current files in DataTransfer
+                files.forEach(file => dataTransfer.items.add(file)); // Re-add remaining files
+                document.getElementById('multiple_images').files = dataTransfer.files; // Update the input element
             }
+
+            updateInputFiles();
         });
 
         $(document).ready(function() {

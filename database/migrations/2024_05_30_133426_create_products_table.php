@@ -25,7 +25,7 @@ return new class extends Migration
             $table->unsignedBigInteger('brand_id');
             $table->foreign('brand_id')->references('id')->on('brands')->onDelete('cascade');
             $table->text('short_description');
-            $table->longText('long_description');
+            $table->longText('long_description')->nullable();
             $table->boolean('is_top', [0, 1])->default(0);
             $table->boolean('new_product', [0, 1])->default(0);
             $table->boolean('is_best', [0, 1])->default(0);
