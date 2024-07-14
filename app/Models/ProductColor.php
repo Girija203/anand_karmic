@@ -17,6 +17,7 @@ class ProductColor extends Model
         'sku',
         'single_image'
     ];
+
     public function product()
     {
         return $this->belongsTo(Product::class, 'product_id');
@@ -30,5 +31,4 @@ class ProductColor extends Model
     {
         return $this->hasMany(ProductColorImage::class, 'product_color_id');
     }
-
 }

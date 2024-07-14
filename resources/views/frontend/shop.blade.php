@@ -123,7 +123,7 @@
                                 @foreach ($products as $product)
                                     <div class="col-md-6 col-lg-4">
                                         <!-- Product Card Start -->
-                                        <div class="card position-relative box-shad mb-4">
+                                        <div class="card position-relative box-shad h-100 mb-4">
                                             <div class="p-2">
                                                 <a href="{{ route('single.product', $product->id) }}"
                                                     class="card_height">
@@ -154,19 +154,18 @@
                                                             $productColor = $product->colors->first(); // Assuming you want the first color, adjust as necessary
                                                         @endphp
                                                         @if ($productColor)
-                                                            <span class="product-card-old-price">
-                                                                <del>{{ $currencySymbol }}{{ number_format($productColor->price * $exchangeRate, 2) }}</del>
-                                                            </span>
-                                                            <span class="product-card-regular-price fw-600">
-                                                                {{ $currencySymbol }}{{ number_format($productColor->offer_price * $exchangeRate, 2) }}
-                                                            </span>
-                                                        @else
-                                                            <span class="product-card-old-price">
-                                                                <del>{{ $currencySymbol }}0.00</del>
-                                                            </span>
-                                                            <span class="product-card-regular-price fw-600">
-                                                                {{ $currencySymbol }}0.00
-                                                            </span>
+                                                            @if (is_null($productColor->offer_price))
+                                                                <span class="product-card-regular-price fw-600">
+                                                                    {{ $currencySymbol }}{{ number_format($productColor->price * $exchangeRate, 2) }}
+                                                                </span>
+                                                            @else
+                                                                <span class="product-card-old-price">
+                                                                    <del>{{ $currencySymbol }}{{ number_format($productColor->price * $exchangeRate, 2) }}</del>
+                                                                </span>
+                                                                <span class="product-card-regular-price fw-600">
+                                                                    {{ $currencySymbol }}{{ number_format($productColor->offer_price * $exchangeRate, 2) }}
+                                                                </span>
+                                                            @endif
                                                         @endif
                                                     </div>
                                                 </div>

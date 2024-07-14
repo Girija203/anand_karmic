@@ -21699,3 +21699,9 @@ table.dataTable tbody td {
       background-color: #fcfcfa;
     }
   }
+
+  .checkmark::after {
+    content: " ✅"; /* Unicode checkmark */
+    color: green;
+    font-weight: bold;
+}
