@@ -186,12 +186,12 @@ class ProductController extends Controller
                 return $labels;
             })
             ->addColumn('single_image', function ($row) {
-                if ($row->colors->isNotEmpty()) {
-                    $color = $row->colors->first(); // Change this to get the desired color image
-                    $imagePath = 'storage/' . $color->single_image;
-                    return url($imagePath); // Return the URL of the image
+                $color = $row->colors->first();
+                if ($color->single_image != null) {
+                     // Change this to get the desired color image
+                    $imagePath = $color->single_image;
+                    return $imagePath; // Return the URL of the image
                 }
-                return 'N/A';
             })
             ->rawColumns(['labels'])
             ->make(true);

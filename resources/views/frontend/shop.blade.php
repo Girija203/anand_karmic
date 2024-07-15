@@ -134,7 +134,7 @@
                                                             alt="Card image cap" width="100%">
                                                     @else
                                                         <img class="card-img-top object-fit-cover"
-                                                            src="{{ asset('images/products/default-image.jpg') }}"
+                                                            src="{{ asset('assets/admin/images/product_image_not_found.png') }}"
                                                             alt="Default image" width="100%">
                                                     @endif
                                                 </a>

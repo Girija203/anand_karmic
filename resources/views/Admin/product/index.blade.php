@@ -297,7 +297,7 @@
                         data: 'single_image',
                         name: 'single_image',
                         render: function(data, type, row) {
-                            let imagePath = data ? `${data}` :
+                            let imagePath = data ? `{{ url('storage') }}/${data}` :
                                 '{{ url('assets/admin/images/no_image.png') }}';
                             return `<img src="${imagePath}"height="60" width="auto"/>`;
                         }
@@ -488,13 +488,13 @@
             ${multiImagesHTML.split('\n').map((imgTag, index) => {
                 if (imgTag.trim() !== '') {
                     return `
-                                                                                    <div class="multi-image-item" data-index="${index}">
-                                                                                        ${imgTag}
-                                                                                        <button type="button" class="btn btn-danger btn-sm mt-2" onclick="removeMultiImage(this)">
-                                                                                            <span class="mdi mdi-delete"></span>
-                                                                                        </button>
-                                                                                    </div>
-                                                                                `;
+                                                                                                    <div class="multi-image-item" data-index="${index}">
+                                                                                                        ${imgTag}
+                                                                                                        <button type="button" class="btn btn-danger btn-sm mt-2" onclick="removeMultiImage(this)">
+                                                                                                            <span class="mdi mdi-delete"></span>
+                                                                                                        </button>
+                                                                                                    </div>
+                                                                                                `;
                 }
                 return '';
             }).join('')}
@@ -512,9 +512,7 @@
         function saveRow(button) {
             var row = button.closest('tr');
             var cells = row.getElementsByTagName('td');
-
             var id = cells[0].innerText;
-            // var colorId = cells[1].querySelector('select[name="color_id"]').value; // Get color ID from the select dropdown
             var sku = cells[2].querySelector('input[name="sku"]').value;
             var qty = cells[3].querySelector('input[name="qty"]').value;
             var price = cells[4].querySelector('input[name="price"]').value;
@@ -522,13 +520,9 @@
             var singleImageInput = cells[6].querySelector('input[name="single_image"]');
             var multiImagesInput = cells[7].querySelector('input[name="multi_images[]"]');
             var product_id = $('#product').val();
-            // var base_color_id = $('.base_color_id').val();
-            // alert('base_color_id               ' + base_color_id)
-            // console.log('base_color_id----------------------------------', base_color_id);
             var formData = new FormData();
             formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
             formData.append('id', id);
-            // formData.append('color_id', base_color_id); // Append color ID
             formData.append('sku', sku);
             formData.append('qty', qty);
             formData.append('price', price);
