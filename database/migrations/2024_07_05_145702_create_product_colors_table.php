@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('color_id');
             $table->double('price')->nullable();
             $table->double('offer_price')->nullable();
-            $table->integer('qty');
+            $table->integer('qty')->nullable();
             $table->string('sku')->nullable();
             $table->string('single_image')->nullable();  
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');

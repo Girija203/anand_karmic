@@ -64,7 +64,8 @@
                                                                 <label for="name" class="col-form-label mandatory">Short
                                                                     description </label>
                                                                 <div class="">
-                                                                    <textarea class="form-control" rows="3" name="short_description" value="{{ old('short_description') }}"></textarea>
+                                                                    <textarea class="form-control" rows="3" name="short_description" id="short_description"
+                                                                        value="{{ old('short_description') }}"></textarea>
                                                                     @error('short_description')
                                                                         <span class="error"
                                                                             style="color: red;">{{ $message }}</span>
@@ -144,7 +145,8 @@
                                                                     <label for="price"
                                                                         class="col-form-label mandatory">Price (₹)</label>
                                                                     <input type="text" class="form-control"
-                                                                        name="price" value="{{ old('price') }}">
+                                                                        name="price" id="price"
+                                                                        value="{{ old('price') }}">
                                                                     @error('price')
                                                                         <span class="error"
                                                                             style="color: red;">{{ $message }}</span>
@@ -308,16 +310,16 @@
 
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-3">
+                                                    <div class="col-md-3 ">
                                                         <div class="border rounded-1 p-2">
 
                                                             <div>
                                                                 <h5> Required to Create Product</h5>
 
                                                                 <ul>
-                                                                    <li>Product name</li>
-                                                                    <li>Short Description</li>
-                                                                    <li>Price</li>
+                                                                    <li id="title-li">Product Name</li>
+                                                                    <li id="short-description-li">Short Description</li>
+                                                                    <li id="price-li">Price</li>
                                                                 </ul>
                                                             </div>
 
@@ -466,6 +468,7 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        // Verification and Required
         document.addEventListener("DOMContentLoaded", function() {
             const titleInput = document.getElementById("title");
             const shortDescriptionInput = document.getElementById("short_description");
@@ -473,10 +476,32 @@
             const saveDraftButton = document.querySelector("button[value='save_and_new']");
             const publishButton = document.querySelector("button[value='save']");
 
+            const titleLi = document.getElementById("title-li");
+            const shortDescriptionLi = document.getElementById("short-description-li");
+            const priceLi = document.getElementById("price-li");
+
             function checkInputs() {
                 const isTitleFilled = titleInput.value.trim() !== "";
                 const isShortDescriptionFilled = shortDescriptionInput.value.trim() !== "";
                 const isPriceFilled = priceInput.value.trim() !== "";
+
+                if (isTitleFilled) {
+                    titleLi.classList.add("checkmark");
+                } else {
+                    titleLi.classList.remove("checkmark");
+                }
+
+                if (isShortDescriptionFilled) {
+                    shortDescriptionLi.classList.add("checkmark");
+                } else {
+                    shortDescriptionLi.classList.remove("checkmark");
+                }
+
+                if (isPriceFilled) {
+                    priceLi.classList.add("checkmark");
+                } else {
+                    priceLi.classList.remove("checkmark");
+                }
 
                 if (isTitleFilled && isShortDescriptionFilled && isPriceFilled) {
                     saveDraftButton.disabled = false;
