@@ -87,7 +87,7 @@
 
         .quantity__input {
             /* width: 32px;
-                                                height: 19px; */
+                                                    height: 19px; */
             width: 70px;
             height: 35px;
             margin: 0;
@@ -127,7 +127,7 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb justify-content-start">
                         <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item"><a href="#">Shop</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('shop') }}">Shop</a></li>
                         <li class="breadcrumb-item active" aria-current="page">
                             Karmic Model One
                         </li>
@@ -180,7 +180,8 @@
                                         @foreach ($productColors as $productColor)
                                             <input type="radio" id="color-lable-{{ $productColor->color->name }}"
                                                 name="color" value="{{ $productColor->color->name }}"
-                                                {{ $loop->first ? 'checked' : '' }} data-price="{{ $productColor->price }}"
+                                                {{ $loop->first ? 'checked' : '' }}
+                                                data-price="{{ $productColor->price }}"
                                                 data-offer-price="{{ $productColor->offer_price }}">
                                             <label class="color-lable color-lable-{{ $productColor->color->name }}"
                                                 for="color-lable-{{ $productColor->color->name }}">
@@ -208,7 +209,7 @@
                                             class="quantity__minus product-item-quantity-decrement product-item-quantity-button"><span>-</span></button>
                                         <input type="number" class="quantity__input" name="quantity" id="quantity"
                                             min="1"
-                                            value="{{ $cart->where('product_id', $products->id)->first()->quantity ?? '' }}">
+                                            value="{{ $cart->where('product_id', $products->id)->first()->quantity ?? 1 }}">
                                         <button
                                             class="quantity__plus product-item-quantity-increment product-item-quantity-button"><span>+</span></button>
                                     </div>

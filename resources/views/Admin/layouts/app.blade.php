@@ -10,7 +10,7 @@
 
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ asset('assets/admin/images/favicon.png') }}">
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Daterangepicker css -->
     <link rel="stylesheet" href="{{ asset('assets/admin/vendor/daterangepicker/daterangepicker.css') }}">
     <script src="{{ asset('assets/admin/js/vendor.min.js') }}"></script>
