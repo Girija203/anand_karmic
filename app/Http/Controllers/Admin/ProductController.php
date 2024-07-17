@@ -339,41 +339,29 @@ class ProductController extends Controller
 
         $validatedData = $request->validate([
             'title' => 'required',
-            'main_image' => 'nullable',
-            'category_id' => 'required',
-            // 'subcategory_id' => 'required',
-            'brand_id' => 'required',
             'short_description' => 'required',
-            'long_description' => 'required',
-            'price' => 'required',
-            // 'offer_price' => 'required',
-            'qty' => 'required',
-            'status' => 'required',
-            'multiple_images.*' => 'nullable',
+            'slug' => 'required|string|unique:products,slug,' . $id . '|max:255', 
         ]);
 
 
         $product = Product::findOrFail($id);
 
+        if($request->input('action') == "save"){
+            $status = 1;
+        }else{
+            $status = 0;
+        }
 
         $product->title = $request->input('title');
-        $product->slug = Str::slug($request->input('title'));
+        $product->slug = Str::slug($request->input('slug'));
         $product->category_id = $request->input('category_id');
         $product->subcategory_id = $request->input('subcategory_id') ?? null;
         $product->childcategory_id = $request->input('childcategory_id') ?? null;
         $product->brand_id = $request->input('brand_id');
         $product->short_description = $request->input('short_description');
         $product->long_description = $request->input('long_description');
-        $product->sku = $request->input('sku');
-        $product->price = $request->input('price');
-        $product->offer_price = $request->input('offer_price');
-        $product->qty = $request->input('qty');
-        $product->is_top = $request->has('is_top') ? 1 : 0;
-        $product->new_product = $request->has('new_product') ? 1 : 0;
-        $product->is_best = $request->has('is_best') ? 1 : 0;
-        $product->is_featured = $request->has('is_featured') ? 1 : 0;
-        $product->status = $request->input('status');
-
+        $product->status = $status;
+ 
 
         if ($request->hasFile('main_image')) {
 
