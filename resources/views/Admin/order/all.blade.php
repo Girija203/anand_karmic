@@ -56,7 +56,6 @@
                                                         <th>ID</th>
                                                         <th>Customer</th>
                                                         <th>Order ID</th>
-                                                        <th>Date</th>
                                                         <th>Quantity</th>
                                                         <th>Amount</th>
                                                         <th>Order Status</th>
@@ -184,16 +183,12 @@
                         name: 'id'
                     },
                     {
-                        data: 'user_id',
-                        name: 'user_id'
+                        data: 'customer_name',
+                        name: 'customer_name'
                     },
                     {
                         data: 'order_no',
                         name: 'order_no'
-                    },
-                    {
-                        data: 'created_at',
-                        name: 'created_at'
                     },
                     {
                         data: 'product_qty',

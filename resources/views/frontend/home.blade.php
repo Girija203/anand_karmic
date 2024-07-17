@@ -292,7 +292,7 @@
                                           <div class="d-flex flex-column align-items-end">
 
                                               <span class="product-card-old-price fw-600">
-                                                  <del>₹ 
+                                                  <del>₹
                                                       {{ $showCaseProduct->product->colors->first()->price }}</del></span>
                                               <span>₹
                                                   {{ $showCaseProduct->product->colors->first()->offer_price }}</span>
@@ -322,41 +322,54 @@
                   pagination-clickable="true" slides-per-view="5" space-between="5" free-mode="true" autoplay="true"
                   loop="true" style="height: 350px !important;">
                   <swiper-slide>
-                      <img class="slide-image" src="{{ asset('frontend/assets/images/products/1.jpg') }}"
-                          alt="">
+                      <a href="{{ route('shop') }}">
+                          <img class="slide-image" src="{{ asset('frontend/assets/images/products/1.jpg') }}"
+                              alt="">
+                      </a>
                   </swiper-slide>
                   <swiper-slide>
-                      <img class="slide-image" src="{{ asset('frontend/assets/images/products/pano (1).jpeg') }}"
-                          alt="">
+                      <a href="{{ route('shop') }}">
+                          <img class="slide-image" src="{{ asset('frontend/assets/images/products/pano (1).jpeg') }}"
+                              alt="">
+                      </a>
                   </swiper-slide>
                   <swiper-slide>
-                      <img class="slide-image" src="{{ asset('frontend/assets/images/products/pano (3).jpg') }}"
-                          alt="">
+                      <a href="{{ route('shop') }}">
+                          <img class="slide-image" src="{{ asset('frontend/assets/images/products/pano (3).jpg') }}"
+                              alt="">
+                      </a>
                   </swiper-slide>
 
                   <swiper-slide>
-                      <img class="slide-image" src="{{ asset('frontend/assets/images/products/pano (4).jpg') }}"
-                          alt="">
+                      <a href="{{ route('shop') }}">
+                          <img class="slide-image" src="{{ asset('frontend/assets/images/products/pano (4).jpg') }}"
+                              alt="">
+                      </a>
                   </swiper-slide>
                   <swiper-slide>
-                      <img class="slide-image" src="{{ asset('frontend/assets/images/products/CES02376ed.jpg') }}"
-                          alt="">
+                      <a href="{{ route('shop') }}">
+                          <img class="slide-image" src="{{ asset('frontend/assets/images/products/CES02376ed.jpg') }}"
+                              alt="">
+                      </a>
                   </swiper-slide>
                   <swiper-slide>
-                      <img class="slide-image" src="{{ asset('frontend/assets/images/products/pano (5).jpg') }}"
-                          alt="">
+                      <a href="{{ route('shop') }}">
+                          <img class="slide-image" src="{{ asset('frontend/assets/images/products/pano (5).jpg') }}"
+                              alt="">
+                      </a>
                   </swiper-slide>
                   <swiper-slide>
-                      <img class="slide-image" src="{{ asset('frontend//assets/images/products/1 (1).JPG') }}"
-                          alt="">
+                      <a href="{{ route('shop') }}">
+                          <img class="slide-image" src="{{ asset('frontend//assets/images/products/1 (1).JPG') }}"
+                              alt="">
+                      </a>
                   </swiper-slide>
                   <swiper-slide>
-                      <img class="slide-image" src="{{ asset('frontend/assets/images/products/CES02376ed.jpg') }}"
-                          alt="">
+                      <a href="{{ route('shop') }}">
+                          <img class="slide-image" src="{{ asset('frontend/assets/images/products/CES02376ed.jpg') }}"
+                              alt="">
+                      </a>
                   </swiper-slide>
-
-
-
               </swiper-container>
 
           </div>

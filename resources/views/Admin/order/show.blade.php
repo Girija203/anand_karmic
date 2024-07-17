@@ -49,22 +49,22 @@
                                                                 <div class="col-md-6">
                                                                     <address>
                                                                         <strong>Billing Information:</strong><br>
-                                                                        None<br>
-                                                                        None,
-                                                                        None,
-                                                                        None,
-                                                                        None<br>
+                                                                        {{ $order->user->addresses[0]->address }},
+                                                                        {{ $order->user->addresses[0]->city }},
+                                                                        {{ $order->user->addresses[0]->state }},
+                                                                        {{ $order->user->addresses[0]->country }},
+                                                                        {{ $order->user->addresses[0]->pincode }},
                                                                     </address>
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-6 text-md-right">
                                                                 <address>
                                                                     <strong>Shipping Information :</strong><br>
-                                                                    None<br>
-                                                                    None,
-                                                                    None,
-                                                                    None,
-                                                                    None<br>
+                                                                    {{ $order->user->addresses[0]->address }},
+                                                                    {{ $order->user->addresses[0]->city }},
+                                                                    {{ $order->user->addresses[0]->state }},
+                                                                    {{ $order->user->addresses[0]->country }},
+                                                                    {{ $order->user->addresses[0]->pincode }},
                                                                 </address>
                                                             </div>
                                                         </div>
@@ -101,49 +101,25 @@
                                                                     <tr>
                                                                         <th width="5%">#</th>
                                                                         <th width="25%">Product</th>
-                                                                        <th width="20%">Variant</th>
-                                                                        <th width="10%">Shop Name</th>
                                                                         <th width="10%" class="text-center">Unit Price
                                                                         </th>
                                                                         <th width="10%" class="text-center">Quantity</th>
                                                                         <th width="10%" class="text-right">Total</th>
                                                                     </tr>
-                                                                    <tr>
-                                                                        <td>1</td>
-                                                                        <td><a href="">Samsung Galaxy A52 (8/128
-                                                                                GB)</a></td>
-                                                                        <td>
-                                                                        </td>
-                                                                        <td>
-                                                                        </td>
-                                                                        <td class="text-center">Rs.9.99</td>
-                                                                        <td class="text-center">1</td>
-                                                                        <td class="text-right">Rs.9.99</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>2</td>
-                                                                        <td><a href="">Samsung Galaxy A52 (8/128
-                                                                                GB)</a></td>
-                                                                        <td>
-                                                                        </td>
-                                                                        <td>
-                                                                        </td>
-                                                                        <td class="text-center">Rs.9.99</td>
-                                                                        <td class="text-center">1</td>
-                                                                        <td class="text-right">Rs.9.99</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>3</td>
-                                                                        <td><a href="">JBL Clip 4 Orange Portable
-                                                                                Speaker</a></td>
-                                                                        <td>
-                                                                        </td>
-                                                                        <td>
-                                                                        </td>
-                                                                        <td class="text-center">Rs.133</td>
-                                                                        <td class="text-center">1</td>
-                                                                        <td class="text-right">Rs.133</td>
-                                                                    </tr>
+                                                                    @foreach ($order->orderItems as $item)
+                                                                        <tr>
+                                                                            <td>{{ $item->product->id }}</td>
+                                                                            <td>{{ $item->product->title }}</td>
+                                                                            <td class="text-center">{{ $item->quantity }}
+                                                                            </td>
+                                                                            <td class="text-center">{{ $item->unit_price }}
+                                                                            </td>
+                                                                            <td class="text-right">{{ $item->total_price }}
+                                                                            </td>
+                                                                        </tr>
+                                                                    @endforeach
+
+
                                                                 </tbody>
                                                             </table>
                                                         </div>
@@ -209,34 +185,10 @@
                                                                         Status</button>
                                                                 </form>
                                                             </div>
-                                                            <div class="col-lg-6 text-right">
-                                                                <div class="invoice-detail-item">
-                                                                    <div class="invoice-detail-name">Subtotal : Rs.152.98
-                                                                    </div>
-                                                                </div>
-                                                                <div class="invoice-detail-item">
-                                                                    <div class="invoice-detail-name">Discount(-) : Rs.0
-                                                                    </div>
-                                                                </div>
-                                                                <div class="invoice-detail-item">
-                                                                    <div class="invoice-detail-name">Shipping : Rs.0</div>
-                                                                </div>
-                                                                <hr class="mt-2 mb-2">
-                                                                <div class="invoice-detail-item">
-                                                                    <div
-                                                                        class="invoice-detail-value invoice-detail-value-lg">
-                                                                        Total : Rs.152.98</div>
-                                                                </div>
-                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- <div class="text-md-right print-area">
-                                     <hr>
-                                     <button class="btn btn-success btn-icon icon-left print_btn"><i class="fas fa-print"></i> Print</button>
-                                     <button class="btn btn-danger btn-icon icon-left" data-toggle="modal" data-target="#deleteModal" onclick="deleteData(37)"><i class="fas fa-times"></i> Delete</button>
-                                  </div> -->
                                         </div>
                                     </div>
                                 </div>

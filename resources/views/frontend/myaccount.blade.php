@@ -105,7 +105,7 @@
                                              Unknown Status
                                              @endswitch
                                           </td>
-                                          <td>${{ number_format($orders->total_amount, 2) }} for
+                                          <td>₹{{ number_format($orders->total_amount, 2) }} for
                                              {{ $orders->product_qty }} item(s)
                                           </td>
                                           <td>

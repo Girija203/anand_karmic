@@ -87,6 +87,7 @@ class ProductController extends Controller
         // $productColor->product_id = $request->input('product_id');
         // $productColor->color_id = $request->input('color_id'); // Ensure color_id is an integer
         $productColor = ProductColor::where('product_id', $request->input('product_id'))->where('id', $request->input('id'))->first();
+        $productColor->color_id = $request->input('color_id');
         $productColor->price = $request->input('price');
         $productColor->sku = $request->input('sku');
         $productColor->qty = $request->input('qty');
