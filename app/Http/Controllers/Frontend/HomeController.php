@@ -96,7 +96,7 @@ class HomeController extends Controller
         $perPage = 12;
     
         // Fetch all products with pagination
-        $products = Product::paginate($perPage);
+        $products = Product::where('status', 1)->paginate($perPage);
         $totalProducts = Product::count();
     
         $cart = Cart::get();
@@ -786,9 +786,9 @@ public function cart(Request $request)
     {
         // Add product to cart
         $product = Product::findOrFail($productId);
-
+        
         $existingCartItem = Cart::where('product_id', $product->id)->first();
-
+        
         if ($existingCartItem) {
             // If the product is already in the cart, update the quantity
             $existingCartItem->quantity += 1;
@@ -797,8 +797,8 @@ public function cart(Request $request)
             Cart::create([
                 'product_id' => $product->id,
                 'name' => $product->title,
-                'price' => $product->offer_price,
-                'image' => $product->image,
+                'price' => $product->colors->first()->offer_price,
+                'image' => $product->colors->first()->single_image,
                 'quantity' => 1,
             ]);
         }

@@ -121,7 +121,7 @@
                                 class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 mb-15 mt-4">
 
                                 @foreach ($products as $product)
-                                    <div class="col-md-6 col-lg-4">
+                                    <div class="col-md-6 col-lg-4 mb-5">
                                         <!-- Product Card Start -->
                                         <div class="card position-relative box-shad h-100 mb-4">
                                             <div class="p-2">
@@ -139,6 +139,8 @@
                                                     @endif
                                                 </a>
                                             </div>
+                                            
+
 
                                             <div class="card-body">
                                                 <h6 class="card-title">{{ $product->title }}</h6>
