@@ -87,6 +87,7 @@ class ProductController extends Controller
         // $productColor->product_id = $request->input('product_id');
         // $productColor->color_id = $request->input('color_id'); // Ensure color_id is an integer
         $productColor = ProductColor::where('product_id', $request->input('product_id'))->where('id', $request->input('id'))->first();
+        $productColor->color_id = $request->input('color_id');
         $productColor->price = $request->input('price');
         $productColor->sku = $request->input('sku');
         $productColor->qty = $request->input('qty');
@@ -144,7 +145,6 @@ class ProductController extends Controller
     public function indexData()
     {
         $product = Product::with('category', 'subcategory', 'childcategory', 'brand', 'colors')->get();
-
         return DataTables::of($product)
             ->addColumn('category_name', function ($row) {
                 return $row->category ? $row->category->name : 'N/A';
@@ -157,6 +157,18 @@ class ProductController extends Controller
             })
             ->addColumn('brand', function ($row) {
                 return $row->brand ? $row->brand->name : 'N/A';
+            })
+            ->addColumn('color_count', function ($row) {
+                return $row->colors ? $row->colors->count() : 0;
+            })
+            ->addColumn('colors', function ($row) {
+                if ($row->colors->isNotEmpty()) {
+                    $colorNames = $row->colors->map(function ($colors) {
+                        return $colors->color ? $colors->color->code : 'N/A';
+                    });
+                    return $colorNames->implode(', ');
+                }
+                return 'N/A';
             })
             ->addColumn('labels', function ($row) {
                 $labels = '';
@@ -175,12 +187,12 @@ class ProductController extends Controller
                 return $labels;
             })
             ->addColumn('single_image', function ($row) {
-                if ($row->colors->isNotEmpty()) {
-                    $color = $row->colors->first(); // Change this to get the desired color image
-                    $imagePath = 'storage/' . $color->single_image;
-                    return url($imagePath); // Return the URL of the image
+                $color = $row->colors->first();
+                if ($color->single_image != null) {
+                     // Change this to get the desired color image
+                    $imagePath = $color->single_image;
+                    return $imagePath; // Return the URL of the image
                 }
-                return 'N/A';
             })
             ->rawColumns(['labels'])
             ->make(true);
@@ -198,7 +210,7 @@ class ProductController extends Controller
         $meta_key = MetaKey::all();
         $color = Color::all();
 
-        return view('Admin.product.create', compact('brand', 'category', 'productspecificationkey', 'meta_type', 'meta_key','color'));
+        return view('Admin.product.create', compact('brand', 'category', 'productspecificationkey', 'meta_type', 'meta_key', 'color'));
     }
 
     public function getSubcategories($categoryId)
@@ -226,23 +238,21 @@ class ProductController extends Controller
         // Validate the incoming request
         $validatedData = $request->validate([
             'title' => 'required',
-            'color_id' => 'required', // Assuming color_id should be validated instead of color
-            'main_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'category_id' => 'required',
+            'main_image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'short_description' => 'required',
-            'long_description' => 'required',
             'price' => 'required|numeric',
-            'offer_price' => 'required|numeric',
-            'brand_id' => 'required',
-            'status' => 'required'
         ]);
-
+        // dd($request);
         // Create and save the product
         $product = new Product();
         $product->fill($validatedData); // Using mass assignment
         $product->slug = Str::slug($request->input('title'));
+        $product->brand_id = $request->input('brand_id') ?? null;
+        $product->brand_id = $request->input('brand_id') ?? null;
+        $product->category_id = $request->input('category_id') ?? null;
         $product->subcategory_id = $request->input('subcategory_id') ?? null;
         $product->childcategory_id = $request->input('childcategory_id') ?? null;
+        $product->long_description = $request->input('long_description') ?? null;
         $product->is_top = $request->has('is_top') ? 1 : 0;
         $product->new_product = $request->has('new_product') ? 1 : 0;
         $product->is_best = $request->has('is_best') ? 1 : 0;
@@ -254,7 +264,7 @@ class ProductController extends Controller
         $productColor->product_id = $product->id;
         $productColor->color_id = $request->input('color_id');
         $productColor->price = $request->input('price');
-        $productColor->qty = $request->input('qty');
+        $productColor->qty = $request->input('qty') ?? 0;
         $productColor->sku = $request->input('sku');
         $productColor->offer_price = $request->input('offer_price');
         if ($request->hasFile('main_image')) {
@@ -330,41 +340,29 @@ class ProductController extends Controller
 
         $validatedData = $request->validate([
             'title' => 'required',
-            'main_image' => 'nullable',
-            'category_id' => 'required',
-            // 'subcategory_id' => 'required',
-            'brand_id' => 'required',
             'short_description' => 'required',
-            'long_description' => 'required',
-            'price' => 'required',
-            // 'offer_price' => 'required',
-            'qty' => 'required',
-            'status' => 'required',
-            'multiple_images.*' => 'nullable',
+            'slug' => 'required|string|unique:products,slug,' . $id . '|max:255', 
         ]);
 
 
         $product = Product::findOrFail($id);
 
+        if($request->input('action') == "save"){
+            $status = 1;
+        }else{
+            $status = 0;
+        }
 
         $product->title = $request->input('title');
-        $product->slug = Str::slug($request->input('title'));
+        $product->slug = Str::slug($request->input('slug'));
         $product->category_id = $request->input('category_id');
         $product->subcategory_id = $request->input('subcategory_id') ?? null;
         $product->childcategory_id = $request->input('childcategory_id') ?? null;
         $product->brand_id = $request->input('brand_id');
         $product->short_description = $request->input('short_description');
         $product->long_description = $request->input('long_description');
-        $product->sku = $request->input('sku');
-        $product->price = $request->input('price');
-        $product->offer_price = $request->input('offer_price');
-        $product->qty = $request->input('qty');
-        $product->is_top = $request->has('is_top') ? 1 : 0;
-        $product->new_product = $request->has('new_product') ? 1 : 0;
-        $product->is_best = $request->has('is_best') ? 1 : 0;
-        $product->is_featured = $request->has('is_featured') ? 1 : 0;
-        $product->status = $request->input('status');
-
+        $product->status = $status;
+ 
 
         if ($request->hasFile('main_image')) {
 
@@ -433,7 +431,5 @@ class ProductController extends Controller
         $product->delete();
         $result = "Product deleted successfully";
         return $result;
-
-       
     }
 }

@@ -27,7 +27,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header py-1 pt-2">
+                            <div class="card-header m-0 p-0">
                                 <a href="{{ route('users.index') }}" title="User List">
                                     <button class="header-title btn btn-gery">User List</button>
                                 </a>
@@ -82,7 +82,8 @@
 
                                                     <div class="row mb-2 mt-2">
                                                         <div class="col-md-6">
-                                                            <label for="password" class=" col-form-label mandatory">Password</label>
+                                                            <label for="password"
+                                                                class=" col-form-label mandatory">Password</label>
                                                             <div class="">
                                                                 <input type="password" id="password" class="form-control"
                                                                     name="password" required placeholder="Password" />

@@ -87,7 +87,7 @@
 
         .quantity__input {
             /* width: 32px;
-                                                            height: 19px; */
+                                                        height: 19px; */
             width: 70px;
             height: 35px;
             margin: 0;
@@ -137,13 +137,13 @@
         </section>
         <!-- Product Details Section Start -->
         <section class="product-details-section">
-            <div class="container px-5">
+            <div class="container">
                 <div class="row gy-5">
-                    <div class="col-md-12 col-lg-7">
+                    <div class="col-md-6">
                         <div class="product-item-details-box">
                             <h4 class="product-item-details-title">{{ $products->title }}</h4>
                             <div class="d-flex justify-content-between my-3">
-                                <div class="product-card-price mt-2 fs-18">
+                                <div class="product-card-price mt-2">
                                     @php
                                         $selectedColor = $productColors->first(); // Default to the first color
                                         $price = $selectedColor ? $selectedColor->price * $exchangeRate : 0;
@@ -165,11 +165,10 @@
                                 </div>
                             </div>
 
-                            <p class="product-item-details-description mt-2 fs-14" id="product-description">
+                            <p class="product-item-details-description mt-2" id="product-description">
                                 {{ Str::limit($products->short_description, 150) }} <!-- Initial short description -->
                                 <span id="more-text"
                                     style="display: none;">{{ substr($products->short_description, 150) }}</span>
-                                <br>
                                 <a href="javascript:void(0);" id="toggle-description" onclick="toggleDescription()">Show
                                     More</a>
                             </p>
@@ -258,7 +257,7 @@
                         @endif
 
                     </div>
-                    <div class="col-md-12 col-lg-5">
+                    <div class="col-md-6">
                         <div class="swiper product-details-lg-active">
                             <div class="swiper-wrapper">
                                 @if ($products->colors->first()->images)
@@ -327,7 +326,7 @@
 
                     </div>
                     <div class="tab-pane fade" id="nav-additional-information" role="tabpanel" tabindex="0">
-                        <table class="additional-info-table" style="width:100px !important;">
+                        <table class="additional-info-table">
                             <tbody>
                                 @foreach ($specifications as $specification)
                                     <tr class="additional-info-table-tr">

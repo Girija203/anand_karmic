@@ -28,29 +28,30 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header py-1 pt-2">
-                                <a href="{{ route('childcategory.index') }}" title="Child Category List">
-                                    <button class="header-title btn btn-gery">ChildCategory List</button>
-                                </a>
-                                <a href="#" title="Child Category Create">
-                                    <button class="header-title btn btn_primary_color"> <i
-                                            class="mdi mdi-plus-box pe-1"></i>Create
-                                        ChildCategory</button>
-                                </a>
+                            <div class="card-header m-0 p-0">
+                                <ul class="nav nav-pills">
+                                    <li class="nav-item">
+                                        <a class="nav-link rounded-0 pt-2 pb-2" aria-current="page"
+                                            href="{{ route('childcategory.index') }}">Child Category List</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link active rounded-0 pt-2 pb-2" href="#">Create Child
+                                            Category</a>
+                                    </li>
+                                </ul>
                             </div>
                             <div class="card-body pt-0">
                                 <div class="row">
                                     <div class="col-md-12 rightsetup-details">
-                                        <div class="d-flex justify-content-between p-2 bd-highlight"></div>
-                                        <div class="card-body">
+                                        <div class="card-body mt-4">
                                             <div class="m-b-30">
                                                 <form class="row g-3" method="POST"
                                                     action="{{ route('childcategory.store') }}">
                                                     @csrf
-
-                                                    <div class="row">
+                                                    <div class="row justify-content-center">
                                                         <div class="col-md-6">
-                                                            <label for="category_id">Category<span class="text text-danger">*</span></label>
+                                                            <label for="category_id"
+                                                                class="col-form-label mandatory">Category</label>
                                                             <select id="category_id" class="form-control" name="category_id"
                                                                 required>
                                                                 <option value="">Select Category</option>
@@ -64,36 +65,39 @@
                                                                     style="color: red;">{{ $message }}</span>
                                                             @enderror
                                                         </div>
-
+                                                    </div>
+                                                    <div class="row justify-content-center">
                                                         <div class="col-md-6">
-                                                            <label for="subcategory_id">SubCategory<span class="text text-danger">*</span></label>
+                                                            <label for="subcategory_id" class="col-form-label mandatory">Sub
+                                                                Category</label>
                                                             <select id="subcategory_id" class="form-control"
                                                                 name="subcategory_id" required>
-                                                                <option value="">Select SubCategory</option>
+                                                                <option value="">Select Sub Category</option>
                                                             </select>
                                                             @error('status')
                                                                 <span class="error"
                                                                     style="color: red;">{{ $message }}</span>
                                                             @enderror
                                                         </div>
-
+                                                    </div>
+                                                    <div class="row justify-content-center">
                                                         <div class="col-md-6">
-                                                            <label for="name">Name<span class="text text-danger">*</span></label>
+                                                            <label for="name"
+                                                                class="col-form-label mandatory">Name</label>
                                                             <div>
                                                                 <input class="form-control" type="text" name="name"
-                                                                    id="name" >
+                                                                    id="name">
                                                                 @error('name')
                                                                     <span class="error"
                                                                         style="color: red;">{{ $message }}</span>
                                                                 @enderror
                                                             </div>
                                                         </div>
-
+                                                    </div>
+                                                    <div class="row justify-content-center">
                                                         <div class="col-md-6">
-                                                            <label for="status" class="">Status<span class="text text-danger">*</span></label>
-                                                            <select id="inputState" class="form-control" name="status"
-                                                               >
-                                                                <option value="">select option</option>
+                                                            <label for="status" class="col-form-label">Status</label>
+                                                            <select id="inputState" class="form-control" name="status">
                                                                 <option value="1">Active</option>
                                                                 <option value="0">Inactive</option>
                                                             </select>
@@ -108,9 +112,19 @@
                                                     <div class="form-group">
                                                         <div class="d-flex justify-content-evenly">
                                                             <button type="submit"
-                                                                class="btn btn_primary_color waves-effect waves-light">Submit</button>
-                                                            <a href="{{ route('subcategory.index') }}"
-                                                                class="btn btn-secondary waves-effect m-l-5">Cancel</a>
+                                                                class="btn btn-primary waves-effect waves-light"
+                                                                name="action" value="save">
+                                                                Save
+                                                            </button>
+                                                            <button type="submit"
+                                                                class="btn btn-light waves-effect waves-light"
+                                                                name="action" value="save_and_new">
+                                                                Save and New
+                                                            </button>
+                                                            <a href="{{ route('childcategory.index') }}"
+                                                                class="btn btn-secondary waves-effect m-l-5">
+                                                                Cancel
+                                                            </a>
                                                         </div>
                                                     </div>
                                                 </form>

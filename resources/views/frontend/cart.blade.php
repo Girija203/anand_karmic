@@ -118,8 +118,15 @@
 
              @foreach ($cart as $item)
                  @php
+                  $offerPrice = \App\Models\ProductColor::where('product_id', $item->product_id)
+                  ->min('offer_price'); 
+
+        // If no offer price is found, fallback to product's offer price
+        if (!$offerPrice) {
+            $offerPrice = $item->product->offer_price;
+        }
                      // Calculate the total amount for each item
-                     $totalAmount += $item->quantity * $item->product->offer_price;
+                $totalAmount += $item->quantity * $offerPrice;
                  @endphp
                  @php
                      // Calculate the final total amount including the shipping fee
@@ -132,7 +139,7 @@
              
               @php
              $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
-          $currencySymbol = session('currency_symbol', '$');
+          $currencySymbol = session('currency_symbol', '₹');
 
     // Convert prices to selected currency
     $totalAmount *= $exchangeRate;
@@ -147,71 +154,62 @@
     @endphp
              <div class="col-lg-4">
                  <div class="cart_totals table-responsive">
-                     <h5 class="mb-1">Order Summary</h5>
-                     <table class="cart-totals-table table align-middle text-dark">
-                         <tbody style="border-bottom: 2px solid #cccccc54">
-                             <tr class="cart-subtotal">
-                                 <th>Price</th>
-                                 <td>{{ $currencySymbol }}<span class="amount">{{ number_format($totalAmount, 2) }}</span></td>
-                             </tr>
-                             <!-- <tr class="cart-subtotal">
-                                                                                                                                                                                          <th>Discount</th>
-                                                                                                                                                                                          <td>
-                                                                                                                                                                                            <span class="amount text-dark fw-500"></span>
-                                                                                                                                                                                          </td>
-                                                                                                                                                                                        </tr> -->
-                             <tr class="cart-subtotal">
-                                 <th>Shipping</th>
-                                 <td>{{ $currencySymbol }}<span class="text-success fw-500">{{ number_format($shippingFee, 2) }}</span></td>
-                             </tr>
-                             <tr class="cart-subtotal">
-                                 <th>Coupon Applied</th>
-                                 <td>
-                                    {{ $currencySymbol }}
-                                     <span class="amount text-dark fw-500">-{{ $res_coupon }}</span>
-                                 </td>
-                             </tr>
-                         </tbody>
-                         <tbody style="border-bottom: 2px solid #cccccc54">
-                             <tr class="cart-subtotal">
-                                 <th class="fw-500 text-uppercase">Total</th>
-                                 <td>
-                                    {{ $currencySymbol }}
-                                     <span
-                                         class="amount text-dark fw-500">{{ number_format((float) $finalTotalAmount - (float) $res_coupon, 2) }}</span>
+                             <h5 class="mb-1">Order Summary</h5>
+        <table class="cart-totals-table table align-middle text-dark">
+            <tbody style="border-bottom: 2px solid #cccccc54">
+                <tr class="cart-subtotal">
+                    <th>Price</th>
+                    <td>{{ $currencySymbol }}<span class="amount">{{ number_format($totalAmount, 2) }}</span></td>
+                </tr>
+                <tr class="cart-subtotal">
+                    <th>Shipping</th>
+                    <td>{{ $currencySymbol }}<span class="text-success fw-500">{{ number_format($shippingFee, 2) }}</span></td>
+                </tr>
+                <tr class="cart-subtotal">
+                    <th>Coupon Applied</th>
+                    <td>
+                        {{ $currencySymbol }}
+                        <span class="amount text-dark fw-500">-{{ number_format($res_coupon, 2) }}</span>
+                    </td>
+                </tr>
+            </tbody>
+            <tbody style="border-bottom: 2px solid #cccccc54">
+                <tr class="cart-subtotal">
+                    <th class="fw-500 text-uppercase">Total</th>
+                    <td>
+                        {{ $currencySymbol }}
+                        <span class="amount text-dark fw-500">{{ number_format($finalTotalAmount - $res_coupon, 2) }}</span>
+                    </td>
+                </tr>
+                <tr class="order-total">
+                    <td class="order-total-amount">
+                    </td>
+                </tr>
 
-                                 </td>
-                             </tr>
-                             <tr class="order-total">
-                                 <td class="order-total-amount">
-                                 </td>
-                             </tr>
-
-                             <tr class="w-100">
-                                 <td class="w-100">
-                                     <div class="">
-                                         <form method="GET" class="justify-content-center flex-column align-items-center" action="{{ route('cart') }}">
-                                             <div class="row">
-                                                <div class="col-lg-9">
-                                                    <input type="text" name="coupon" class="form-control rounded-pill"
-                                                 placeholder="Coupon Code" class="w-100" value="{{ request('coupon') }}">
-                                                </div>
-                                                <div class="col-lg-3">
-                                                  <button type="button" class="d-flex btn wrong-icon" id="removeCouponButton" aria-label="Remove Coupon">
-                                                    <i class="fa-regular fa-circle-xmark"></i>
-                                                  </button>
-
-                                                </div>
-                                             </div>
-                                            
-                                             <button class="button1 w-50 text-center d-flex justify-content-center mt-4" type="submit" style='margin:  auto'>Apply Coupon</button>
-            
-                                         </form>
-                                     </div>
-                                 </td>
-                             </tr>
-                         </tbody>
-                     </table>
+                <tr class="w-100">
+                    <td class="w-100">
+                        <div class="">
+                            <form method="GET" class="justify-content-center flex-column align-items-center" action="{{ route('cart') }}">
+                                <div class="row">
+                                    <div class="col-lg-9">
+                                        <input type="text" name="coupon" class="form-control rounded-pill"
+                                            placeholder="Coupon Code" class="w-100" value="{{ request('coupon') }}">
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <button type="button" class="d-flex btn wrong-icon" id="removeCouponButton"
+                                            aria-label="Remove Coupon">
+                                            <i class="fa-regular fa-circle-xmark"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <button class="button1 w-50 text-center d-flex justify-content-center mt-4"
+                                    type="submit" style='margin:  auto'>Apply Coupon</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
                      <div class="d-flex justify-content-center">
                          <a href="{{ route('checkout') }}" class="button1" style="--clr: #7808d0">
                              <span class="button1__icon-wrapper">

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\SlugHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
@@ -32,14 +33,14 @@ class CategoryController extends Controller
 
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'status'=>'required'
+            'name' => 'required|string|unique:categories|max:255',
         ]);
 
         $category = new Category();
         $category->name = $request->input('name');
-        $category->slug = Str::slug($request->input('name'));
         $category->status = $request->input('status');
+        $category->slug = SlugHelper::generateUniqueSlug(Category::class, $request->input('name'));
+
         $category->save();
 
         if ($request->action === 'save') {
@@ -47,7 +48,6 @@ class CategoryController extends Controller
         } elseif ($request->action === 'save_and_new') {
             return redirect()->route('category.create')->with('success', 'Category created successfully');
         }
-        
     }
 
     public function edit($id)
@@ -62,14 +62,13 @@ class CategoryController extends Controller
     {
 
         $request->validate([
-            'name' => 'required|string|max:255',
-            'status' => 'required',
-
+            'name' => 'required|string|unique:categories,name,' . $id . '|max:255',
+            'slug' => 'required|string|unique:categories,slug,' . $id . '|max:255', 
         ]);
 
         $category = Category::findOrfail($id);
         $category->name = $request->input('name');
-        $category->slug = Str::slug($request->input('name'));
+        $category->slug = Str::slug($request->input('slug'));
         $category->status = $request->input('status');
         $category->save();
 

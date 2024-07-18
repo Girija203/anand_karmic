@@ -12,10 +12,8 @@
                         <div class="page-title-box">
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item">Product Management</li>
-                                    <li class="breadcrumb-item"><a href="{{ route('productspecificationkey.index') }}">
-                                            Product Specification key</a></li>
-                                    <li class="breadcrumb-item active">List</li>
+                                    <li class="breadcrumb-item">Manage Products</li>
+                                    <li class="breadcrumb-item active">Product Specification key</li>
                                 </ol>
                             </div>
                             <h4 class="page-title">Product Specification Key List</h4>
@@ -26,28 +24,22 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header py-1 pt-2">
-                                <a href="#" title="Specification Key List">
-                                    <button class="header-title btn btn_primary_color">Specification Key List</button>
-                                </a>
-                                <a href="{{ route('productspecificationkey.create') }}" title="Specification Key Create">
-                                    <button class="header-title btn btn-gery"> <i class="mdi mdi-plus-box  pe-1"></i>Create
-                                        Specification Key</button>
-                                </a>
-                            </div>
-                            <div class="alert alert-success alert-dismissible fade show" role="alert"
-                                style="display:none;">
-                                {{-- <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button> --}}
-                                <strong></strong> Product specification key deleted successfully.
+                            <div class="card-header m-0 p-0">
+                                <ul class="nav nav-pills">
+                                    <li class="nav-item">
+                                        <a class="nav-link active rounded-0 pt-2 pb-2" aria-current="page"
+                                            href="#">Specification Key List</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link rounded-0 pt-2 pb-2"
+                                            href="{{ route('productspecificationkey.create') }}">Create
+                                            Specification Key</a>
+                                    </li>
+                                </ul>
                             </div>
                             <div class="card-body pt-0">
                                 <div class="row">
                                     <div class="col-md-12 rightsetup-details">
-                                        <div class="d-flex justify-content-between bd-highlight">
-
-                                        </div>
                                         <div class="card-body data_table_border_style">
                                             <table id="productspecificationkey-table"
                                                 class="table table-striped table-bordered dt-responsive nowrap"
@@ -61,7 +53,6 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr>
-
                                                     </tr>
                                             </table>
                                         </div>
@@ -109,30 +100,24 @@
                 serverSide: true,
                 ajax: '{{ route('productspecificationkey.data') }}',
                 columns: [{
-                        data: 'id',
-                        name: 'id'
+                        data: null,
+                        name: 'auto_increment_id',
+                        render: function(data, type, row, meta) {
+                            return meta.row + 1;
+                        }
                     },
                     {
                         data: 'name',
                         name: 'name'
                     },
-
-                    // {
-                    //     data: 'status',
-                    //     name: 'status'
-
-                    // },
-
-
-
                     {
                         data: null,
                         orderable: false,
                         searchable: false,
                         render: function(data, type, row) {
                             return `
-                           <button class="btn py-0 px-0" onclick="editUsers(${row.id})"><i class="ri-edit-box-line text_danger_blue " style="font-size: 20px;"></i></button>
-                           <button  class="btn py-0" onclick="deleteUsers(${row.id})"><i class="mdi mdi-delete text_danger_red" style="font-size: 20px;"></i></button>
+                           <button class="btn btn-edit py-0 px-0" onclick="editUsers(${row.id})"><i class="ri-edit-line " style="font-size: 20px;"></i></button>
+                           <button  class="btn btn-delete py-0" onclick="deleteUsers(${row.id})"><i class="mdi mdi-delete-outline" style="font-size: 20px;"></i></button>
 
                        `;
                         }

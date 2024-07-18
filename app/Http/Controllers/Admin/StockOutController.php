@@ -17,7 +17,7 @@ class StockOutController extends Controller
     public function outOfStockData()
     {
         $product = Product::with('category', 'subcategory', 'childcategory', 'brand')
-                    ->where('qty', '=', 0) // Filter for out-of-stock products
+                    ->where('qty', '=', 0) 
                     ->get();
     
         return DataTables::of($product)

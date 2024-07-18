@@ -13,7 +13,7 @@
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
                                     <li class="breadcrumb-item">Category Management</li>
-                                    <li class="breadcrumb-item">Category List</a></li>
+                                    <li class="breadcrumb-item active">Category List</a></li>
                                 </ol>
                             </div>
                             <h4 class="page-title">Manage Categories</h4>
@@ -36,18 +36,9 @@
                                     </li>
                                 </ul>
                             </div>
-                            <div class="alert alert-success alert-dismissible fade show" role="alert"
-                                style="display:none;">
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                                <strong></strong> Category deleted successfully.
-                            </div>
                             <div class="card-body pt-0">
                                 <div class="row">
                                     <div class="col-md-12 rightsetup-details">
-                                        <div class="d-flex justify-content-between bd-highlight">
-                                        </div>
                                         <div class="card-body data_table_border_style">
                                             <table id="category-table"
                                                 class="table table-striped table-bordered dt-responsive nowrap"
@@ -104,8 +95,6 @@
 
     <script>
         var table;
-
-
         $(document).ready(function() {
 
             table = $('#category-table').DataTable({
@@ -163,7 +152,7 @@
 
         function deleteUsers(id) {
 
-            if (confirm('Are you sure you want to delete this category?')) {
+            if (confirm('Are you sure you want to delete this Category?')) {
                 $.ajax({
                     url: 'category/delete/' + id,
                     type: 'get',
