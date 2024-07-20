@@ -87,7 +87,7 @@
 
         .quantity__input {
             /* width: 32px;
-                                                        height: 19px; */
+                                                            height: 19px; */
             width: 70px;
             height: 35px;
             margin: 0;
@@ -327,7 +327,7 @@
 
                     </div>
                     <div class="tab-pane fade" id="nav-additional-information" role="tabpanel" tabindex="0">
-                        <table class="additional-info-table">
+                        <table class="additional-info-table" style="width:100px !important;">
                             <tbody>
                                 @foreach ($specifications as $specification)
                                     <tr class="additional-info-table-tr">

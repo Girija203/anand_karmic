@@ -17,10 +17,13 @@ class OrderController extends Controller
     {
 
         $orders = Order::all();
-
+        // dd($orders[0]->user->name);
         return DataTables::of($orders)
             ->editColumn('payment_status', function ($order) {
                 return $order->payment_status == 1 ? 'Success' : 'Pending';
+            })
+            ->editColumn('customer_name', function ($order) {
+                return $order->user->name;
             })
             ->editColumn('order_status', function ($order) {
                 switch ($order->order_status) {
@@ -65,7 +68,6 @@ class OrderController extends Controller
 
     public function all()
     {
-
         return view('Admin.order.all');
     }
     public function pendingData()
@@ -261,6 +263,7 @@ class OrderController extends Controller
     public function show($id)
     {
         $order = Order::find($id);
+        // dd($order->orderItems);
         return view('Admin.order.show', compact('order'));
     }
     public function read_one($id)

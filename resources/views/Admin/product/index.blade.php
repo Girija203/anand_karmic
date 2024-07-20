@@ -398,7 +398,9 @@
                         $('#variant-table tbody').append(`
                     <tr>
                         <td>${productColor.id}</td>
-                        <td>${productColor.color.name ?? ''}</td>
+                        <td data-color-id="${productColor.color.id ?? ''}">
+                            ${productColor.color.name ?? ''}
+                        </td>
                         <td>${productColor.sku ?? ''}</td>
                         <td>${productColor.qty}</td>
                         <td>${productColor.price}</td>
@@ -464,6 +466,7 @@
 
 
     <script>
+        var availableColors = @json($color);
         function editRow(button) {
             var row = button.closest('tr');
             var cells = row.getElementsByTagName('td');
@@ -473,6 +476,15 @@
             var qty = cells[3].innerText;
             var price = cells[4].innerText;
             var offer_price = cells[5].innerText;
+
+            cells[1].innerHTML = `
+        <select name="color_id" class="form-control">
+            <!-- Populate options dynamically with existing colors -->
+            ${availableColors.map(color => `
+                <option value="${color.id}" ${color.id == colorId ? 'selected' : ''}>${color.name}</option>
+            `).join('')}
+        </select>
+    `;
 
             cells[2].innerHTML = `<input type="text" name="sku" value="${sku}" class="form-control">`;
             cells[3].innerHTML = `<input type="number" name="qty" value="${qty}" class="form-control">`;
@@ -513,6 +525,7 @@
             var row = button.closest('tr');
             var cells = row.getElementsByTagName('td');
             var id = cells[0].innerText;
+            var colorId = cells[1].querySelector('select[name="color_id"]').value;
             var sku = cells[2].querySelector('input[name="sku"]').value;
             var qty = cells[3].querySelector('input[name="qty"]').value;
             var price = cells[4].querySelector('input[name="price"]').value;
@@ -523,6 +536,7 @@
             var formData = new FormData();
             formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
             formData.append('id', id);
+            formData.append('color_id', colorId); 
             formData.append('sku', sku);
             formData.append('qty', qty);
             formData.append('price', price);

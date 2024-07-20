@@ -450,10 +450,10 @@ Route::middleware(['auth'])->group(function () {
 
     //Order 
     Route::get('order-all', [OrderController::class, 'all'])->name('orders.all');
+    Route::get('order/data', [OrderController::class, 'indexData'])->name('orders.data');
     Route::get('/orders/{id}', [OrderController::class, 'getOrder']);
     Route::post('order-update', [OrderController::class, 'update'])->name('orders.update');
     Route::get('order-edit/{id}', [CouponController::class, 'edit'])->name('order.edit');
-    Route::get('order/data', [OrderController::class, 'indexData'])->name('orders.data');
     Route::get('order/pending_data', [OrderController::class, 'pendingData'])->name('orders.pending_data');
     Route::get('order/progress_data', [OrderController::class, 'progressData'])->name('orders.progress_data');
     Route::get('order/delivered_data', [OrderController::class, 'deliveredData'])->name('orders.delivered_data');

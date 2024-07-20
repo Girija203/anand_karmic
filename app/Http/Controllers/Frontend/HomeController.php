@@ -617,7 +617,7 @@ public function cart(Request $request)
     {
         $user = Auth::user();
         $cart = Cart::all();
-        $order = Order::all();
+        $order = Order::where('user_id', $user->id)->get();
         if ($user) {
             $address = Addresses::where('user_id', $user->id)
                 ->where('type', 0)
@@ -838,9 +838,7 @@ public function vieworder($id){
    
     $cart=Cart::all();
     $order = Order::with('orderItems.product')->findOrFail($id);
-
-  
-
+    // dd($order->user->addresses);
     return view( 'frontend.vieworder',compact('cart','order'));
 }
 }

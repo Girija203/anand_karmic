@@ -16,7 +16,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserCreated;
 use App\Models\Notification;
+use App\Models\ProductColor;
 use App\Notifications\OrderNotification;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class CheckOutController extends Controller
@@ -24,7 +26,7 @@ class CheckOutController extends Controller
 
     public function placeOrder(Request $request)
     {
-        $orderData =  $request->validate([
+        $orderData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255',
             'mobile' => 'required|string|max:15',
@@ -35,233 +37,201 @@ class CheckOutController extends Controller
             'pincode' => 'required|string|max:10',
         ]);
 
-        $user = User::where('email', $request->email)
-            ->orWhere('phone', $request->mobile)
-            ->first();
+        DB::beginTransaction();
 
-        if (!$user) {
-            // If user doesn't exist, create a new user
-            $user = new User();
-            $user->name = $request->name;
-            $user->email = $request->email;
-            $user->phone = $request->mobile;
-            $user->password = bcrypt($request->mobile); // Use mobile number as password
-            $user->save();
+        try {
+            $user = User::where('email', $request->email)
+                ->orWhere('phone', $request->mobile)
+                ->first();
 
-            // Send email to the user with login details
-            Mail::send('frontend.usercreated', ['email' => $request->email, 'password' => $request->mobile], function ($message) use ($user) {
-                $message->to($user->email);
-                $message->subject('Your Login Details');
-            });
-        } else {
-            // If user already exists, update user details
-            $user->name = $request->name;
-            $user->email = $request->email;
-            $user->phone = $request->mobile;
-            $user->save();
-        }
+            if (!$user) {
+                // If user doesn't exist, create a new user
+                $user = new User();
+                $user->name = $request->name;
+                $user->email = $request->email;
+                $user->phone = $request->mobile;
+                $user->password = bcrypt($request->mobile); // Use mobile number as password
+                $user->save();
 
-        // Get the user ID
-        $user_id = $user->id;
+                // Send email to the user with login details
+                Mail::send('frontend.usercreated', ['email' => $request->email, 'password' => $request->mobile], function ($message) use ($user) {
+                    $message->to($user->email);
+                    $message->subject('Your Login Details');
+                });
+            } else {
+                // If user already exists, update user details
+                $user->name = $request->name;
+                $user->email = $request->email;
+                $user->phone = $request->mobile;
+                $user->save();
+            }
 
-        // Save billing address
-        if (!$user->addresses()->where('type', 0)->exists()) {
-            $billingAddress = new Addresses();
-            $billingAddress->user_id = $user_id;
-            $billingAddress->name = $request->name;
-            $billingAddress->email = $request->email;
-            $billingAddress->mobile = $request->mobile;
-            $billingAddress->country = $request->country;
-            $billingAddress->state = $request->state;
-            $billingAddress->city = $request->city;
-            $billingAddress->address = $request->address;
-            $billingAddress->pincode = $request->pincode;
-            $billingAddress->type = 0;
-            $billingAddress->save();
-        }
+            // Get the user ID
+            $user_id = $user->id;
 
-        $selectedShippingAddressId = $request->input('selected_shipping_address_id');
+            // Save billing address
+            if (!$user->addresses()->where('type', 0)->exists()) {
+                $billingAddress = new Addresses();
+                $billingAddress->user_id = $user_id;
+                $billingAddress->name = $request->name;
+                $billingAddress->email = $request->email;
+                $billingAddress->mobile = $request->mobile;
+                $billingAddress->country = $request->country;
+                $billingAddress->state = $request->state;
+                $billingAddress->city = $request->city;
+                $billingAddress->address = $request->address;
+                $billingAddress->pincode = $request->pincode;
+                $billingAddress->type = 0;
+                $billingAddress->save();
+            }
 
-        // dd($selectedShippingAddressId);
-
-        // Retrieve the current default shipping address
-        $defaultShippingAddress = $user->addresses()->where('type', 1)->where('default_shipping', 1)->first();
-
-        if ($defaultShippingAddress) {
-            // If a default shipping address exists, update it to not be the default
-            $defaultShippingAddress->default_shipping = 0;
-            $defaultShippingAddress->save();
-        }
-
-        // Retrieve the new selected shipping address
-        $newSelectedShippingAddress = $user->addresses()->where('id', $selectedShippingAddressId)->first();
-        // dd($newSelectedShippingAddress);
-        if ($newSelectedShippingAddress) {
-            // If the selected shipping address exists, set it as the new default
-            $newSelectedShippingAddress->default_shipping = 1;
-            $newSelectedShippingAddress->save();
-        } else {
-            // Handle the case where the selected shipping address ID doesn't exist for the user
-        }
-
-
-        if ($request->has('ship_different') && !$user->addresses()->where('type', 1)->exists()) {
-            $request->validate([
-                'shipping_name' => 'required|string|max:255',
-                'shipping_email' => 'nullable|string|email|max:255',
-                'shipping_mobile' => 'nullable|string|max:15',
-                'shipping_country' => 'nullable|string|max:255',
-                'shipping_state' => 'nullable|string|max:255',
-                'shipping_city' => 'nullable|string|max:255',
-                'shipping_address' => 'nullable|string',
-                'shipping_pincode' => 'nullable|string|max:10',
-            ]);
-
-            // Find and update the existing default shipping address, if any
+            $selectedShippingAddressId = $request->input('selected_shipping_address_id');
+            // Retrieve the current default shipping address
             $defaultShippingAddress = $user->addresses()->where('type', 1)->where('default_shipping', 1)->first();
 
-            // Save the new shipping address as the default
-            $shippingAddress = new Addresses();
-            $shippingAddress->user_id = $user_id;
-            $shippingAddress->name = $request->shipping_name;
-            $shippingAddress->email = $request->shipping_email;
-            $shippingAddress->mobile = $request->shipping_mobile;
-            $shippingAddress->country = $request->shipping_country;
-            $shippingAddress->state = $request->shipping_state;
-            $shippingAddress->city = $request->shipping_city;
-            $shippingAddress->address = $request->shipping_address;
-            $shippingAddress->pincode = $request->shipping_pincode;
-            $shippingAddress->type = 1;
-            $shippingAddress->default_shipping = 1;
-            $shippingAddress->save();
-        }
-
-
-
-        $cartItems = Cart::with('product')->get();
-        $cart = $cartItems->map(function ($item) {
-            $product = $item->product;
-            $discount = 0;
-
-            if ($product->offer_price && $product->price > $product->offer_price) {
-                $discount = $product->price - $product->offer_price;
+            if ($defaultShippingAddress) {
+                // If a default shipping address exists, update it to not be the default
+                $defaultShippingAddress->default_shipping = 0;
+                $defaultShippingAddress->save();
             }
 
-            $item->discount = $discount;
-            return $item;
-        });
+            // Retrieve the new selected shipping address
+            $newSelectedShippingAddress = $user->addresses()->where('id', $selectedShippingAddressId)->first();
+            if ($newSelectedShippingAddress) {
+                // If the selected shipping address exists, set it as the new default
+                $newSelectedShippingAddress->default_shipping = 1;
+                $newSelectedShippingAddress->save();
+            }
 
+            if ($request->has('ship_different') && !$user->addresses()->where('type', 1)->exists()) {
+                $request->validate([
+                    'shipping_name' => 'required|string|max:255',
+                    'shipping_email' => 'nullable|string|email|max:255',
+                    'shipping_mobile' => 'nullable|string|max:15',
+                    'shipping_country' => 'nullable|string|max:255',
+                    'shipping_state' => 'nullable|string|max:255',
+                    'shipping_city' => 'nullable|string|max:255',
+                    'shipping_address' => 'nullable|string',
+                    'shipping_pincode' => 'nullable|string|max:10',
+                ]);
 
-        // Calculate the total amount and discount amount
-        $totalAmount = 0;
-        $discountAmount = 0;
-        $discountAmounts = 0;
+                // Save the new shipping address as the default
+                $shippingAddress = new Addresses();
+                $shippingAddress->user_id = $user_id;
+                $shippingAddress->name = $request->shipping_name;
+                $shippingAddress->email = $request->shipping_email;
+                $shippingAddress->mobile = $request->shipping_mobile;
+                $shippingAddress->country = $request->shipping_country;
+                $shippingAddress->state = $request->shipping_state;
+                $shippingAddress->city = $request->shipping_city;
+                $shippingAddress->address = $request->shipping_address;
+                $shippingAddress->pincode = $request->shipping_pincode;
+                $shippingAddress->type = 1;
+                $shippingAddress->default_shipping = 1;
+                $shippingAddress->save();
+            }
 
-        foreach ($cart as $item) {
-            $itemAmount = $item->quantity * $item->product->price;
-            $totalAmount += $itemAmount;
-            $discountAmount += $item->discount * $item->quantity;
-        }
+            $cartItems = Cart::with('product')->get();
+            $cart = $cartItems->map(function ($item) {
+                $product = $item->product;
+                $discount = 0;
+                if ($product->colors->first()->offer_price && $product->colors->first()->price > $product->colors->first()->offer_price) {
+                    $discount = $product->colors->first()->price - $product->colors->first()->offer_price;
+                }
 
-        // dd( $discountAmounts);
-        // Calculate the final total amount including shipping and coupon discount
-        $shippingFee = $request->shipping_fee;
-        $couponDiscount = $request->coupon_discount;
+                $item->discount = $discount;
+                return $item;
+            });
+            // Calculate the total amount and discount amount
+            $totalAmount = 0;
+            $discountAmount = 0;
+            $discountAmounts = 0;
 
-        $itemAmount = $item->quantity * $item->product->offer_price;
-        $itemAmount = floatval($itemAmount);         // Ensure $itemAmount is a float// Ensure $discountAmounts is a float
-        $shippingFee = floatval($shippingFee);         // Ensure $shippingFee is a float
-        $couponDiscount = floatval($couponDiscount);   // Ensure $couponDiscount is a float
+            foreach ($cart as $item) {
+                $itemAmount = $item->quantity * $item->product->colors->first()->offer_price;
+                $totalAmount += $itemAmount;
+                $discountAmount += $item->discount * $item->quantity;
+            }
+            // Calculate the final total amount including shipping and coupon discount
+            $shippingFee = $request->shipping_fee;
+            $couponDiscount = $request->coupon_discount;
+            $itemAmount = $item->quantity * $item->product->colors->first()->offer_price;
+            $itemAmount = floatval($itemAmount);
+            $shippingFee = floatval($shippingFee);
+            $couponDiscount = floatval($couponDiscount);
 
-        $grandTotal = $itemAmount + $shippingFee - $couponDiscount;
-        // $grandTotal = ($itemAmount - $discountAmounts) + $shippingFee - $couponDiscount;
+            $grandTotal = $itemAmount + $shippingFee - $couponDiscount;
+            // Create order
+            $order = new Order();
+            $order->user_id = $user_id;
+            $order->order_no = 'ORDER-' . strtoupper(uniqid());
+            $order->total_amount = $grandTotal;
+            $order->product_qty = $item->quantity;
+            $order->payment_method = $request->payment_method;
+            $order->payment_status = 0;
+            $order->order_status = 0;
+            $order->shipping_cost = $shippingFee;
+            $order->coupon_cost = $couponDiscount;
+            $order->save();
 
-        // dd($grandTotal );
+            // Save order items
+            foreach ($cartItems as $item) {
+                $orderItem = new OrderItem();
+                $orderItem->order_id = $order->id;
+                $orderItem->product_id = $item['product_id'];
+                $orderItem->quantity = $item['quantity'];
+                $orderItem->unit_price = $item['price'];
+                $orderItem->total_price = $item['quantity'] * $item['price'];
+                $orderItem->save();
+            }
+            $productColor = ProductColor::where('product_id', $item['product_id'])->first();
+            if ($productColor) {
+                $productColor->qty -= $item['quantity'];
+                $productColor->save();
+            }
 
-        // Create order
-        $order = new Order();
-        $order->user_id = $user_id;
-        $order->order_no = 'ORDER-' . strtoupper(uniqid());
-        $order->total_amount = $grandTotal;
-        $order->product_qty = $item->quantity;
-        $order->payment_method = $request->payment_method;
-        $order->payment_status = 0;
-        $order->order_status = 0;
-        $order->shipping_cost = $shippingFee;
-        $order->coupon_cost = $couponDiscount;
-        $order->save();
+            if (in_array($request->payment_method, ['stripe', 'razorpay'])) {
+                $payment = new Payment();
+                $payment->order_id = $order->id;
+                $payment->payment_method = $request->payment_method;
+                $payment->transaction_id = Str::random(16); // Generates a random 16 character string
+                $payment->amount = $grandTotal;
+                $payment->status = 0;
+                $payment->save();
+            } elseif ($request->payment_method == 'cod') {
+                $payment = new Payment();
+                $payment->order_id = $order->id;
+                $payment->payment_method = 'cod';
+                $payment->transaction_id = null;
+                $payment->amount = $grandTotal;
+                $payment->status = 0;
+                $payment->save();
+            }
 
-        // Save order items
-        foreach ($cartItems as $item) {
-            $orderItem = new OrderItem();
-            $orderItem->order_id = $order->id;
-            $orderItem->product_id = $item['product_id'];
-            $orderItem->quantity = $item['quantity'];
-            $orderItem->unit_price = $item['price'];
-            $orderItem->total_price = $item['quantity'] * $item['price'];
-            $orderItem->save();
-        }
+            $exchangeRate = session('exchange_rate', 1);
+            $currencySymbol = session('currency_symbol', '$');
 
-        if (in_array($request->payment_method, ['stripe', 'razorpay'])) {
-            $payment = new Payment();
-            $payment->order_id = $order->id;
-            $payment->payment_method = $request->payment_method;
-            $payment->transaction_id = Str::random(16); // Generates a random 16 character string
-            $payment->amount = $grandTotal;
-            $payment->status = 0;
-            $payment->save();
-        } elseif ($request->payment_method == 'cod') {
-            $payment = new Payment();
-            $payment->order_id = $order->id;
-            $payment->payment_method = 'cod';
-            $payment->transaction_id = null;
-            $payment->amount = $grandTotal;
-            $payment->status = 0;
-            $payment->save();
-        }
-
-        $exchangeRate = session('exchange_rate', 1);
-        $currencySymbol = session('currency_symbol', '$');
-
-
-        $orderItems = $order->orderItems()->with('product')->get();
-        Mail::send('Admin.mail.order_confirmation', ['user' => $user, 'order' => $order, 'orderItems' => $orderItems, 'exchangeRate' => $exchangeRate, 'currencySymbol' => $currencySymbol], function ($message) use ($user) {
-            $message->to($user->email);
-            $message->subject('Order Confirmation');
-        });
-
-        // Delete all cart items
-        foreach ($cartItems as $item) {
-            $item->delete();
-        }
-
-        $username = $user->name;
-        $order_no = $order->order_no;
-        event(new OrderNotificationEvent($username, $order_no));
-
-        $admins = User::all();
-        foreach ($admins as $admin) {
-            $unreadNotification = $admin->unreadNotifications;
-            $order_Notification = $unreadNotification->filter(function ($notification) {
-                return $notification->type == 'App\Notifications\OrderNotification';
+            $orderItems = $order->orderItems()->with('product')->get();
+            Mail::send('Admin.mail.order_confirmation', ['user' => $user, 'order' => $order, 'orderItems' => $orderItems, 'exchangeRate' => $exchangeRate, 'currencySymbol' => $currencySymbol], function ($message) use ($user) {
+                $message->to($user->email);
+                $message->subject('Order Confirmation');
             });
 
-            if (count($order_Notification) < 5) {
-                $admin->notify(new OrderNotification($orderData, $order_no));
-            } else {
-                $admin->notify(new OrderNotification($orderData, $order_no));
-                $last_order = $order_Notification->sortByDesc('created_at')->last();
-                $notificat = Notification::where('id', $last_order->id)->first();
-                $notificat->delete();
+            // Delete all cart items
+            foreach ($cartItems as $item) {
+                $item->delete();
             }
-        }
 
-        if (auth()->check()) {
-            // User is logged in, redirect to account page
-            return redirect()->route('myaccount')->with('success', 'Your order has been placed successfully. You are now logged in.');
-        } else {
-            // User is not logged in, redirect to registration page
-            return redirect()->route('normaluser.register')->with('success', 'Your order has been placed successfully. Please login to continue.');
+            DB::commit();
+
+            if (auth()->check()) {
+                return redirect()->route('myaccount')->with('success', 'Your order has been placed successfully. You are now logged in.');
+            } else {
+                return redirect()->route('normaluser.register')->with('success', 'Your order has been placed successfully. Please login to continue.');
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'An error occurred while placing your order. Please try again.');
         }
     }
 
