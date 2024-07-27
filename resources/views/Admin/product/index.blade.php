@@ -318,6 +318,7 @@
                 <button class="btn py-0 px-0" onclick="addVariantModal(${row.id})" class="icon-button custom-color">
                     <i class="mdi mdi-plus-box text_danger_blue" style="font-size: 22px;"></i>
                 </button>`;
+
                         }
                     },
                     {
@@ -331,7 +332,7 @@
                             <button title="Edit Color Varient" class="btn btn-edit py-0 px-0" onclick="editVariantModal(${row.id})" class="icon-button custom-color">
                             <i class="ri-edit-box-line  " style="font-size: 20px;"></i>
                             </button>
-
+                           <button title="Edit Product" class="btn btn-edit py-0 px-0" onclick="addProduct(${row.id})"> <i class="mdi mdi-plus-box text_danger_blue" style="font-size: 22px;"></i></button>
                            <button title="Edit Product" class="btn btn-edit py-0 px-0" onclick="editUsers(${row.id})"><i class="ri-edit-line" style="font-size: 20px;"></i></button>
                            <button title="Delete Product" class="btn btn-delete py-0 px-0" onclick="deleteUsers(${row.id})"><i class="mdi mdi-delete-outline" style="font-size: 20px;"></i></button>
 
@@ -443,6 +444,12 @@
             window.location.href = '/product/edit/' + id;
         }
 
+        function addProduct(id) {
+            console.log("inside");
+
+            window.location.href = '/product/add/' + id;
+        }
+
         function deleteUsers(id) {
 
             if (confirm('Are you sure you want to delete this category?')) {
@@ -467,6 +474,7 @@
 
     <script>
         var availableColors = @json($color);
+
         function editRow(button) {
             var row = button.closest('tr');
             var cells = row.getElementsByTagName('td');
@@ -481,8 +489,8 @@
         <select name="color_id" class="form-control">
             <!-- Populate options dynamically with existing colors -->
             ${availableColors.map(color => `
-                <option value="${color.id}" ${color.id == colorId ? 'selected' : ''}>${color.name}</option>
-            `).join('')}
+                    <option value="${color.id}" ${color.id == colorId ? 'selected' : ''}>${color.name}</option>
+                `).join('')}
         </select>
     `;
 
@@ -500,13 +508,13 @@
             ${multiImagesHTML.split('\n').map((imgTag, index) => {
                 if (imgTag.trim() !== '') {
                     return `
-                                                                                                    <div class="multi-image-item" data-index="${index}">
-                                                                                                        ${imgTag}
-                                                                                                        <button type="button" class="btn btn-danger btn-sm mt-2" onclick="removeMultiImage(this)">
-                                                                                                            <span class="mdi mdi-delete"></span>
-                                                                                                        </button>
-                                                                                                    </div>
-                                                                                                `;
+                                                                                                        <div class="multi-image-item" data-index="${index}">
+                                                                                                            ${imgTag}
+                                                                                                            <button type="button" class="btn btn-danger btn-sm mt-2" onclick="removeMultiImage(this)">
+                                                                                                                <span class="mdi mdi-delete"></span>
+                                                                                                            </button>
+                                                                                                        </div>
+                                                                                                    `;
                 }
                 return '';
             }).join('')}
@@ -536,7 +544,7 @@
             var formData = new FormData();
             formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
             formData.append('id', id);
-            formData.append('color_id', colorId); 
+            formData.append('color_id', colorId);
             formData.append('sku', sku);
             formData.append('qty', qty);
             formData.append('price', price);
