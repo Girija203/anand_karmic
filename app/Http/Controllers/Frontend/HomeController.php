@@ -30,6 +30,7 @@ use App\Models\Notification;
 use App\Models\OrderItem;
 use App\Models\ProductColor;
 use App\Models\ProductShowCase;
+use App\Models\ProductVariantColor;
 use App\Models\ShowCaseProduct;
 use App\Models\TermsAndCondition;
 use App\Models\User;
@@ -236,39 +237,58 @@ class HomeController extends Controller
     }
 
     public function singleProduct($id)
-{
-    // Fetch the current product along with its images and specifications
-    $products = Product::with('images', 'category')->findOrFail($id);
+    {
+        // Fetch the current product along with its images and specifications
+        $products = Product::with('images', 'category')->findOrFail($id);
 
-    // Fetch product colors and related color data
-    $productColors = ProductColor::where('product_id', $id)->with('color')->get();
+        // Fetch product colors and related color data
+        $productColors = ProductColor::where('product_id', $id)->with('color')->get();
 
-    $specifications = ProductSpecification::where('product_id', $id)->with('key')->get();
+        // Fetch product variant colors and their associated color data
+        $productVariantColors = ProductVariantColor::where('main_product_id', $products->id)
+            ->with('color')
+            ->get();
 
-    // Fetch related products from the same category
-    $relatedProducts = Product::where('category_id', $products->category_id)
-        ->where('id', '!=', $products->id)
-        ->with('images')
-        ->take(4)
-        ->get();
+        $specifications = ProductSpecification::where('product_id', $id)->with('key')->get();
 
-    $reviews = $products->reviews()->where('status', 1)->get();
+        // Fetch related products from the same category
+        $relatedProducts = Product::where('category_id', $products->category_id)
+            ->where('id', '!=', $products->id)
+            ->with('images')
+            ->take(4)
+            ->get();
 
-    $cart = Cart::where('product_id', $id)->get();
+        $reviews = $products->reviews()->where('status', 1)->get();
 
-    $product_sml_share = [];
+        $cart = Cart::where('product_id', $id)->get();
 
-    // Check if the product is shareable
-    if ($products->is_shareable) {
-        $product_sml_share = ProductSMLShare::all();
+        $product_sml_share = [];
+
+        // Check if the product is shareable
+        if ($products->is_shareable) {
+            $product_sml_share = ProductSMLShare::all();
+        }
+
+        $wishlistProductIds = Wishlist::pluck('product_id')->toArray();
+        $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
+        $currencySymbol = session('currency_symbol', '₹');
+
+        return view('frontend.single_product', compact('products', 'specifications', 'relatedProducts', 'reviews', 'cart', 'product_sml_share', 'exchangeRate', 'currencySymbol', 'wishlistProductIds', 'productColors', 'productVariantColors'));
     }
 
-    $wishlistProductIds = Wishlist::pluck('product_id')->toArray();
-    $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
-    $currencySymbol = session('currency_symbol', '₹');
 
-    return view('frontend.single_product', compact('products', 'specifications', 'relatedProducts', 'reviews', 'cart', 'product_sml_share', 'exchangeRate', 'currencySymbol', 'wishlistProductIds', 'productColors'));
-}
+
+    public function productsByColor($colorId)
+    {
+        $products = Product::whereHas('productVariantColors', function ($query) use ($colorId) {
+            $query->where('color_id', $colorId);
+        })->with('images', 'category')->get();
+
+        $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
+        $currencySymbol = session('currency_symbol', '₹');
+
+        return view('frontend.products_by_color', compact('products', 'exchangeRate', 'currencySymbol'));
+    }
 
     public function wishlist()
     {
@@ -438,7 +458,11 @@ public function cart(Request $request)
     public function checkout(Request $request)
     {
 
-        $cart = Cart::with('product')->get();
+        $productId = $request->session()->get('checkout_product_id');
+        if (!$productId) {
+            return redirect()->route('home')->withErrors('No product found for checkout.');
+        }
+        $cart = Cart::with('product')->where('product_id', $productId)->get();
 
         // Calculate the total amount
         $totalAmount = 0;
@@ -610,7 +634,12 @@ public function cart(Request $request)
             // Convert individual item prices to selected currency
            
         }
-        return view('frontend.checkout', compact('cart', 'totalAmount', 'shippingFee', 'finalTotalAmount', 'res_coupon', 'billingAddress', 'shippingAddress', 'userHasShippingAddress', 'Address', 'exchangeRate', 'currencySymbol'));
+
+        $productId = $request->session()->get('checkout_product_id');
+
+        // Find the product
+        $product = Product::find($productId);
+        return view('frontend.checkout', compact('cart', 'totalAmount', 'shippingFee', 'finalTotalAmount', 'res_coupon', 'billingAddress', 'shippingAddress', 'userHasShippingAddress', 'Address', 'exchangeRate', 'currencySymbol','product'));
     }
 
     public function myaccount()
@@ -806,6 +835,8 @@ public function cart(Request $request)
         // Store the cart in a cookie
         $cart = Cart::all();
         Cookie::queue('cart', json_encode($cart), 60 * 24 * 30); // 30 days
+
+        $request->session()->put('checkout_product_id', $productId);
 
         // Redirect to the checkout page
         return redirect()->route('checkout')->with('success', 'Product added to cart successfully');
