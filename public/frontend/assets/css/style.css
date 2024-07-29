@@ -2108,6 +2108,7 @@ hr {
     border-radius: 5000px;
     margin: 3px;
     position: relative;
+    border: 1px solid black;
 }
 .product-color-radio-buttons .color-lable:before {
     content: "";

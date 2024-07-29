@@ -443,98 +443,95 @@
 
             </div>
             <!-- Header Bottom Area End -->
-            @php
+           @php
+$totalAmount = 0; // Total amount in base currency
+$exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
+$currencySymbol = session('currency_symbol', '$'); // Currency symbol (for display purposes)
+@endphp
 
+@foreach ($cart as $item)
+    @php
+        // Get the lowest offer price for the product color
+        $offerPrice = \App\Models\ProductColor::where('product_id', $item->product_id)
+            ->min('offer_price');
 
-            $totalAmount = 0;
-            $discountAmount = 0;
-            $totalAmounts = 0;
-            @endphp
+        // Fallback to the product's offer price if no offer price is found
+        if (!$offerPrice) {
+            $offerPrice = $item->product->offer_price;
+        }
 
-            @foreach ($cart as $item)
-            @php
-            // Calculate the total amount for each item
-            $itemAmount = $item->quantity * $item->price;
-            $totalAmount += $itemAmount;
-            $discountAmount += $item->product->offer_price;
+        // Calculate the total amount for each item
+        $totalAmount += $item->quantity * $offerPrice;
 
-            // Sum of offer prices for each item
-            $totalAmounts += $item->quantity * $item->product->offer_price;
-            @endphp
-            @endforeach
+        // Convert item price to selected currency
+        $item->price = $offerPrice * $exchangeRate; // Update item price in selected currency
+    @endphp
+@endforeach
 
-            @php
-            $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
-            $currencySymbol = session('currency_symbol', '$');
-
-            // Convert total amounts to selected currency
-            $totalAmount *= $exchangeRate;
-            $totalAmountInCountryCurrency = $totalAmounts * $exchangeRate;
-
-            // Convert individual item prices to selected currency
-            foreach ($cart as $item) {
-            $item->price *= $exchangeRate;
-            $singleAmount = $item->product->offer_price;
-            $singleAmountCountryCurrency = $singleAmount * $exchangeRate;
-            }
-            @endphp
-
+@php
+// Convert total amount to selected currency
+$totalAmountInCountryCurrency = $totalAmount * $exchangeRate;
+@endphp
             <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas-cart">
-                <div class="offcanvas-cart-wrap">
-                    <div class="offcanvas-cart-header">
-                        <div class="offcanvas-cart-title">YOUR CART</div>
-                        <button type="button" class="btn-close text-end" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                    </div>
-            <div class="offcanvas-body">
-    <div class="cart-product">
-        <!-- Cart Product Item Start -->
-        @if ($cart->isEmpty())
-            <p class="text-center">Your cart is empty.</p>
-        @else
-            @foreach ($cart as $item)
-                <div class="cart-product-item">
-                    <a href="product-details.html" class="cart-product-thum">
-                        <img src="{{ asset('storage/' . $item->image) }}" alt="Product Cart One" />
-                    </a>
-                    <div class="cart-product-content">
-                        <h6 class="cart-product-content-title">
-                            <a href="">{{ $item->name }}</a>
-                        </h6>
-                        <div class="cart-product-content-bottom">
-                            <span class="cart-product-content-quantity">{{ $item->quantity }} ×
-                            </span>
-                            <span class="cart-product-content-amount">
-                                <bdi>
-                                    <span class="visually-hidden">Price:</span>
-                                    <td class="price text-dark fw-500">
-                                        {{ $currencySymbol }}<span class="item-total-price">{{ number_format($singleAmountCountryCurrency, 2) }}</span>
-                                    </td>
-                            </span>
+    <div class="offcanvas-cart-wrap">
+        <div class="offcanvas-cart-header">
+            <div class="offcanvas-cart-title">YOUR CART</div>
+            <button type="button" class="btn-close text-end" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="cart-product">
+                <!-- Cart Product Item Start -->
+                @if ($cart->isEmpty())
+                    <p class="text-center">Your cart is empty.</p>
+                @else
+                    @foreach ($cart as $item)
+                        @php
+                            // Get the item’s converted price for display
+                            $itemPriceInCountryCurrency = $item->price;
+                        @endphp
+                        <div class="cart-product-item">
+                            <a href="product-details.html" class="cart-product-thum">
+                                <img src="{{ asset('storage/' . $item->image) }}" alt="Product Cart One" />
+                            </a>
+                            <div class="cart-product-content">
+                                <h6 class="cart-product-content-title">
+                                    <a href="">{{ $item->name }}</a>
+                                </h6>
+                                <div class="cart-product-content-bottom">
+                                    <span class="cart-product-content-quantity">{{ $item->quantity }} ×
+                                    </span>
+                                    <span class="cart-product-content-amount">
+                                        <bdi>
+                                            <span class="visually-hidden">Price:</span>
+                                            {{ $currencySymbol }}<span class="item-total-price">{{ number_format($itemPriceInCountryCurrency, 2) }}</span>
+                                        </bdi>
+                                    </span>
+                                </div>
+                            </div>
+                            <form action="{{ route('remove.from.cart', $item->id) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="cart-product-close">x</button>
+                            </form>
                         </div>
-                    </div>
-                    <!-- <button class="cart-product-close">×</button> -->
-                    <form action="{{ route('remove.from.cart', $item->id) }}" method="POST">
-                        @csrf
-                        <button type="submit" class="cart-product-close">x</button>
-                    </form>
+                    @endforeach
+                @endif
+                <!-- Cart Product Item End -->
+            </div>
+            <div class="offcanvas-cart-footer">
+                <div class="mini-cart-total">
+                    <strong class="mini-cart-subtotal">Subtotal</strong>
+                    <span class="mini-cart-amount">
+                        <bdi>
+                            <span class="currency-symbol">{{ $currencySymbol }}</span>{{ number_format($totalAmountInCountryCurrency, 2) }}
+                        </bdi>
+                    </span>
                 </div>
-           
-        <!-- Cart Product Item End -->
-    </div>
-    <div class="offcanvas-cart-footer">
-        <div class="mini-cart-total">
-            <strong class="mini-cart-subtotal">Subtotal</strong>
-            <span class="mini-cart-amount">
-                <bdi>
-                    <span class="currency-symbol">{{ $currencySymbol }}</span>{{ number_format($totalAmountInCountryCurrency, 2) }}</bdi>
-            </span>
+                <div class="cart-button-action-wrap gap-2 d-flex flex-column">
+                    <a href="{{ route('cart') }}" class="btn-outline btn btn-full btn-lg">View Cart</a>
+                    <a href="{{ route('checkout') }}" class="btn-outline btn btn-full btn-lg">Checkout</a>
+                </div>
+            </div>
         </div>
-        <div class="cart-button-action-wrap gap-2 d-flex flex-column">
-            <a href="{{ route('cart') }}" class="btn-outline btn btn-full btn-lg">View Cart</a>
-            <a href="{{ route('checkout') }}" class="btn-outline btn btn-full btn-lg">Checkout</a>
-        </div>
-         @endforeach
-        @endif
     </div>
 </div>
             <!-- OffCanvas Cart End -->

@@ -563,6 +563,7 @@ Route::get('/shop/category/{id}', [HomeController::class, 'filterByCategory'])->
 Route::get('/filter', [HomeController::class, 'filterBySpecifications'])->name('filter.bySpecifications');
 
 Route::get('product/{id}', [HomeController::class, 'singleProduct'])->name('single.product');
+Route::get('/products/color/{colorId}', [ProductController::class, 'productsByColor'])->name('products.by.color');
 Route::get('wishlist', [HomeController::class, 'wishlist'])->name('wishlist');
 Route::post('/wishlist/add-to-cart', [HomeController::class, 'addToCart'])->name('wishlist.addToCart');
 Route::get('wishlist/remove/{id}', [HomeController::class, 'wishlistDelete'])->name('wishlist.remove');
