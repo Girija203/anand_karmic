@@ -16,6 +16,7 @@ use App\Models\ProductMeta;
 use App\Models\ProductMultipleImage;
 use App\Models\ProductSpecification;
 use App\Models\ProductSpecificationKey;
+use App\Models\ProductVariantColor;
 use App\Models\SubCategory;
 use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
@@ -334,6 +335,36 @@ class ProductController extends Controller
         return view('Admin.product.edit', compact('product', 'category', 'brand', 'productspecificationkey', 'subcategory', 'childcategory', 'productSpecifications', 'meta_key', 'productmeta', 'meta_type'));
     }
 
+    public function add($id)
+    {
+        $product = Product::findOrFail($id);
+       
+     $colors = Color::all();
+     $products = Product::all();
+
+
+        return view('Admin.product.add_product_variant', compact('product','colors','products'));
+    }
+
+    public function storeVariant(Request $request)
+    {
+        // dd($request);
+        $request->validate([
+            'main_product_id' => 'required|exists:products,id',
+            'color_id' => 'required|exists:colors,id',
+            'product_id' => 'required|exists:products,id',
+        ]);
+
+        $data = $request->only(['main_product_id', 'color_id', 'product_id']);
+
+        ProductVariantColor::create($data);
+
+        if ($request->action === 'save_and_new') {
+            return redirect()->back()->with('success', 'Product variant color saved. Add another one.');
+        }
+
+        return redirect()->route('product.index')->with('success', 'Product variant color saved.');
+    }
 
     public function update(Request $request, $id)
     {
