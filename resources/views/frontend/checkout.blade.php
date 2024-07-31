@@ -340,120 +340,88 @@
                             </div>
                             <!-- billing-details-wrap end -->
                         </div>
-                        <div class="col-lg-6 col-md-6">
-                            @php
-                                $totalAmount = 0;
+                      <div class="col-lg-6 col-md-6">
+    @php
+        $totalAmount = 0;
+        $cartItems = $cart;
+    @endphp
 
-                            @endphp
+    @foreach ($cartItems as $item)
+        @php
+            $offerPrice = \App\Models\ProductColor::where('product_id', $item->product_id)->min('offer_price') ?: $item->product->offer_price;
+            $totalAmount += $item->quantity * $offerPrice;
+        @endphp
+    @endforeach
 
-                            @foreach ($cart as $item)
-                                @php
-                                    $offerPrice = \App\Models\ProductColor::where('product_id', $item->product_id)->min(
-                                        'offer_price',
-                                    );
+    @php
+         $shippingFee = session('shippingFee', 0);
+        $res_coupon = session('res_coupon', 0);
+        $finalTotalAmount = $totalAmount + $shippingFee;
+        $finalAmountToPay = $finalTotalAmount - $res_coupon;
 
-                                    // If no offer price is found, fallback to product's offer price
-                                    if (!$offerPrice) {
-                                        $offerPrice = $item->product->offer_price;
-                                    }
-                                    // Calculate the total amount for each item
-                                    $totalAmount += $item->quantity * $offerPrice;
+      
 
-                                @endphp
-                                @php
-                                    // Calculate the final total amount including the shipping fee
-                                    $finalTotalAmount = $totalAmount + $shippingFee;
-                                    $finalAmountToPay = $finalTotalAmount - (float) $res_coupon;
-                                @endphp
-                            @endforeach
-                            @php
-                                $coupons = DB::table('coupons')->get();
-                            @endphp
+        $exchangeRate = session('exchange_rate', 1);
+        $currencySymbol = session('currency_symbol', '₹');
 
-                            @php
-                                $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
-                                $currencySymbol = session('currency_symbol', '₹');
+        $totalAmount *= $exchangeRate;
+        $shippingFee *= $exchangeRate;
+        $finalTotalAmount *= $exchangeRate;
+        $finalAmountToPay *= $exchangeRate;
 
-                                // Convert prices to selected currency
-                                $totalAmount *= $exchangeRate;
-                                $shippingFee *= $exchangeRate;
-                                $finalTotalAmount *= $exchangeRate;
-                                $finalAmountToPay *= $exchangeRate;
-
-                                // Convert individual item prices to selected currency
-                                foreach ($cart as $item) {
-                                    $item->price *= $exchangeRate;
-                                    $singleAmount = $item->product->offer_price;
-                                }
-                                $singleAmountCountryCurrency = $singleAmount * $exchangeRate;
-                            @endphp
-
-
-                            <!-- Order Summary-wrapper start -->
-                            <div class="order-summary">
-                                <h4 class="shoping-checkboxt-title mb-4 text-center">
-                                    YOUR ORDER
-                                </h4>
-                                <!-- your-order-wrap start-->
-                                <div class="order-summary-wrap">
-                                    <!-- order-summary-table start -->
-                                    <div class="order-summary-table table-responsive">
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th class="product-name">Product</th>
-                                                    <th class="product-total">Total</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($cart as $item)
-                                                    <tr class="cart_item">
-                                                        <td class="product-name">
-                                                            {{ $item->product->title }}
-                                                            <strong class="product-quantity"> ×
-                                                                {{ $item->quantity }}</strong>
-                                                        </td>
-                                                        <td class="product-total">
-                                                            {{ $currencySymbol }}<span
-                                                                class="amount">{{ number_format($totalAmount, 2) }}</span>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                            <tfoot>
-                                                <tr class="cart-subtotal">
-                                                    <th>Cart Subtotal</th>
-                                                    <td>{{ $currencySymbol }}<span
-                                                            class="amount">{{ number_format($singleAmountCountryCurrency, 2) }}</span>
-                                                    </td>
-
-
-
-                                                </tr>
-
-
-                                                <tr class="shipping">
-                                                    <th>Shipping Cost</th>
-                                                    <td> {{ $currencySymbol }}<span
-                                                            class="amount">{{ number_format($shippingFee, 2) }}</span>
-                                                    </td>
-
-                                                </tr>
-                                                <tr class="cart-subtotal">
-                                                    <th>Coupon Discount</th>
-                                                    <td>{{ $currencySymbol }}<span
-                                                            class="amount">{{ $res_coupon }}</span></td>
-                                                </tr>
-                                                <tr class="order-total">
-                                                    <th>Order Total</th>
-                                                    <td><strong>{{ $currencySymbol }} <span
-                                                                class="amount">{{ number_format((float) $finalTotalAmount - (float) $res_coupon, 2) }}</span></strong>
-                                                    </td>
-                                                </tr>
-                                            </tfoot>
-                                        </table>
-                                    </div>
-
+        foreach ($cartItems as $item) {
+            $item->price *= $exchangeRate;
+        }
+    @endphp
+                                    <!-- Order Summary-wrapper start -->
+                                    <div class="order-summary">
+                                        <h4 class="shoping-checkboxt-title mb-4 text-center">
+                                            YOUR ORDER
+                                        </h4>
+                                        <!-- your-order-wrap start-->
+                                        <div class="order-summary-wrap">
+                                            <!-- order-summary-table start -->
+                                            <div class="order-summary-table table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="product-name">Product</th>
+                                                            <th class="product-total">Total</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($cartItems as $item)
+                                                            <tr class="cart_item">
+                                                                <td class="product-name">
+                                                                    {{ $item->product->title }}
+                                                                    <strong class="product-quantity"> × {{ $item->quantity }}</strong>
+                                                                </td>
+                                                                <td class="product-total">
+                                                                    {{ $currencySymbol }}<span class="amount">{{ number_format($item->quantity * $item->price, 2) }}</span>
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                    <tfoot>
+                                                        <tr class="cart-subtotal">
+                                                            <th>Cart Subtotal</th>
+                                                            <td>{{ $currencySymbol }}<span class="amount">{{ number_format($totalAmount, 2) }}</span></td>
+                                                        </tr>
+                                                        <tr class="shipping">
+                                                            <th>Shipping Cost</th>
+                                                            <td>{{ $currencySymbol }}<span class="amount">{{ number_format($shippingFee, 2) }}</span></td>
+                                                        </tr>
+                                                        <tr class="cart-subtotal">
+                                                            <th>Coupon Discount</th>
+                                                            <td>{{ $currencySymbol }}<span class="amount">{{ number_format($res_coupon, 2) }}</span></td>
+                                                        </tr>
+                                                        <tr class="order-total">
+                                                            <th>Order Total</th>
+                                                            <td><strong>{{ $currencySymbol }}<span class="amount">{{ number_format($finalAmountToPay, 2) }}</span></strong></td>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
                                     <!-- your-order-table end -->
 
                                     <!-- your-order-wrap end -->

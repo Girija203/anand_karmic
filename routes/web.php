@@ -595,6 +595,12 @@ Route::post('/update-cart', [CartController::class, 'updateCart'])->name('update
 
 Route::post('remove-from-cart/{id}', [CartController::class, 'removeCart'])->name('remove.from.cart');
 
+Route::delete('remove-from-cart', [CartController::class, 'remove'])->name('cart.remove');
+
+Route::post('/update-carts', [CartController::class, 'updateCartForUnauthenticated'])->name('cart.update');
+
+
+
 //contact
 
 

@@ -357,216 +357,202 @@ class HomeController extends Controller
 }
 
 
-public function cart(Request $request)
-{
-    $cartcount = Cart::count();
-    // Fetch cart items with associated products
-    $cart = Cart::with('product')->get();
+    public function cart(Request $request)
+    {
+        $cartcount = 0;
+        $cart = collect(); // Initialize an empty collection
+        $totalAmount = 0;
+        $shippingFee = 0;
+        $res_coupon = 0;
 
-    // Initialize variables
-    $totalAmount = 0;
-    $shippingFee = 0;
-    $res_coupon = 0;
+        // Check if the user is authenticated
+        if (Auth::check()) {
+            // Fetch cart items from the database for authenticated users
+            $cart = Cart::with('product')->where('user_id', Auth::id())->get();
+            $cartcount = $cart->count();
 
-    // Iterate through each item in the cart
-    foreach ($cart as $item) {
-        // Fetch the lowest offer price for the product based on product_id
-        $offerPrice = ProductColor::where('product_id', $item->product_id)
-            ->min('offer_price');
+            foreach ($cart as $item) {
+                $offerPrice = ProductColor::where('product_id', $item->product_id)->min('offer_price');
+                if (!$offerPrice) {
+                    $offerPrice = $item->product->offer_price;
+                }
+                $totalAmount += $item->quantity * $offerPrice;
+            }
+        } else {
+            // Fetch cart items from the session for unauthenticated users
+            $sessionCart = session('cart', []);
+// dd($sessionCart);
+            if (!empty($sessionCart)) {
+                $cartcount = 1; // Since session cart is for one product in your context
 
-        // If no offer price is found, fallback to product's offer price
-        if (!$offerPrice) {
-            $offerPrice = $item->product->offer_price;
-        }
-
-        // Calculate total amount for this item
-        $totalAmount += $item->quantity * $offerPrice;
-    }
-
-    // dd($totalAmount);
-
-    // Fetch exchange rate from session (default to 1 if not set)
-    $exchangeRate = session('exchange_rate', 1);
-
-    // Convert total amount to selected currency
-    $totalAmountConverted = $totalAmount * $exchangeRate;
-
-    // Fetch shipping rules (assuming Shipping model exists)
-    $shippingRules = Shipping::all();
-
-    // Determine applicable shipping fee based on total amount
-    foreach ($shippingRules as $rule) {
-        $conditionFromInCountryCurrency = $rule->condition_from * $exchangeRate;
-        $conditionToInCountryCurrency = $rule->condition_to * $exchangeRate;
-
-        if ($totalAmountConverted >= $conditionFromInCountryCurrency && $totalAmountConverted <= $conditionToInCountryCurrency) {
-            $shippingFee = $rule->shipping_fee * $exchangeRate;
-            break;
-        }
-    }
-
-    // Apply coupon if provided in the request
-    $couponCode = $request->input('coupon');
-    if ($couponCode) {
-        $coupon = Coupon::where('code', $couponCode)
-            ->where('status', 1)
-            ->where('start_date', '<=', now())
-            ->where('end_date', '>=', now())
-            ->first();
-
-        if ($coupon) {
-            $totalAmountAfterDiscount = $totalAmountConverted;
-
-            if ($totalAmountConverted >= $coupon->minimum_purchase_price * $exchangeRate) {
-                if ($coupon->discount_type == 'percentage') {
-                    $discount = ($totalAmountConverted * $coupon->discount_value) / 100;
-                    $totalAmountAfterDiscount -= $discount;
-                    $res_coupon = $discount / $exchangeRate; // Convert discount back to original currency
-                } elseif ($coupon->discount_type == 'fixed') {
-                    $totalAmountAfterDiscount -= $coupon->discount_value * $exchangeRate;
-                    $res_coupon = $coupon->discount_value; // Already in original currency
+                $product = Product::find($sessionCart['product_id']);
+                if ($product) {
+                    $offerPrice = ProductColor::where('product_id', $sessionCart['product_id'])->min('offer_price');
+                    if (!$offerPrice) {
+                        $offerPrice = $product->offer_price;
+                    }
+                    $totalAmount += $sessionCart['quantity'] * $offerPrice ?? '';
+                    $cart->push((object)[
+                        'id' => 0, // No database ID
+                        'product_id' => $sessionCart['product_id'],
+                        'name' => $sessionCart['product_title'],
+                        'price' => $offerPrice,
+                        'image' => $sessionCart['image'],
+                        'quantity' => $sessionCart['quantity'],
+                        'product' => $product
+                    ]);
                 }
             }
-
-            // Update total amount after applying coupon
-            $totalAmountConverted = $totalAmountAfterDiscount;
         }
+
+        // Apply exchange rate conversion and other calculations
+        $exchangeRate = session('exchange_rate', 1);
+        $currencySymbol = session('currency_symbol', '₹');
+        $totalAmountConverted = $totalAmount * $exchangeRate;
+
+        // Determine applicable shipping fee based on total amount
+        $shippingRules = Shipping::all();
+        foreach ($shippingRules as $rule) {
+            $conditionFromInCountryCurrency = $rule->condition_from * $exchangeRate;
+            $conditionToInCountryCurrency = $rule->condition_to * $exchangeRate;
+            if ($totalAmountConverted >= $conditionFromInCountryCurrency && $totalAmountConverted <= $conditionToInCountryCurrency) {
+                $shippingFee = $rule->shipping_fee * $exchangeRate;
+                break;
+            }
+        }
+
+        // Apply coupon if provided in the request
+        $couponCode = $request->input('coupon');
+        if ($couponCode) {
+            $coupon = Coupon::where('code', $couponCode)
+                ->where('status', 1)
+                ->where('start_date', '<=', now())
+                ->where('end_date', '>=', now())
+                ->first();
+
+            if ($coupon) {
+                $totalAmountAfterDiscount = $totalAmountConverted;
+                if ($totalAmountConverted >= $coupon->minimum_purchase_price * $exchangeRate) {
+                    if ($coupon->discount_type == 'percentage') {
+                        $discount = ($totalAmountConverted * $coupon->discount_value) / 100;
+                        $totalAmountAfterDiscount -= $discount;
+                        $res_coupon = $discount / $exchangeRate; // Convert discount back to original currency
+                    } elseif ($coupon->discount_type == 'fixed') {
+                        $totalAmountAfterDiscount -= $coupon->discount_value * $exchangeRate;
+                        $res_coupon = $coupon->discount_value; // Already in original currency
+                    }
+                }
+                $totalAmountConverted = $totalAmountAfterDiscount;
+            }
+        }
+        session(['res_coupon' => $res_coupon]);
+
+        session()->put('cart', $sessionCart);
+
+        $finalTotalAmount = ($totalAmountConverted + $shippingFee - $res_coupon) / $exchangeRate;
+
+        return view('frontend.cart', compact('cart', 'totalAmount', 'shippingFee', 'res_coupon', 'finalTotalAmount', 'cartcount', 'exchangeRate', 'currencySymbol'));
     }
-    session(['res_coupon' => $res_coupon]);
-
-
-    $exchangeRate = session('exchange_rate', 1);
-    $currencySymbol = session('currency_symbol', '₹');
-
-
-    // Calculate final total amount including shipping and coupon discount
-    $finalTotalAmount = $totalAmountConverted + $shippingFee - $res_coupon;
-
-    // Convert final total amount back to original currency for display or further processing
-    $finalTotalAmount /= $exchangeRate;
-
-    // Assuming you pass data to a view or process further here...
-    // For example, you might return a view with the calculated totals and cart items
-    return view('frontend.cart', compact('cart', 'totalAmount', 'shippingFee', 'res_coupon', 'finalTotalAmount','cartcount','exchangeRate','currencySymbol'));
-}
-
-
-
 
 
 
     public function checkout(Request $request)
     {
+        $totalAmount = 0;
+        $shippingFee = session('shippingFee', 0);
+        $res_coupon = session('res_coupon', 0);
+        $cart = collect(); // Initialize an empty collection for cart items
 
-        $productId = $request->session()->get('checkout_product_id');
-        if (!$productId) {
-            return redirect()->route('home')->withErrors('No product found for checkout.');
+        // Check if the user is authenticated
+        if (Auth::check()) {
+            $cart = Cart::with('product')->where('user_id', Auth::id())->get();
+        } else {
+            $sessionCart = session('cart', []);
+            if (!empty($sessionCart)) {
+                $product = Product::find($sessionCart['product_id']);
+                if ($product) {
+                    $offerPrice = ProductColor::where('product_id', $sessionCart['product_id'])->min('offer_price');
+                    if (!$offerPrice) {
+                        $offerPrice = $product->offer_price;
+                    }
+                    $cart->push((object)[
+                        'id' => 0, // No database ID
+                        'product_id' => $sessionCart['product_id'],
+                        'name' => $sessionCart['product_title'],
+                        'price' => $offerPrice,
+                        'image' => $sessionCart['image'],
+                        'quantity' => $sessionCart['quantity'],
+                        'product' => $product
+                    ]);
+                }
+            }
         }
-        $cart = Cart::with('product')->where('product_id', $productId)->get();
 
         // Calculate the total amount
-        $totalAmount = 0;
-
         foreach ($cart as $item) {
-            // Fetch the lowest offer price for the product based on product_id
-            $offerPrice = ProductColor::where('product_id', $item->product_id)
-                ->min('offer_price');
-    
-            // If no offer price is found, fallback to product's offer price
+            $offerPrice = ProductColor::where('product_id', $item->product_id)->min('offer_price');
             if (!$offerPrice) {
                 $offerPrice = $item->product->offer_price;
             }
-    
-            // Calculate total amount for this item
             $totalAmount += $item->quantity * $offerPrice;
         }
-    
-        // dd($totalAmount );
-
-        $user = auth()->user();
 
         $exchangeRate = session('exchange_rate', 1);
-        $currencySymbol = session('currency_symbol', '$');
+        $currencySymbol = session('currency_symbol', '₹');
 
         // Convert totalAmount to country-based currency
         $totalAmountInCountryCurrency = $totalAmount * $exchangeRate;
-
-
-        // dd($totalAmountInCountryCurrency);
 
         // Fetch shipping rules
         $shippingRules = Shipping::all();
 
         // Determine the applicable shipping fee
-        $shippingFee = 0;
         foreach ($shippingRules as $rule) {
-
             $conditionFromInCountryCurrency = $rule->condition_from * $exchangeRate;
             $conditionToInCountryCurrency = $rule->condition_to * $exchangeRate;
-            // dd( $conditionFromInCountryCurrency);
-            // dd( $conditionToInCountryCurrency);
-
             if ($totalAmountInCountryCurrency >= $conditionFromInCountryCurrency && $totalAmountInCountryCurrency <= $conditionToInCountryCurrency) {
                 $shippingFee = $rule->shipping_fee * $exchangeRate;
                 break;
             }
         }
-        $Address = null;
-        if ($user != null) {
-            $shippingAddress = Addresses::where('user_id', $user->id)
-                ->where('type', 1) // Shipping address
-                ->get();
 
-            $Address = Addresses::where('user_id', $user->id)
-                ->where('type', 1)
+        // Apply coupon if provided in the request
+        $couponCode = $request->input('coupon');
+        if ($couponCode) {
+            $coupon = Coupon::where('code', $couponCode)
+                ->where('status', 1)
+                ->where('start_date', '<=', now())
+                ->where('end_date', '>=', now())
                 ->first();
 
-            $userHasShippingAddress = Addresses::where('user_id', $user->id)
-                ->where('type', 1) // Shipping address
-                ->exists();
+            if ($coupon) {
+                $totalAmountAfterDiscount = $totalAmountInCountryCurrency;
+                if ($totalAmountInCountryCurrency >= $coupon->minimum_purchase_price * $exchangeRate) {
+                    if ($coupon->discount_type == 'percentage') {
+                        $discount = ($totalAmountInCountryCurrency * $coupon->discount_value) / 100;
+                        $totalAmountAfterDiscount -= $discount;
+                        $res_coupon = $discount / $exchangeRate; // Convert discount back to original currency
+                    } elseif ($coupon->discount_type == 'fixed') {
+                        $totalAmountAfterDiscount -= $coupon->discount_value * $exchangeRate;
+                        $res_coupon = $coupon->discount_value; // Already in original currency
+                    }
+                }
+                $totalAmountInCountryCurrency = $totalAmountAfterDiscount;
+            }
         }
 
-        // If billing address exists, pre-fill the request with billing address data
-        // if ($billingAddress) {
-        //     $request->merge([
-        //         'name' => $request->input('name', $billingAddress->name),
-        //         'email' => $request->input('email', $billingAddress->email),
-        //         'mobile' => $request->input('mobile', $billingAddress->mobile),
-        //         'country' => $request->input('country', $billingAddress->country),
-        //         'state' => $request->input('state', $billingAddress->state),
-        //         'city' => $request->input('city', $billingAddress->city),
-        //         'address' => $request->input('address', $billingAddress->address),
-        //         'pincode' => $request->input('pincode', $billingAddress->pincode),
-        //     ]);
-        // }
-
-        $res_coupon = session('res_coupon', 0);
-
-        //    dd($res_coupon);
-
-        $finalTotalAmount = $totalAmount  + $shippingFee;
-
+        $finalTotalAmount = ($totalAmountInCountryCurrency + $shippingFee - $res_coupon) / $exchangeRate;
 
         $user = auth()->user();
-
         $billingAddress = null;
         $shippingAddress = null;
         $userHasShippingAddress = null;
 
         if ($user) {
-            // Fetch existing addresses
-            $billingAddress = Addresses::where('user_id', $user->id)
-                ->where('type', 0) // Billing address
-                ->first();
+            $billingAddress = Addresses::where('user_id', $user->id)->where('type', 0)->first();
+            $shippingAddress = Addresses::where('user_id', $user->id)->where('type', 1)->first();
+            $userHasShippingAddress = Addresses::where('user_id', $user->id)->where('type', 1)->exists();
 
-            $shippingAddress = Addresses::where('user_id', $user->id)
-                ->where('type', 1) // Shipping address
-                ->first();
-
-            $userHasShippingAddress = Addresses::where('user_id', $user->id)
-                ->where('type', 1) // Shipping address
-                ->exists();
-            // If billing address exists, pre-fill the request with billing address data
             if ($billingAddress) {
                 $request->merge([
                     'name' => $request->input('name', $billingAddress->name),
@@ -577,69 +563,12 @@ public function cart(Request $request)
                     'city' => $request->input('city', $billingAddress->city),
                     'address' => $request->input('address', $billingAddress->address),
                     'pincode' => $request->input('pincode', $billingAddress->pincode),
+                    'billing_same_as_shipping' => $userHasShippingAddress ? $request->input('billing_same_as_shipping', 1) : 1,
                 ]);
             }
-
-            // If shipping address exists and the ship_different flag is set, pre-fill the request with shipping address data
-            if ($request->has('ship_different') && $shippingAddress) {
-                $request->merge([
-                    'shipping_name' => $request->input('shipping_name', $shippingAddress->name),
-                    'shipping_email' => $request->input('shipping_email', $shippingAddress->email),
-                    'shipping_mobile' => $request->input('shipping_mobile', $shippingAddress->mobile),
-                    'shipping_country' => $request->input('shipping_country', $shippingAddress->country),
-                    'shipping_state' => $request->input('shipping_state', $shippingAddress->state),
-                    'shipping_city' => $request->input('shipping_city', $shippingAddress->city),
-                    'shipping_address' => $request->input('shipping_address', $shippingAddress->address),
-                    'shipping_pincode' => $request->input('shipping_pincode', $shippingAddress->pincode),
-                ]);
-            }
-
-            $shippingAddress = Addresses::where('user_id', $user->id)
-                ->where('type', 1) // Shipping address
-                ->get();
-
-            $Address = Addresses::where('user_id', $user->id)
-                ->where('type', 1)
-                ->first();
-
-
-
-            $userHasShippingAddress = Addresses::where('user_id', $user->id)
-                ->where('type', 1) // Shipping address
-                ->exists();
-
-
-            // If billing address exists, pre-fill the request with billing address data
-            if ($billingAddress) {
-                $request->merge([
-                    'name' => $request->input('name', $billingAddress->name),
-                    'email' => $request->input('email', $billingAddress->email),
-                    'mobile' => $request->input('mobile', $billingAddress->mobile),
-                    'country' => $request->input('country', $billingAddress->country),
-                    'state' => $request->input('state', $billingAddress->state),
-                    'city' => $request->input('city', $billingAddress->city),
-                    'address' => $request->input('address', $billingAddress->address),
-                    'pincode' => $request->input('pincode', $billingAddress->pincode),
-                ]);
-            }
-
-
-            // dd($finalTotalAmount);
-
-            $exchangeRate = session('exchange_rate', 1);
-            $currencySymbol = session('currency_symbol', '₹');
-
-
-            // dd($totalAmountInCountryCurrency);
-            // Convert individual item prices to selected currency
-           
         }
 
-        $productId = $request->session()->get('checkout_product_id');
-
-        // Find the product
-        $product = Product::find($productId);
-        return view('frontend.checkout', compact('cart', 'totalAmount', 'shippingFee', 'finalTotalAmount', 'res_coupon', 'billingAddress', 'shippingAddress', 'userHasShippingAddress', 'Address', 'exchangeRate', 'currencySymbol','product'));
+        return view('frontend.checkout', compact('cart', 'totalAmount', 'shippingFee', 'res_coupon', 'finalTotalAmount', 'exchangeRate', 'currencySymbol', 'billingAddress', 'shippingAddress', 'userHasShippingAddress'));
     }
 
     public function myaccount()
@@ -813,35 +742,50 @@ public function cart(Request $request)
 
     public function buyNow($productId, Request $request)
     {
-        // Add product to cart
         $product = Product::findOrFail($productId);
-        
+        $productColorId = $request->input('product_color_id');
+
+        // Fetch product details based on the selected color
+        $productColor = $product->colors->firstWhere('id', $productColorId);
+
+        // Check if the user is authenticated
+        if (!Auth::check()) {
+            // Store the product details in session and redirect to login page
+            $productDetails = [
+                'product_id' => $productId,
+                'product_color_id' => $productColorId,
+                'product_title' => $product->title,
+                'price' => $productColor->offer_price,
+                'image' => $productColor->single_image,
+                'quantity' => 1,
+            ];
+            session()->put('cart', $productDetails);
+
+            return redirect()->route('cart')->with('success', 'Product added to cart successfully!');
+        }
+
+        // Add product to cart for authenticated users
         $existingCartItem = Cart::where('product_id', $product->id)->first();
-        
+
         if ($existingCartItem) {
             // If the product is already in the cart, update the quantity
             $existingCartItem->quantity += 1;
             $existingCartItem->save();
         } else {
             Cart::create([
+                'user_id' => Auth::id(),
                 'product_id' => $product->id,
+                'product_color_id' => $productColorId,
                 'name' => $product->title,
-                'price' => $product->colors->first()->offer_price,
-                'image' => $product->colors->first()->single_image,
+                'price' => $productColor->offer_price,
+                'image' => $productColor->single_image,
                 'quantity' => 1,
             ]);
         }
 
-        // Store the cart in a cookie
-        $cart = Cart::all();
-        Cookie::queue('cart', json_encode($cart), 60 * 24 * 30); // 30 days
-
-        $request->session()->put('checkout_product_id', $productId);
-
         // Redirect to the checkout page
         return redirect()->route('checkout')->with('success', 'Product added to cart successfully');
     }
-
 
     public function changePassword(Request $request)
     {
