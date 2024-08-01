@@ -53,15 +53,15 @@
                             </div>
 
                             <!-- <div class="col-md-6 ">
-                                    <div class="col-md-12 mb-5">
-                                        <img src="{{ asset('frontend/assets/images/products/pano (1).jpeg') }}"
-                                            alt="" srcset="" class="w-100">
-                                    </div>
-                                    <div class="col-md-12 mb-5">
-                                        <img src="{{ asset('frontend/assets/images/products/pano (1).jpeg') }}"
-                                            alt="" srcset="" class="w-100">
-                                    </div>
-                                </div> -->
+                                       <div class="col-md-12 mb-5">
+                                           <img src="{{ asset('frontend/assets/images/products/pano (1).jpeg') }}"
+                                               alt="" srcset="" class="w-100">
+                                       </div>
+                                       <div class="col-md-12 mb-5">
+                                           <img src="{{ asset('frontend/assets/images/products/pano (1).jpeg') }}"
+                                               alt="" srcset="" class="w-100">
+                                       </div>
+                                   </div> -->
 
 
 
@@ -88,22 +88,22 @@
                         <div class="">
                             <div class="my-4">
                                 <div class="mb-5 about-image">
-                                    <img src="{{ asset('frontend/assets/images/karmicabout/ab1.jpg') }}" alt=""
+                                    <img src="{{ asset('frontend/assets/images/karmicabout/three.jpg') }}" alt=""
                                         srcset="" class="w-100">
                                 </div>
 
                             </div>
 
                             <!-- <div class="col-md-6 ">
-                                    <div class="col-md-12 mb-5">
-                                        <img src="{{ asset('frontend/assets/images/products/pano (1).jpeg') }}"
-                                            alt="" srcset="" class="w-100">
-                                    </div>
-                                    <div class="col-md-12 mb-5">
-                                        <img src="{{ asset('frontend/assets/images/products/pano (1).jpeg') }}"
-                                            alt="" srcset="" class="w-100">
-                                    </div>
-                                </div> -->
+                                       <div class="col-md-12 mb-5">
+                                           <img src="{{ asset('frontend/assets/images/products/pano (1).jpeg') }}"
+                                               alt="" srcset="" class="w-100">
+                                       </div>
+                                       <div class="col-md-12 mb-5">
+                                           <img src="{{ asset('frontend/assets/images/products/pano (1).jpeg') }}"
+                                               alt="" srcset="" class="w-100">
+                                       </div>
+                                   </div> -->
 
 
 
@@ -176,22 +176,22 @@
                         <div class="">
                             <div class="my-4">
                                 <div class="mb-5 about-image">
-                                    <img src="{{ asset('frontend/assets/images/karmicabout/ab2.jpg') }}" alt=""
+                                    <img src="{{ asset('frontend/assets/images/karmicabout/one.jpg') }}" alt=""
                                         srcset="" class="w-100">
                                 </div>
 
                             </div>
 
                             <!-- <div class="col-md-6 ">
-                 <div class="col-md-12 mb-5">
-                     <img src="{{ asset('frontend/assets/images/products/pano (1).jpeg') }}"
-                         alt="" srcset="" class="w-100">
-                 </div>
-                 <div class="col-md-12 mb-5">
-                     <img src="{{ asset('frontend/assets/images/products/pano (1).jpeg') }}"
-                         alt="" srcset="" class="w-100">
-                 </div>
-             </div> -->
+                    <div class="col-md-12 mb-5">
+                        <img src="{{ asset('frontend/assets/images/products/pano (1).jpeg') }}"
+                            alt="" srcset="" class="w-100">
+                    </div>
+                    <div class="col-md-12 mb-5">
+                        <img src="{{ asset('frontend/assets/images/products/pano (1).jpeg') }}"
+                            alt="" srcset="" class="w-100">
+                    </div>
+                </div> -->
 
 
 
@@ -212,22 +212,22 @@
                         <div class="">
                             <div class="my-4">
                                 <div class="mb-5 about-image">
-                                    <img src="{{ asset('frontend/assets/images/karmicabout/ab3.jpg') }}" alt=""
+                                    <img src="{{ asset('frontend/assets/images/karmicabout/four.jpg') }}" alt=""
                                         srcset="" class="w-100">
                                 </div>
 
                             </div>
 
                             <!-- <div class="col-md-6 ">
-                 <div class="col-md-12 mb-5">
-                     <img src="{{ asset('frontend/assets/images/products/pano (1).jpeg') }}"
-                         alt="" srcset="" class="w-100">
-                 </div>
-                 <div class="col-md-12 mb-5">
-                     <img src="{{ asset('frontend/assets/images/products/pano (1).jpeg') }}"
-                         alt="" srcset="" class="w-100">
-                 </div>
-             </div> -->
+                    <div class="col-md-12 mb-5">
+                        <img src="{{ asset('frontend/assets/images/products/pano (1).jpeg') }}"
+                            alt="" srcset="" class="w-100">
+                    </div>
+                    <div class="col-md-12 mb-5">
+                        <img src="{{ asset('frontend/assets/images/products/pano (1).jpeg') }}"
+                            alt="" srcset="" class="w-100">
+                    </div>
+                </div> -->
 
 
 
@@ -298,21 +298,21 @@
                         <div class="">
                             <div class="my-4">
                                 <div class="mb-5 about-image">
-                                    <img src="{{ asset('frontend/assets/images/karmicabout/ab4.jpg') }}" alt=""
+                                    <img src="{{ asset('frontend/assets/images/karmicabout/two.jpg') }}" alt=""
                                         srcset="" class="w-100">
                                 </div>
 
                             </div>
 
                             <!-- <div class="col-md-6 ">
-    <div class="col-md-12 mb-5">
-      <img src="{{ asset('frontend/assets/images/products/pano (1).jpeg') }}"
-          alt="" srcset="" class="w-100">
-    </div>
-    <div class="col-md-12 mb-5">
-      <img src="{{ asset('frontend/assets/images/products/pano (1).jpeg') }}"
-          alt="" srcset="" class="w-100">
-    </div>
+     <div class="col-md-12 mb-5">
+         <img src="{{ asset('frontend/assets/images/products/pano (1).jpeg') }}"
+             alt="" srcset="" class="w-100">
+     </div>
+     <div class="col-md-12 mb-5">
+         <img src="{{ asset('frontend/assets/images/products/pano (1).jpeg') }}"
+             alt="" srcset="" class="w-100">
+     </div>
     </div> -->
 
 

@@ -87,7 +87,7 @@
 
         .quantity__input {
             /* width: 32px;
-                                                            height: 19px; */
+                                                                            height: 19px; */
             width: 70px;
             height: 35px;
             margin: 0;
@@ -114,6 +114,29 @@
         .comment-form-textarea {
             min-height: 100px !important;
             height: 100px !important;
+        }
+
+        .colors {
+            display: flex;
+            gap: 10px;
+        }
+
+        .color-swatch {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            text-shadow: 0 0 2px black;
+            transition: transform 0.2s;
+        }
+
+        .color-swatch:hover {
+            transform: scale(1.1);
         }
 
         /* count incre and dec Ends */
@@ -173,32 +196,43 @@
                                 <a href="javascript:void(0);" id="toggle-description" onclick="toggleDescription()">Show
                                     More</a>
                             </p>
-<form class="product-color-radio-form" id="productColorForm">
-    <fieldset class="product-color-radio-wrap">
-        <h6 class="mb-0 title">Color</h6>
-        <div class="product-color-radio-buttons">
-            @foreach ($productVariantColors as $productVariantColor)
-                <input type="radio" id="color-lable-{{ $productVariantColor->color->name }}"
-                       name="color" value="{{ $productVariantColor->product_id }}"
-                       {{ $loop->first ? 'checked' : '' }}
-                       data-price="{{ $productVariantColor->price }}"
-                       data-offer-price="{{ $productVariantColor->offer_price }}">
-                <label class="color-lable color-lable-{{ $productVariantColor->color->name }}"
-                       for="color-lable-{{ $productVariantColor->color->name }}"  style="background: {{ $productVariantColor->color->code }}">
-                   
-                </label>
-                {{-- {{ $productVariantColor->color->code }} --}}
-            @endforeach
-        </div>
-    </fieldset>
-</form>
+                            {{-- <form class="product-color-radio-form" id="productColorForm">
+                                <fieldset class="product-color-radio-wrap">
+                                    <h6 class="mb-0 title">Color</h6>
+                                    <div class="product-color-radio-buttons">
+                                        @foreach ($productVariantColors as $productVariantColor)
+                                            <input type="radio" id="color-lable-{{ $productVariantColor->color->name }}"
+                                                name="color" value="{{ $productVariantColor->product_id }}">
+                                            <label class="color-lable color-lable-{{ $productVariantColor->color->name }}"
+                                                for="color-lable-{{ $productVariantColor->color->name }}"
+                                                style="background: {{ $productVariantColor->color->code }}">
 
-                            
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                </fieldset>
+                            </form> --}}
+                            <fieldset class="product-color-radio-wrap">
+                                <h6 class="mb-0 title">Color</h6>
+                                <div class="product-color-radio-buttons">   
+                                    <div class="colors">
+                                    @foreach ($productVariantColors as $productVariantColor)
+                                        <a href="{{ route('single.product', ['id' => $productVariantColor->product_id]) }}">
+                                            <div class="color-swatch"
+                                                style="background-color: {{ $productVariantColor->color->code }};">
+                                            </div><div class=""></div>
+                                        </a>
+                                    @endforeach
+                                    </div>
+                                </div>
+                            </fieldset>
+
+
 
 
                             <div class="product-item-stock in-stock mb-3">
                                 <span class="stock-label visually-hidden">Availability:</span>
-                                <span class="product-item-stock-in">{{ $productVariantColor->qty ??''}} In Stock</span>
+                                <span class="product-item-stock-in">{{ $productVariantColor->qty ?? '' }} In Stock</span>
                             </div>
 
                             <form action="{{ route('cart.add', $products->id) }}" method="post" id="addToCartForm">
@@ -633,12 +667,15 @@
 
 
 
-   <script>
-    document.querySelectorAll('input[name="color"]').forEach(function(radio) {
-        radio.addEventListener('change', function() {
-            var productId = this.value;
-            window.location.href = '/product/' + productId;
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('input[name="color"]').forEach(function(radio) {
+                radio.addEventListener('change', function() {
+                    console.log("Radio button changed");
+                    var productId = this.value;
+                    window.location.href = '/product/' + productId;
+                });
+            });
         });
-    });
-</script>
+    </script>
 @endsection
