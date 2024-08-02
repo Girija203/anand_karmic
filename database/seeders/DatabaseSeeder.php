@@ -40,7 +40,8 @@ class DatabaseSeeder extends Seeder
             FooterSeeder::class,
             SocialMediaLinkSeeder::class,
             FooterLinkSeeder::class,
-            ColorTableSeeder::class
+            ColorTableSeeder::class,
+            CouponTypeTableSeeder::class
             // ProductSeeder::class,
              
         ]);

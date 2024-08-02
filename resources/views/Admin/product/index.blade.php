@@ -277,80 +277,76 @@
 
         $(document).ready(function() {
 
-            table = $('#product-table').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: '{{ route('product.data') }}',
-                columns: [{
-                        data: null,
-                        name: 'auto_increment_id',
-                        render: function(data, type, row, meta) {
-                            return meta.row + 1;
-                        }
-                    },
-                    {
-                        data: 'title',
-                        name: 'title'
-                    },
+table = $('#product-table').DataTable({
+    processing: true,
+    serverSide: true,
+    ajax: '{{ route('product.data') }}',
+    columns: [
+        {
+            data: null,
+            name: 'auto_increment_id',
+            render: function(data, type, row, meta) {
+                return meta.row + 1;
+            }
+        },
+        {
+            data: 'title',
+            name: 'title'
+        },
+        {
+            data: 'single_image',
+            name: 'single_image',
+            render: function(data, type, row) {
+                let imagePath = data ? `{{ url('storage') }}/${data}` : '{{ url('assets/admin/images/no_image.png') }}';
+                return `<img src="${imagePath}" height="60" width="auto"/>`;
+            }
+        },
+        {
+            data: 'colors',
+            name: 'colors',
+            render: function(data, type, row, meta) {
+                let colors = data.split(', ');
+                let colorDivs = colors.map(color => {
+                   
+                }).join('');
 
-                    {
-                        data: 'single_image',
-                        name: 'single_image',
-                        render: function(data, type, row) {
-                            let imagePath = data ? `{{ url('storage') }}/${data}` :
-                                '{{ url('assets/admin/images/no_image.png') }}';
-                            return `<img src="${imagePath}"height="60" width="auto"/>`;
-                        }
-                    },
-                    {
-                        data: 'colors',
-                        name: 'colors',
-                        render: function(data, type, row, meta) {
-                            // Split the colors if they are separated by a comma
-                            let colors = data.split(', ');
-                            let colorDivs = colors.map(color => {
-                                return `<div style="display: flex; align-items: center; border: 1px solid; width: 20px; float: left; margin-right: 5px;">
-                        <div style="width: 20px; height: 20px; background-color: ${color};"></div>
-                    </div>`;
-                            }).join(''); // Join all color divs into a single string
+                return `${colorDivs}
+               
+                    <button title="Edit Product" class="btn btn-edit py-0 px-0" onclick="addProduct(${row.id})">
+                        <i class="mdi mdi-plus-box text_danger_blue" style="font-size: 22px;"></i>
+                    </button> 
+                    <button title="Edit Color Varient" class="btn btn-edit py-0 px-0" onclick="editProduct(${row.id})" class="icon-button custom-color">
+                        <i class="ri-edit-box-line" style="font-size: 20px;"></i>
+                    </button>  
+                    `;
+            }
+        },
+        {
+            data: null,
+            orderable: false,
+            searchable: false,
+            render: function(data, type, row) {
+                return `
+                    
+               
+                    <button title="Edit Product" class="btn btn-edit py-0 px-0" onclick="editUsers(${row.id})">
+                        <i class="ri-edit-line" style="font-size: 20px;"></i>
+                    </button>
+                    <button title="Delete Product" class="btn btn-delete py-0 px-0" onclick="deleteUsers(${row.id})">
+                        <i class="mdi mdi-delete-outline" style="font-size: 20px;"></i>
+                    </button>`;
+            }
+        },
+    ],
+    order: [[0, 'asc']],
+    select: true,
+    dom: 'lBfrtip',
+    buttons: [
+        'excel', 'print'
+    ],
+    pageLength: 8
+});
 
-                            return `${colorDivs}
-                <button class="btn py-0 px-0" onclick="addVariantModal(${row.id})" class="icon-button custom-color">
-                    <i class="mdi mdi-plus-box text_danger_blue" style="font-size: 22px;"></i>
-                </button>`;
-
-                        }
-                    },
-                    {
-                        data: null,
-                        orderable: false,
-                        searchable: false,
-
-                        render: function(data, type, row) {
-                            return `
-                            
-                            <button title="Edit Color Varient" class="btn btn-edit py-0 px-0" onclick="editVariantModal(${row.id})" class="icon-button custom-color">
-                            <i class="ri-edit-box-line  " style="font-size: 20px;"></i>
-                            </button>
-                           <button title="Edit Product" class="btn btn-edit py-0 px-0" onclick="addProduct(${row.id})"> <i class="mdi mdi-plus-box text_danger_blue" style="font-size: 22px;"></i></button>
-                           <button title="Edit Product" class="btn btn-edit py-0 px-0" onclick="editUsers(${row.id})"><i class="ri-edit-line" style="font-size: 20px;"></i></button>
-                           <button title="Delete Product" class="btn btn-delete py-0 px-0" onclick="deleteUsers(${row.id})"><i class="mdi mdi-delete-outline" style="font-size: 20px;"></i></button>
-
-                       `;
-                        }
-
-                    },
-                ],
-                order: [
-                    [0, 'asc']
-                ],
-                select: true,
-                dom: 'lBfrtip',
-                buttons: [
-                    'excel', 'print'
-                ],
-                pageLength: 8
-            });
 
 
         });
@@ -448,6 +444,12 @@
             console.log("inside");
 
             window.location.href = '/product/add/' + id;
+        }
+
+        function editProduct(id) {
+            console.log("inside");
+
+            window.location.href = '/product/editproduct/' + id;
         }
 
         function deleteUsers(id) {

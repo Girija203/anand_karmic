@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Addresses;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Models\Order;
@@ -262,10 +263,20 @@ class OrderController extends Controller
 
     public function show($id)
     {
-        $order = Order::find($id);
-        // dd($order->orderItems);
-        return view('Admin.order.show', compact('order'));
+        $order = Order::with('payment')->find($id);
+        $user = $order->user; // Assuming the `user` relationship is set up
+
+        $billingAddress = Addresses::getBillingAddress($user->id);
+        $shippingAddress = Addresses::getShippingAddress($user->id);
+
+        // If no shipping address exists, use the billing address
+        if (!$shippingAddress) {
+            $shippingAddress = $billingAddress;
+        }
+
+        return view('Admin.order.show', compact('order', 'billingAddress', 'shippingAddress'));
     }
+
     public function read_one($id)
     {
         $notify = Notification::find($id);

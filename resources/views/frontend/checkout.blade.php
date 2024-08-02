@@ -128,118 +128,88 @@
                                             @enderror
                                             <span class="text-danger" id="error_pincode"></span>
                                         </div>
-                                        @php
-                                            use App\Models\Addresses; // Move the 'use' statement here
-                                        @endphp
+                                      @php
+    use App\Models\Addresses; // Move the 'use' statement here
+@endphp
 
-                                        @if (!empty($shippingAddress) && $shippingAddress->count() > 0)
-                                            <!-- Shipping Address Starts -->
-                                            <!-- shipping Address Starts -->
+@if (!empty($shippingAddress) && $shippingAddress->count() > 0)
+    <!-- Shipping Address Starts -->
+    <!-- shipping Address Starts -->
 
-                                            <section class="cart-page-section border-bottom-1 mt-3">
-                                                <h4>Shipping Address</h3>
-                                                    <div class="">
-                                                        <div class="row gy-8">
-                                                            <div class="col-lg-12">
-                                                                @php
-                                                                    $user = auth()->user();
-                                                                    $shippingAddresses = Addresses::where(
-                                                                        'user_id',
-                                                                        $user->id,
-                                                                    )
-                                                                        ->where('type', 1) // Shipping address
-                                                                        ->where('default_shipping', 1) // Default shipping address
-                                                                        ->get();
-                                                                    $firstAddressId = $shippingAddresses->first()
-                                                                        ? $shippingAddresses->first()->id
-                                                                        : null;
-                                                                @endphp
+    <section class="cart-page-section border-bottom-1 mt-3">
+        <h4>Shipping Address</h4>
+        <div class="">
+            <div class="row gy-8">
+                <div class="col-lg-12">
+                    @php
+                        $user = auth()->user();
+                        $shippingAddresses = Addresses::where('user_id', $user->id)
+                            ->where('type', 1) // Shipping address
+                            ->where('default_shipping', 1) // Default shipping address
+                            ->get();
+                        $firstAddressId = $shippingAddresses->first()
+                            ? $shippingAddresses->first()->id
+                            : null;
+                    @endphp
 
-                                                                @foreach ($shippingAddress as $shippingAddress)
-                                                                    <div class="row my-3">
-                                                                        <div class="col-md-9">
+                    @foreach ($shippingAddresses as $address)
+                        <div class="row my-3">
+                            <div class="col-md-9">
 
-                                                                            <div
-                                                                                class="customer-detailaddress d-flex flex-column text-black">
+                                <div class="customer-detailaddress d-flex flex-column text-black">
+                                    <div class="form-check">
+                                        <input
+                                            class="form-check-input"
+                                            type="radio"
+                                            name="shipping_address"
+                                            id="flexRadioDefault{{ $address->id }}"
+                                            value="{{ $address->id }}"
+                                            {{ $address->id === $firstAddressId ? 'checked' : '' }}
+                                        />
+                                        <label class="form-check-label" for="flexRadioDefault{{ $address->id }}">
+                                            <h5 class="fs-20 fw-500">
+                                                {{ $address->name }}
+                                            </h5>
+                                        </label>
+                                    </div> 
 
-                                                                                <!-- <div class="form-check">
-                          <input
-                class="form-check-input"
-                type="radio"
-                name="shipping_address"
-                id="flexRadioDefault{{ $shippingAddress->id }}"
-                value="{{ $shippingAddress->id }}"
-                {{ $shippingAddress->id === $firstAddressId ? 'checked' : '' }}
-            />
-                          <label class="form-check-label" for="flexRadioDefault1">
-                            <h5 class="fs-20 fw-500">
-                              {{ $shippingAddress->name }}
-                            </h5>
-                          </label>
-                        </div> -->
-
-                                                                                <div class="form-check">
-                                                                                    <!-- Hidden input field to store the selected shipping address ID -->
-                                                                                    <input type="hidden"
-                                                                                        name="selected_shipping_address_id"
-                                                                                        value="{{ $shippingAddress->id }}">
-
-                                                                                    <input class="form-check-input"
-                                                                                        type="radio"
-                                                                                        name="shipping_address"
-                                                                                        id="flexRadioDefault{{ $shippingAddress->id }}"
-                                                                                        value="{{ $shippingAddress->id }}"
-                                                                                        {{ $shippingAddress->id === $firstAddressId ? 'checked' : '' }} />
-                                                                                    <label class="form-check-label"
-                                                                                        for="flexRadioDefault{{ $shippingAddress->id }}">
-                                                                                        <h5 class="fs-20 fw-500">
-                                                                                            {{ $shippingAddress->name }}
-                                                                                        </h5>
-                                                                                    </label>
-                                                                                </div>
-
-                                                                                <p class="fs-15 pl-1em">
-                                                                                    {{ $shippingAddress->address }}</p>
-                                                                                <p class="fs-16 pl-1em">Contact -(+91)
-                                                                                    {{ $shippingAddress->mobile }}</p>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="col-md-3">
-                                                                            <div class="d-flex justify-content-between">
-                                                                                <a
-                                                                                    href="{{ route('edit.shipping.address', $shippingAddress->id) }}">
-                                                                                    <span
-                                                                                        class="fs-16 fw-500 text-black">Edit</span></a>
-                                                                                <a
-                                                                                    href="{{ route('remove.shipping.address', $shippingAddress->id) }}">
-                                                                                    <span
-                                                                                        class="fs-16 fw-500 text-danger">Remove</span>
-                                                                                </a>
-
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                @endforeach
-                                                                <div class="p-3 my-3"
-                                                                    style="border-top: 1px solid rgba(186, 186, 186, 0.444)">
-                                                                    <a href="{{ route('add.shipping.address') }}">
-                                                                        <p class="fs-6 text-success px-5">Add Address</p>
-                                                                    </a>
-
-                                                                </div>
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
-                                            </section>
-                                            <!-- shipping Address Ends -->
-                                        @else
-                                            <label id="chekout-box-2" class="fs-16 mt-3">
-                                                <input type="checkbox" value="1" id="ship-toggle"
-                                                    name="ship_different">
-                                                Ship to a different address?
-                                            </label>
-                                        @endif
+                                    <p class="fs-15 pl-1em">
+                                        {{ $address->address }}
+                                    </p>
+                                    <p class="fs-16 pl-1em">Contact -(+91)
+                                        {{ $address->mobile }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="d-flex justify-content-between">
+                                    <a href="{{ route('edit.shipping.address', $address->id) }}">
+                                        <span class="fs-16 fw-500 text-black">Edit</span>
+                                    </a>
+                                    <a href="{{ route('remove.shipping.address', $address->id) }}">
+                                        <span class="fs-16 fw-500 text-danger">Remove</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                    <div class="p-3 my-3" style="border-top: 1px solid rgba(186, 186, 186, 0.444)">
+                        <a href="{{ route('add.shipping.address') }}">
+                            <p class="fs-6 text-success px-5">Add Address</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- shipping Address Ends -->
+@else
+    <label id="chekout-box-2" class="fs-16 mt-3">
+        <input type="checkbox" value="1" id="ship-toggle" name="ship_different">
+        Ship to a different address?
+    </label>
+@endif
+                                    
 
                                         <div class="col-lg-12">
                                             <div class="checkout-box-wrap mt-4">

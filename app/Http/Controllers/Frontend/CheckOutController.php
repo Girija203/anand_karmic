@@ -54,10 +54,10 @@ class CheckOutController extends Controller
                 $user->save();
 
                 // Send email to the user with login details
-                // Mail::send('frontend.usercreated', ['email' => $request->email, 'password' => $request->mobile], function ($message) use ($user) {
-                //     $message->to($user->email);
-                //     $message->subject('Your Login Details');
-                // });
+                Mail::send('frontend.usercreated', ['email' => $request->email, 'password' => $request->mobile], function ($message) use ($user) {
+                    $message->to($user->email);
+                    $message->subject('Your Login Details');
+                });
             } else {
                 // If user already exists, update user details
                 $user->name = $request->name;
@@ -212,10 +212,10 @@ class CheckOutController extends Controller
             $currencySymbol = session('currency_symbol', '$');
 
             $orderItems = $order->orderItems()->with('product')->get();
-            // Mail::send('Admin.mail.order_confirmation', ['user' => $user, 'order' => $order, 'orderItems' => $orderItems, 'exchangeRate' => $exchangeRate, 'currencySymbol' => $currencySymbol], function ($message) use ($user) {
-            //     $message->to($user->email); 
-            //     $message->subject('Order Confirmation');
-            // });
+            Mail::send('Admin.mail.order_confirmation', ['user' => $user, 'order' => $order, 'orderItems' => $orderItems, 'exchangeRate' => $exchangeRate, 'currencySymbol' => $currencySymbol], function ($message) use ($user) {
+                $message->to($user->email); 
+                $message->subject('Order Confirmation');
+            });
 
             // Delete all cart items
             foreach ($cartItems as $item) {

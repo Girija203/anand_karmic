@@ -346,6 +346,42 @@ class ProductController extends Controller
         return view('Admin.product.add_product_variant', compact('product','colors','products'));
     }
 
+    public function editProduct($id)
+    {
+        // Find the product by id
+        $product = Product::findOrFail($id);
+
+        // Fetch all colors
+        $colors = Color::all();
+
+        // Fetch all products
+        $products = Product::all();
+
+        // Fetch all product variant colors related to this product
+        $productVariantColors = ProductVariantColor::where('main_product_id', $id)->get();
+
+        return view('Admin.product.edit_product_variant', compact('product', 'colors', 'products', 'productVariantColors'));
+    }
+
+    public function updateProduct(Request $request, $id)
+    {
+        // Find the product by id
+        $product = Product::findOrFail($id);
+
+        // Update product details
+        $product->update($request->all());
+
+        // Update product variant colors
+        foreach ($request->input('variant_colors', []) as $variantId => $variantData) {
+            $productVariantColor = ProductVariantColor::findOrFail($variantId);
+            $productVariantColor->update($variantData);
+        }
+
+        return redirect()->route('product.index')->with('success', 'Product updated successfully');
+    }
+
+
+
     public function storeVariant(Request $request)
     {
         // dd($request);

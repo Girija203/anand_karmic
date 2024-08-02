@@ -15,21 +15,21 @@
                             <div class="col-md-6">
                                 <address>
                                     <strong>Billing Information:</strong><br>
-                                    {{ $order->user->addresses[0]->address }},
-                                    {{ $order->user->addresses[0]->city }},
-                                    {{ $order->user->addresses[0]->state }},
-                                    {{ $order->user->addresses[0]->country }},
-                                    {{ $order->user->addresses[0]->pincode }},
+                                    {{ $billingAddress->address }},
+                                    {{ $billingAddress->city }},
+                                    {{ $billingAddress->state }},
+                                    {{ $billingAddress->country }},
+                                    {{ $billingAddress->pincode }},
                                 </address>
                             </div>
                             <div class="col-md-6 text-md-right">
                                 <address>
                                     <strong>Shipping Information:</strong><br>
-                                    {{ $order->user->addresses[0]->address }},
-                                    {{ $order->user->addresses[0]->city }},
-                                    {{ $order->user->addresses[0]->state }},
-                                    {{ $order->user->addresses[0]->country }},
-                                    {{ $order->user->addresses[0]->pincode }},
+                                    {{ $shippingAddress->address ?? '' }},
+                                    {{ $shippingAddress->city ?? '' }},
+                                    {{ $shippingAddress->state ?? '' }},
+                                    {{ $shippingAddress->country ?? '' }},
+                                    {{ $shippingAddress->pincode ?? '' }},
                                 </address>
                             </div>
                         </div>
@@ -38,20 +38,27 @@
                                 <address>
                                     <strong>Payment Information:</strong><br>
                                     Method: {{ $order->payment_method }}<br>
-                                    Payment Status: <span
-                                        class="badge badge-success">{{ $order->payment_status }}</span><br>
-                                    Transaction: <p>{{ $order->transection_id }}</p>
+                                    Payment Status: {{ $order->payment_status == 1 ? 'Success' : 'Pending' }}<br>
+                                    Transaction: <p>{{ $order->payment->transaction_id ?? 'N/A' }}</p>
                                 </address>
                             </div>
                             <div class="col-md-6 text-md-right">
                                 <address>
                                     <strong>Order Information:</strong><br>
                                     Date: {{ $order->created_at->format('F d, Y') }}<br>
-                                    Shipping: {{ $order->shipping_method }}<br>
-                                    Order Status: <span
-                                        class="">
-                                        {{ $order->order_status == 0 ? 'Pending' : 'Success' }}
-                                    </span>
+                                    Shipping Cost: {{ $order->shipping_cost }}<br>
+                                    Order Status:
+                                    {{ $order->order_status == 0
+                                        ? 'Pending'
+                                        : ($order->order_status == 1
+                                            ? 'In Progress'
+                                            : ($order->order_status == 2
+                                                ? 'Delivered'
+                                                : ($order->order_status == 3
+                                                    ? 'Completed'
+                                                    : ($order->order_status == 4
+                                                        ? 'Declined'
+                                                        : 'Unknown')))) }}
                                 </address>
                             </div>
                         </div>

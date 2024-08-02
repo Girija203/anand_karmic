@@ -46,7 +46,7 @@
                                                 <form class="row g-3" method="POST"
                                                     action="{{ route('coupons.update', $coupon->id) }}">
                                                     @csrf
-
+                                                <input type="hidden" name="coupon_type_id" value="1">
                                                     <label for="name"
                                                         class="col-sm-2 col-form-label mandatory">Name</label>
                                                     <div class="col-sm-4 mb-4">

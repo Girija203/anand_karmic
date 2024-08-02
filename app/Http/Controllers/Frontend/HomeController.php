@@ -95,47 +95,47 @@ class HomeController extends Controller
     {
         // Define how many products you want per page
         $perPage = 12;
-    
+
         // Fetch all products with pagination
         $products = Product::where('status', 1)->paginate($perPage);
         $totalProducts = Product::count();
-    
+
         $cart = Cart::get();
         $categories = Category::all();
         $specifications = ProductSpecification::where('product_specification_key_id', 2)->get();
-    
+
         $cartItems = Cart::with(['product.colors'])->get();
         $cart = $cartItems->map(function ($item) {
             $product = $item->product;
             $productColor = $product->colors->first(); // Assuming you want the first color, adjust as necessary
-    
+
             $discount = 0;
-    
+
             if ($productColor && $productColor->offer_price && $productColor->price > $productColor->offer_price) {
                 $discount = $productColor->price - $productColor->offer_price;
             }
-    
+
             $item->discount = $discount;
             $item->price = $productColor ? $productColor->price : 0;
             return $item;
         });
-    
+
         // Calculate the total amount and discount amount
         $totalAmount = 0;
         $discountAmount = 0;
-    
+
         foreach ($cart as $item) {
             $itemAmount = $item->quantity * $item->price;
             $totalAmount += $itemAmount;
             $discountAmount += $item->discount;
         }
-    
+
         $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
         $currencySymbol = session('currency_symbol', '₹'); // Default to $ if not set
         // dd($products[1]->colors[0]->single_image);
         return view('frontend.shop', compact('products', 'categories', 'specifications', 'cart', 'cartItems', 'exchangeRate', 'currencySymbol', 'totalProducts'));
     }
-    
+
 
     public function filter(Request $request)
     {
@@ -304,7 +304,7 @@ class HomeController extends Controller
             $cart->product_id = $product->id;
             $cart->name = $product->title;
             $cart->price = $product->offer_price;
-            $cart->quantity = 1; 
+            $cart->quantity = 1;
             $cart->image = $product->image;
             $cart->save();
 
@@ -346,15 +346,15 @@ class HomeController extends Controller
     }
 
     public function wishlistRemove($productId)
-{
-    $wishlist = Wishlist::where('product_id', $productId)->first();
+    {
+        $wishlist = Wishlist::where('product_id', $productId)->first();
 
-    if ($wishlist) {
-        $wishlist->delete();
+        if ($wishlist) {
+            $wishlist->delete();
+        }
+
+        return redirect()->back()->with('success', 'Wishlist item Remove successfully');
     }
-
-   return redirect()->back()->with('success', 'Wishlist item Remove successfully');
-}
 
 
     public function cart(Request $request)
@@ -381,7 +381,7 @@ class HomeController extends Controller
         } else {
             // Fetch cart items from the session for unauthenticated users
             $sessionCart = session('cart', []);
-// dd($sessionCart);
+            // dd($sessionCart);
             if (!empty($sessionCart)) {
                 $cartcount = 1; // Since session cart is for one product in your context
 
@@ -693,7 +693,7 @@ class HomeController extends Controller
         $country = $request->country;
         session(['country' => $country]);
 
-        
+
 
         $client = new Client();
         $apiKey = '93426a64e4020f5d28396f59';
@@ -808,12 +808,19 @@ class HomeController extends Controller
         return redirect()->back()->with('success', 'Password changed successfully!');
     }
 
-public function vieworder($id){
+    public function vieworder($id)
+    {
+        $cart = Cart::all();
+        $order = Order::with(['orderItems.product', 'payment'])->findOrFail($id);
+        // dd($order->user->addresses);
+        $user = $order->user;
+        $billingAddress = Addresses::getBillingAddress($user->id);
+        $shippingAddress = Addresses::getShippingAddress($user->id);
 
-   
-    $cart=Cart::all();
-    $order = Order::with('orderItems.product')->findOrFail($id);
-    // dd($order->user->addresses);
-    return view( 'frontend.vieworder',compact('cart','order'));
-}
+        // If no shipping address exists, use the billing address
+        if (!$shippingAddress) {
+            $shippingAddress = $billingAddress;
+        }
+        return view('frontend.vieworder', compact('order', 'billingAddress', 'shippingAddress', 'cart'));
+    }
 }

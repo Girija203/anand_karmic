@@ -25,4 +25,19 @@ class Addresses extends Model
 
 
     ];
+
+    public static function getBillingAddress($userId)
+    {
+        return self::where('user_id', $userId)
+            ->where('type', 0)
+            ->first();
+    }
+
+    // Get default shipping address (default_shipping = 1)
+    public static function getShippingAddress($userId)
+    {
+        return self::where('user_id', $userId)
+            ->where('default_shipping', 1)
+            ->first();
+    }
 }
