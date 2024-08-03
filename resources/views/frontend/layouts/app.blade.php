@@ -543,36 +543,17 @@ $totalAmountInCountryCurrency = $totalAmount * $exchangeRate;
                         </div>
                         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                     </div>
-                    <div class="offcanvas-search-body">
-                        <div class="offcanvas-search-box">
-                            <form action="#" class="offcanvas-search-form">
-                                <input type="text" placeholder="Search..." class="offcanvas-search-input" />
-                                <button type="submit" class="offcanvas-search-submit">
-                                    <i class="icon-rt-loupe"></i>
-                                </button>
-                            </form>
-                            <div class="offcanvas-search-content">
-                                <div class="offcanvas-search-keywords-list">
-                                    <p class="offcanvas-search-key-title">Popular searches :</p>
-                                    <ul class="offcanvas-search-popular d-flex gap-1">
-                                        <li>
-                                            <a href="#" class="btn btn-xs btn-gray btn-rounde-2">Bag1</a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="btn btn-xs btn-gray btn-rounde-2">Bag2</a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="btn btn-xs btn-gray btn-rounde-2">Bag3</a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="btn btn-xs btn-gray btn-rounde-2">Bag4</a>
-                                        </li>
-                                        
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                 <div class="offcanvas-search-body">
+    <div class="offcanvas-search-box">
+        <form action="{{ route('search') }}" method="GET" class="offcanvas-search-form">
+            <input type="text" name="query" placeholder="Search..." class="offcanvas-search-input" />
+            <button type="submit" class="offcanvas-search-submit">
+                <i class="icon-rt-loupe"></i>
+            </button>
+        </form>
+    </div>
+</div>
+
                 </div>
             </div>
             <!-- Offcanvas Mobile Menu Start -->

@@ -823,4 +823,32 @@ class HomeController extends Controller
         }
         return view('frontend.vieworder', compact('order', 'billingAddress', 'shippingAddress', 'cart'));
     }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+
+
+        // Search products by title
+        $category = Category::where('name', 'LIKE', "%{$query}%")->get();
+        // $products = Product::where('title', 'LIKE', "%{$query}%")->get();
+
+        // dd($category);
+        $result = [];
+        foreach ($category as $item) {
+            $products = Product::where('category_id', $item->id)->get();
+            foreach ($products as $product) {
+                $result[] = $product;
+            }
+        }
+
+        dd($result);
+
+        $cart = Cart::all();
+
+        $exchangeRate = session('exchange_rate', 1);
+        $currencySymbol = session('currency_symbol', '₹');
+
+        return view('frontend.search_results', compact('products', 'query', 'cart', 'exchangeRate', 'currencySymbol'));
+    }
 }

@@ -558,6 +558,8 @@ Route::get('terms_condition', [HomeController::class, 'termsCondition'])->name('
 Route::get('privacy_policy', [HomeController::class, 'privacyPolicy'])->name('privacy.policy');
 Route::get('shop', [HomeController::class, 'shop'])->name('shop');
 
+Route::get('/search', [HomeController::class, 'search'])->name('search');
+
 
 Route::get('/shop/filter',  [HomeController::class, 'filter'])->name('shop.filter');
 Route::get('/products/filter', [HomeController::class, 'filterByPrice'])->name('products.filter');
