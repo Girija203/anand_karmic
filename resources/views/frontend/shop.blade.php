@@ -185,22 +185,10 @@
                             <div class="pagination-area">
                                 <nav aria-label="Page navigation">
                                     <ul class="pagination">
-                                        <li class="page-item">
-                                            <a class="page-link" href="#" aria-label="Previous">
-                                                <span aria-hidden="true">←</span>
-                                            </a>
-                                        </li>
-                                        <li class="page-item active" aria-current="page">
-                                            <a class="page-link" href="#">1</a>
-                                        </li>
-                                        <li class="page-item">
-                                            <a class="page-link" href="#">2</a>
-                                        </li>
-                                        <li class="page-item">
-                                            <a class="page-link" href="#" aria-label="Next">
-                                                <span aria-hidden="true">→</span>
-                                            </a>
-                                        </li>
+
+
+                                         {{ $products->links() }}
+                                      
                                     </ul>
                                 </nav>
                             </div>

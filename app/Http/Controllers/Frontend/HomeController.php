@@ -94,7 +94,7 @@ class HomeController extends Controller
     public function shop(Request $request)
     {
         // Define how many products you want per page
-        $perPage = 12;
+        $perPage = 10;
 
         // Fetch all products with pagination
         $products = Product::where('status', 1)->paginate($perPage);
@@ -831,7 +831,7 @@ class HomeController extends Controller
 
         // Search products by title
         $category = Category::where('name', 'LIKE', "%{$query}%")->get();
-        // $products = Product::where('title', 'LIKE', "%{$query}%")->get();
+        $products = Product::where('title', 'LIKE', "%{$query}%")->get();
 
         // dd($category);
         $result = [];
@@ -842,7 +842,7 @@ class HomeController extends Controller
             }
         }
 
-        dd($result);
+        // dd($result);
 
         $cart = Cart::all();
 
