@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserCreated;
 use App\Models\Notification;
+use App\Models\Product;
 use App\Models\ProductColor;
 use App\Notifications\OrderNotification;
 use Illuminate\Support\Facades\DB;
@@ -26,6 +27,7 @@ class CheckOutController extends Controller
 
     public function placeOrder(Request $request)
     {
+        // Validate request data
         $orderData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255',
@@ -86,7 +88,6 @@ class CheckOutController extends Controller
             }
 
             $selectedShippingAddressId = $request->input('selected_shipping_address_id');
-            // Retrieve the current default shipping address
             $defaultShippingAddress = $user->addresses()->where('type', 1)->where('default_shipping', 1)->first();
 
             if ($defaultShippingAddress) {
@@ -131,42 +132,37 @@ class CheckOutController extends Controller
                 $shippingAddress->save();
             }
 
-            $cartItems = Cart::with('product')->get();
-            $cart = $cartItems->map(function ($item) {
-                $product = $item->product;
-                $discount = 0;
-                if ($product->colors->first()->offer_price && $product->colors->first()->price > $product->colors->first()->offer_price) {
-                    $discount = $product->colors->first()->price - $product->colors->first()->offer_price;
-                }
+            // Handle cart items based on authentication status
+            $cartItems = auth()->check() ? Cart::with('product')->where('user_id', $user_id)->get() : collect(session('cart', []));
 
-                $item->discount = $discount;
-                return $item;
-            });
             // Calculate the total amount and discount amount
             $totalAmount = 0;
             $discountAmount = 0;
-            $discountAmounts = 0;
 
-            foreach ($cart as $item) {
-                $itemAmount = $item->quantity * $item->product->colors->first()->offer_price;
+            foreach ($cartItems as $item) {
+                $product = auth()->check() ? $item->product : Product::find($item['product_id']);
+                $productColor = $product->colors->first();
+                $itemAmount = $item['quantity'] * $productColor->offer_price;
                 $totalAmount += $itemAmount;
-                $discountAmount += $item->discount * $item->quantity;
-            }
-            // Calculate the final total amount including shipping and coupon discount
-            $shippingFee = $request->shipping_fee;
-            $couponDiscount = $request->coupon_discount;
-            $itemAmount = $item->quantity * $item->product->colors->first()->offer_price;
-            $itemAmount = floatval($itemAmount);
-            $shippingFee = floatval($shippingFee);
-            $couponDiscount = floatval($couponDiscount);
 
-            $grandTotal = $itemAmount + $shippingFee - $couponDiscount;
+                if ($productColor->price > $productColor->offer_price) {
+                    $discount = $productColor->price - $productColor->offer_price;
+                    $discountAmount += $discount * $item['quantity'];
+                }
+            }
+
+            // Calculate the final total amount including shipping and coupon discount
+            $shippingFee = floatval($request->shipping_fee);
+            $couponDiscount = floatval($request->coupon_discount);
+
+            $grandTotal = $totalAmount + $shippingFee - $couponDiscount;
+
             // Create order
             $order = new Order();
             $order->user_id = $user_id;
             $order->order_no = 'ORDER-' . strtoupper(uniqid());
             $order->total_amount = $grandTotal;
-            $order->product_qty = $item->quantity;
+            $order->product_qty = $cartItems->sum('quantity');
             $order->payment_method = $request->payment_method;
             $order->payment_status = 0;
             $order->order_status = 0;
@@ -176,50 +172,46 @@ class CheckOutController extends Controller
 
             // Save order items
             foreach ($cartItems as $item) {
+                $product = auth()->check() ? $item->product : Product::find($item['product_id']);
+                $productColor = $product->colors->first();
+
                 $orderItem = new OrderItem();
                 $orderItem->order_id = $order->id;
-                $orderItem->product_id = $item['product_id'];
+                $orderItem->product_id = $product->id;
                 $orderItem->quantity = $item['quantity'];
-                $orderItem->unit_price = $item['price'];
-                $orderItem->total_price = $item['quantity'] * $item['price'];
+                $orderItem->unit_price = $productColor->offer_price;
+                $orderItem->total_price = $item['quantity'] * $productColor->offer_price;
                 $orderItem->save();
-            }
-            $productColor = ProductColor::where('product_id', $item['product_id'])->first();
-            if ($productColor) {
+
+                // Reduce the product color quantity
                 $productColor->qty -= $item['quantity'];
                 $productColor->save();
             }
 
-            if (in_array($request->payment_method, ['stripe', 'razorpay'])) {
-                $payment = new Payment();
-                $payment->order_id = $order->id;
-                $payment->payment_method = $request->payment_method;
-                $payment->transaction_id = Str::random(16); // Generates a random 16 character string
-                $payment->amount = $grandTotal;
-                $payment->status = 0;
-                $payment->save();
-            } elseif ($request->payment_method == 'cod') {
-                $payment = new Payment();
-                $payment->order_id = $order->id;
-                $payment->payment_method = 'cod';
-                $payment->transaction_id = null;
-                $payment->amount = $grandTotal;
-                $payment->status = 0;
-                $payment->save();
-            }
+            // Save payment details
+            $payment = new Payment();
+            $payment->order_id = $order->id;
+            $payment->payment_method = $request->payment_method;
+            $payment->transaction_id = in_array($request->payment_method, ['stripe', 'razorpay']) ? Str::random(16) : null;
+            $payment->amount = $grandTotal;
+            $payment->status = 0;
+            $payment->save();
 
+            // Send order confirmation email
             $exchangeRate = session('exchange_rate', 1);
-            $currencySymbol = session('currency_symbol', '$');
+            $currencySymbol = session('currency_symbol', '₹');
 
             $orderItems = $order->orderItems()->with('product')->get();
             Mail::send('Admin.mail.order_confirmation', ['user' => $user, 'order' => $order, 'orderItems' => $orderItems, 'exchangeRate' => $exchangeRate, 'currencySymbol' => $currencySymbol], function ($message) use ($user) {
-                $message->to($user->email); 
+                $message->to($user->email);
                 $message->subject('Order Confirmation');
             });
 
             // Delete all cart items
-            foreach ($cartItems as $item) {
-                $item->delete();
+            if (auth()->check()) {
+                Cart::where('user_id', $user_id)->delete();
+            } else {
+                session()->forget('cart');
             }
 
             DB::commit();

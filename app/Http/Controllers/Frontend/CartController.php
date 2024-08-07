@@ -7,51 +7,80 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Cart;
 use App\Models\ProductColor;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 
 class CartController extends Controller
 {
     public function addToCart($productColorId, Request $request)
     {
-        // Decode the cart from the cookie or initialize an empty array if the cookie does not exist
-        $cart = json_decode(Cookie::get('cart', '[]'), true);
-
-        // Fetch the product color information
         $productColor = ProductColor::findOrFail($productColorId);
         $product = $productColor->product;
-
-        // Check if the product color already exists in the cart
-        $existingCartItem = Cart::where('product_id', $product->id)->first();
         $quantity = $request->input('quantity', 1);
 
-        if ($existingCartItem) {
-            // Check if the updated quantity exceeds available stock for the specific product color
-            if (($existingCartItem->quantity + $quantity) > $productColor->qty) {
-                return redirect()->back()->with('info', 'The requested quantity exceeds available stock.');
+        if (Auth::check()) {
+            // For authenticated users
+            $existingCartItem = Cart::where('user_id', Auth::id())
+                ->where('product_id', $product->id)->first();
+
+            if ($existingCartItem) {
+                // Check stock availability
+                if (($existingCartItem->quantity + $quantity) > $productColor->qty) {
+                    return redirect()->back()->with('info', 'The requested quantity exceeds available stock.');
+                }
+
+                // Update existing cart item
+                $existingCartItem->quantity += $quantity;
+                $existingCartItem->save();
+            } else {
+                if ($quantity > $productColor->qty) {
+                    return redirect()->back()->with('info', 'The requested quantity exceeds available stock.');
+                }
+
+                // Create a new cart item
+                Cart::create([
+                    'user_id' => Auth::id(),
+                    'product_id' => $product->id,
+                    'product_color_id' => $productColorId,
+                    'name' => $product->title,
+                    'price' => $productColor->offer_price,
+                    'image' => $productColor->single_image,
+                    'quantity' => $quantity,
+                ]);
             }
 
-            // If the product color is already in the cart, update the quantity
-            $existingCartItem->quantity += $quantity;
-            $existingCartItem->save();
-
-            return redirect()->route('cart')->with('success', 'Product quantity updated in the cart');
+            return redirect()->route('cart')->with('success', 'Product added to cart successfully');
         } else {
-            // Check if the new quantity exceeds available stock for the specific product color
-            if ($quantity > $productColor->qty) {
-                return redirect()->back()->with('info', 'The requested quantity exceeds available stock.');
+            // For unauthenticated users
+            $cart = session('cart', []);
+
+            $existingCartItemIndex = array_search($product->id, array_column($cart, 'product_id'));
+
+            if ($existingCartItemIndex !== false) {
+                // Check stock availability
+                if (($cart[$existingCartItemIndex]['quantity'] + $quantity) > $productColor->qty) {
+                    return redirect()->back()->with('info', 'The requested quantity exceeds available stock.');
+                }
+
+                // Update existing cart item
+                $cart[$existingCartItemIndex]['quantity'] += $quantity;
+            } else {
+                if ($quantity > $productColor->qty) {
+                    return redirect()->back()->with('info', 'The requested quantity exceeds available stock.');
+                }
+
+                // Add new cart item
+                $cart[] = [
+                    'product_id' => $product->id,
+                    'product_title' => $product->title,
+                    'product_color_id' => $productColorId,
+                    'price' => $productColor->offer_price,
+                    'image' => $productColor->single_image,
+                    'quantity' => $quantity,
+                ];
             }
 
-            // Create a new cart item with the product color information
-            Cart::create([
-                'product_id' => $product->id,
-                'product_color_id' => $productColor->id,
-                'name' => $product->title,
-                'price' => $productColor->offer_price,
-                'image' => $productColor->single_image,
-                'quantity' => $quantity,
-            ]);
-
-            Cookie::queue('cart', json_encode($cart), 60 * 24 * 30); // 30 days
+            session(['cart' => $cart]);
 
             return redirect()->route('cart')->with('success', 'Product added to cart successfully');
         }
@@ -104,15 +133,19 @@ class CartController extends Controller
     {
         $sessionCart = session()->get('cart', []);
 
-        if (!empty($sessionCart)) {
+        if (is_array($sessionCart)) {
             $productId = $request->input('product_id');
             $quantity = $request->input('quantity');
 
-            // Update the quantity in the session cart
-            if (isset($sessionCart['product_id']) && $sessionCart['product_id'] == $productId) {
-                $sessionCart['quantity'] = $quantity;
+            // Iterate through the session cart to update the quantity for the specified product
+            foreach ($sessionCart as &$item) {
+                if (is_array($item) && isset($item['product_id']) && $item['product_id'] == $productId) {
+                    $item['quantity'] = $quantity;
+                    break;
+                }
             }
 
+            // Store the updated cart back in the session
             session()->put('cart', $sessionCart);
         }
 
@@ -129,13 +162,23 @@ class CartController extends Controller
         // Fetch the cart from the session
         $sessionCart = session('cart', []);
 
-        // Remove the item with the specified product_id
-        if (isset($sessionCart['product_id']) && $sessionCart['product_id'] == $productId) {
-            session()->forget('cart'); // Remove entire cart from session if product_id matches
+        // Check if the cart is an array
+        if (is_array($sessionCart)) {
+            // Filter out the item with the specified product_id
+            $sessionCart = array_filter($sessionCart, function ($item) use ($productId) {
+                return isset($item['product_id']) && $item['product_id'] != $productId;
+            });
+
+            // Reindex the array to prevent gaps in the indexes
+            $sessionCart = array_values($sessionCart);
+
+            // Store the updated cart back in the session
+            session()->put('cart', $sessionCart);
         }
 
-        return response()->json(["Data" => "Success"]);
+        return response()->json(["status" => "Success"]);
     }
+
 
 
 

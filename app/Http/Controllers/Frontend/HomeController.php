@@ -293,25 +293,93 @@ class HomeController extends Controller
     public function wishlist()
     {
         $cart = Cart::get();
-        $wishlist = Wishlist::with('product')->get();
+        $wishlist = Wishlist::with(['product', 'productColor'])->get();
         return view('frontend.wishlist', compact('cart', 'wishlist'));
     }
+   
     public function addToCart(Request $request)
     {
         $product = Product::find($request->product_id);
-        if ($product) {
-            $cart = new Cart();
-            $cart->product_id = $product->id;
-            $cart->name = $product->title;
-            $cart->price = $product->offer_price;
-            $cart->quantity = 1;
-            $cart->image = $product->image;
-            $cart->save();
+        $productColorId = $request->input('product_color_id');
+        $quantity = $request->input('quantity', 1);
 
-            return response()->json(['status' => 'success', 'message' => 'Item added to cart']);
+        if ($product) {
+            $productColor = $productColorId ? ProductColor::find($productColorId) : null;
+
+            // For authenticated users
+            if (Auth::check()) {
+                $existingCartItem = Cart::where('user_id', Auth::id())
+                    ->where('product_id', $product->id)
+                    ->where('product_color_id', $productColorId)
+                    ->first();
+
+                if ($existingCartItem) {
+                    // Check stock availability
+                    if ($productColor && ($existingCartItem->quantity + $quantity) > $productColor->qty) {
+                        return response()->json(['status' => 'error', 'message' => 'The requested quantity exceeds available stock']);
+                    }
+
+                    // Update existing cart item
+                    $existingCartItem->quantity += $quantity;
+                    $existingCartItem->save();
+                } else {
+                    if ($productColor && $quantity > $productColor->qty) {
+                        return response()->json(['status' => 'error', 'message' => 'The requested quantity exceeds available stock']);
+                    }
+
+                    // Create a new cart item
+                    Cart::create([
+                        'user_id' => Auth::id(),
+                        'product_id' => $product->id,
+                        'product_color_id' => $productColorId,
+                        'name' => $product->title,
+                        'price' => $productColor ? $productColor->offer_price : $product->offer_price,
+                        'image' => $productColor ? $productColor->single_image : $product->image,
+                        'quantity' => $quantity,
+                    ]);
+                }
+
+                return response()->json(['status' => 'success', 'message' => 'Item added to cart']);
+            } else {
+                // For unauthenticated users
+                $cart = session('cart', []);
+
+                $existingCartItemIndex = array_search($product->id, array_column($cart, 'product_id'));
+                $existingCartItemColorIndex = array_search($productColorId, array_column($cart, 'product_color_id'));
+
+                if ($existingCartItemIndex !== false && $existingCartItemColorIndex !== false) {
+                    // Check stock availability
+                    if ($productColor && ($cart[$existingCartItemColorIndex]['quantity'] + $quantity) > $productColor->qty) {
+                        return response()->json(['status' => 'error', 'message' => 'The requested quantity exceeds available stock']);
+                    }
+
+                    // Update existing cart item
+                    $cart[$existingCartItemColorIndex]['quantity'] += $quantity;
+                } else {
+                    if ($productColor && $quantity > $productColor->qty) {
+                        return response()->json(['status' => 'error', 'message' => 'The requested quantity exceeds available stock']);
+                    }
+
+                    // Add new cart item
+                    $cart[] = [
+                        'product_id' => $product->id,
+                        'product_title' => $product->title,
+                        'product_color_id' => $productColorId,
+                        'price' => $productColor ? $productColor->offer_price : $product->offer_price,
+                        'image' => $productColor ? $productColor->single_image : $product->image,
+                        'quantity' => $quantity,
+                    ];
+                }
+
+                session(['cart' => $cart]);
+
+                return response()->json(['status' => 'success', 'message' => 'Item added to cart']);
+            }
         }
+
         return response()->json(['status' => 'error', 'message' => 'Product not found']);
     }
+
 
 
     public function addToWishlist(Request $request)
@@ -364,8 +432,8 @@ class HomeController extends Controller
         $totalAmount = 0;
         $shippingFee = 0;
         $res_coupon = 0;
+        $sessionCart = [];
 
-        // Check if the user is authenticated
         if (Auth::check()) {
             // Fetch cart items from the database for authenticated users
             $cart = Cart::with('product')->where('user_id', Auth::id())->get();
@@ -381,30 +449,33 @@ class HomeController extends Controller
         } else {
             // Fetch cart items from the session for unauthenticated users
             $sessionCart = session('cart', []);
-            // dd($sessionCart);
-            if (!empty($sessionCart)) {
-                $cartcount = 1; // Since session cart is for one product in your context
 
-                $product = Product::find($sessionCart['product_id']);
-                if ($product) {
-                    $offerPrice = ProductColor::where('product_id', $sessionCart['product_id'])->min('offer_price');
-                    if (!$offerPrice) {
-                        $offerPrice = $product->offer_price;
+            if (is_array($sessionCart)) {
+                $cartcount = count($sessionCart); // Count all items in the session cart
+
+                foreach ($sessionCart as $sessionItem) {
+                    if (is_array($sessionItem)) {
+                        $product = Product::find($sessionItem['product_id']);
+                        if ($product) {
+                            $offerPrice = ProductColor::where('product_id', $sessionItem['product_id'])->min('offer_price');
+                            if (!$offerPrice) {
+                                $offerPrice = $product->offer_price;
+                            }
+                            $totalAmount += $sessionItem['quantity'] * $offerPrice;
+                            $cart->push((object)[
+                                'id' => 0, // No database ID
+                                'product_id' => $sessionItem['product_id'],
+                                'name' => $sessionItem['product_title'],
+                                'price' => $offerPrice,
+                                'image' => $sessionItem['image'],
+                                'quantity' => $sessionItem['quantity'],
+                                'product' => $product
+                            ]);
+                        }
                     }
-                    $totalAmount += $sessionCart['quantity'] * $offerPrice ?? '';
-                    $cart->push((object)[
-                        'id' => 0, // No database ID
-                        'product_id' => $sessionCart['product_id'],
-                        'name' => $sessionCart['product_title'],
-                        'price' => $offerPrice,
-                        'image' => $sessionCart['image'],
-                        'quantity' => $sessionCart['quantity'],
-                        'product' => $product
-                    ]);
                 }
             }
         }
-
         // Apply exchange rate conversion and other calculations
         $exchangeRate = session('exchange_rate', 1);
         $currencySymbol = session('currency_symbol', '₹');
@@ -456,6 +527,7 @@ class HomeController extends Controller
 
 
 
+
     public function checkout(Request $request)
     {
         $totalAmount = 0;
@@ -465,29 +537,44 @@ class HomeController extends Controller
 
         // Check if the user is authenticated
         if (Auth::check()) {
+            // Fetch cart items from the database for authenticated users
             $cart = Cart::with('product')->where('user_id', Auth::id())->get();
+
+            foreach ($cart as $item) {
+                $offerPrice = ProductColor::where('product_id', $item->product_id)->min('offer_price');
+                if (!$offerPrice) {
+                    $offerPrice = $item->product->offer_price;
+                }
+                $totalAmount += $item->quantity * $offerPrice;
+            }
         } else {
+            // Fetch cart items from the session for unauthenticated users
             $sessionCart = session('cart', []);
-            if (!empty($sessionCart)) {
-                $product = Product::find($sessionCart['product_id']);
-                if ($product) {
-                    $offerPrice = ProductColor::where('product_id', $sessionCart['product_id'])->min('offer_price');
-                    if (!$offerPrice) {
-                        $offerPrice = $product->offer_price;
+
+            if (is_array($sessionCart)) {
+                foreach ($sessionCart as $sessionItem) {
+                    if (is_array($sessionItem)) {
+                        $product = Product::find($sessionItem['product_id']);
+                        if ($product) {
+                            $offerPrice = ProductColor::where('product_id', $sessionItem['product_id'])->min('offer_price');
+                            if (!$offerPrice) {
+                                $offerPrice = $product->offer_price;
+                            }
+                            $totalAmount += $sessionItem['quantity'] * $offerPrice;
+                            $cart->push((object)[
+                                'id' => 0, // No database ID
+                                'product_id' => $sessionItem['product_id'],
+                                'name' => $sessionItem['product_title'],
+                                'price' => $offerPrice,
+                                'image' => $sessionItem['image'],
+                                'quantity' => $sessionItem['quantity'],
+                                'product' => $product
+                            ]);
+                        }
                     }
-                    $cart->push((object)[
-                        'id' => 0, // No database ID
-                        'product_id' => $sessionCart['product_id'],
-                        'name' => $sessionCart['product_title'],
-                        'price' => $offerPrice,
-                        'image' => $sessionCart['image'],
-                        'quantity' => $sessionCart['quantity'],
-                        'product' => $product
-                    ]);
                 }
             }
         }
-
         // Calculate the total amount
         foreach ($cart as $item) {
             $offerPrice = ProductColor::where('product_id', $item->product_id)->min('offer_price');
@@ -750,7 +837,7 @@ class HomeController extends Controller
 
         // Check if the user is authenticated
         if (!Auth::check()) {
-            // Store the product details in session and redirect to login page
+            // Store the product details in session
             $productDetails = [
                 'product_id' => $productId,
                 'product_color_id' => $productColorId,
@@ -759,11 +846,35 @@ class HomeController extends Controller
                 'image' => $productColor->single_image,
                 'quantity' => 1,
             ];
-            session()->put('cart', $productDetails);
+
+            // Retrieve the current cart or create a new one if it doesn't exist
+            $cart = session()->get('cart', []);
+
+            if (!is_array($cart)) {
+                $cart = [];
+            }
+
+            // Check if the product is already in the cart
+            $productExists = false;
+            foreach ($cart as &$item) {
+                if (is_array($item) && $item['product_id'] == $productDetails['product_id'] && $item['product_color_id'] == $productDetails['product_color_id']) {
+                    $item['quantity'] += $productDetails['quantity'];
+                    $productExists = true;
+                    break;
+                }
+            }
+
+            // If the product is not in the cart, add it
+            if (!$productExists) {
+                $cart[] = $productDetails;
+            }
+
+            // Store the updated cart back in the session
+            session()->put('cart', $cart);
 
             return redirect()->route('cart')->with('success', 'Product added to cart successfully!');
         }
-
+           
         // Add product to cart for authenticated users
         $existingCartItem = Cart::where('product_id', $product->id)->first();
 

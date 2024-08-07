@@ -75,7 +75,7 @@
                                     <th width="5%">#</th>
                                     <th width="25%">Product</th>
                                     {{-- <th width="20%">Variant</th>
-                                <th width="10%">Shop Name</th> --}}
+            <th width="10%">Shop Name</th> --}}
                                     <th width="10%" class="text-center">Unit Price</th>
                                     <th width="10%" class="text-center">Quantity</th>
                                     <th width="10%" class="text-right">Total</th>
@@ -87,10 +87,10 @@
                                         <td>{{ $index + 1 }}</td>
                                         <td><a href="">{{ $item->product->title }}</a></td>
                                         {{-- <td></td>
-                                <td></td> --}}
+                <td></td> --}}
                                         <td class="text-center">Rs.{{ number_format($item->unit_price, 2) }}</td>
                                         <td class="text-center">{{ $item->quantity }}</td>
-                                        <td class="text-right">Rs.{{ number_format($order->total_amount, 2) }}</td>
+                                        <td class="text-right">Rs.{{ number_format($item->total_price, 2) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>

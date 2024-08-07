@@ -393,12 +393,25 @@
                                     <li class="main-menu-item has-children">
                                         <a href="{{ route('wishlist') }}" class="header-action-item" title="Wishlist">
                                             <img src="{{ asset('./frontend/assets/images/headericon/hamburger.png') }}" alt="" srcset="" width="22" class="op-6" />
+                                             <span class="header-action-item-count">
+            @auth
+                ({{ \App\Models\Wishlist::where('user_id', auth()->id())->count() }})
+            @else
+                (0)
+            @endauth
+        </span>
                                         </a>
                                     </li>
                                     <li class="main-menu-item has-children">
                                         <button class="header-action-item" title="Cart Bag" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvas-cart">
                                             <img src="{{ asset('./frontend/assets/images/headericon/shopping-cart.png') }}" alt="" srcset="" width="20" class="op-6" />
-                                            <!-- <span class="header-action-item-count">(3)</span> -->
+                                           <span class="header-action-item-count">
+            @auth
+                ({{ \App\Models\Cart::where('user_id', auth()->id())->count() }})
+            @else
+                ({{ session()->has('cart') ? count(session()->get('cart')) : 0 }})
+            @endauth
+        </span>
                                         </button>
                                     </li>
 
@@ -444,9 +457,9 @@
             </div>
             <!-- Header Bottom Area End -->
            @php
-$totalAmount = 0; // Total amount in base currency
-$exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
-$currencySymbol = session('currency_symbol', '$'); // Currency symbol (for display purposes)
+$totalAmount = 0;
+$exchangeRate = session('exchange_rate', 1);
+$currencySymbol = session('currency_symbol', '₹'); 
 @endphp
 
 @foreach ($cart as $item)
@@ -481,6 +494,7 @@ $totalAmountInCountryCurrency = $totalAmount * $exchangeRate;
         <div class="offcanvas-body">
             <div class="cart-product">
                 <!-- Cart Product Item Start -->
+                @auth
                 @if ($cart->isEmpty())
                     <p class="text-center">Your cart is empty.</p>
                 @else
@@ -534,6 +548,66 @@ $totalAmountInCountryCurrency = $totalAmount * $exchangeRate;
         </div>
     </div>
 </div>
+@else
+                    
+               
+                @if ($cart->isEmpty())
+                    <p class="text-center">Your cart is empty.</p>
+                @else
+                    @foreach ($cart as $item)
+                        @php
+                            // Get the item’s converted price for display
+                            $itemPriceInCountryCurrency = $item->price;
+                        @endphp
+                        <div class="cart-product-item">
+                            <a href="product-details.html" class="cart-product-thum">
+                                <img src="{{ asset('storage/' . $item->image) }}" alt="Product Cart One" />
+                            </a>
+                            <div class="cart-product-content">
+                                <h6 class="cart-product-content-title">
+                                    <a href="">{{ $item->name }}</a>
+                                </h6>
+                                <div class="cart-product-content-bottom">
+                                    <span class="cart-product-content-quantity">{{ $item->quantity }} ×
+                                    </span>
+                                    <span class="cart-product-content-amount">
+                                        <bdi>
+                                            <span class="visually-hidden">Price:</span>
+                                            {{ $currencySymbol }}<span class="item-total-price">{{ number_format($itemPriceInCountryCurrency, 2) }}</span>
+                                        </bdi>
+                                    </span>
+                                </div>
+                            </div>
+                            {{-- <form action="{{ route('remove.from.cart', $item->id) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="cart-product-close">x</button>
+                            </form> --}}
+                          
+        <button type="button" class="cart-product-remove remove-from-cart" data-product-id="{{ $item->product_id }}">Remove</button>
+
+                        </div>
+                    @endforeach
+                @endif
+                <!-- Cart Product Item End -->
+            </div>
+            <div class="offcanvas-cart-footer">
+                <div class="mini-cart-total">
+                    <strong class="mini-cart-subtotal">Subtotal</strong>
+                    <span class="mini-cart-amount">
+                        <bdi>
+                            <span class="currency-symbol">{{ $currencySymbol }}</span>{{ number_format($totalAmountInCountryCurrency, 2) }}
+                        </bdi>
+                    </span>
+                </div>
+                <div class="cart-button-action-wrap gap-2 d-flex flex-column">
+                    <a href="{{ route('cart') }}" class="btn-outline btn btn-full btn-lg">View Cart</a>
+                    <a href="{{ route('checkout') }}" class="btn-outline btn btn-full btn-lg">Checkout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ @endauth
             <!-- OffCanvas Cart End -->
             <div class="offcanvas offcanvas-top offcanvas-search-area" tabindex="-1" id="offcanvas-search">
                 <div class="offcanvas-search-wrap">

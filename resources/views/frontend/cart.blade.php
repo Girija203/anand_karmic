@@ -145,9 +145,9 @@
             <input class="form-control" type="number" name="quantity" id="quantity-{{ $item->product_id }}" value="{{ $item->quantity }}" onchange="this.form.submit()" style="width: 100px;">
         </form>
     
-            <div class="px-3">
-                        <button type="button" class="cart-product-remove remove-from-cart" data-product-id="{{ $item->product_id }}">Remove</button>
-                    </div>
+           <div class="px-3">
+    <button type="button" class="cart-product-remove remove-from-cart" data-product-id="{{ $item->product_id }}">Remove</button>
+</div>
                 </div>
         </td>
         <td class="price text-dark fw-500">
@@ -411,8 +411,9 @@
                         })
                         .then(response => {
 
+                            
                             if (response.ok) {
-
+                           toastr.success('Item removed from cart successfully');
                                 window.location.href = "";
                             } else {
                                 console.error('Error removing item from cart');
