@@ -597,7 +597,8 @@ Route::post('/add-to-cart/{id}', [CartController::class, 'addToCart'])->name('ca
 
 Route::post('/update-cart', [CartController::class, 'updateCart'])->name('update.cart');
 
-Route::post('remove-from-cart/{id}', [CartController::class, 'removeCart'])->name('remove.from.cart');
+Route::delete('/cart/remove/{id}', [CartController::class, 'removeCart'])->name('remove.from.cart');
+
 
 Route::delete('remove-from-cart', [CartController::class, 'remove'])->name('cart.remove');
 

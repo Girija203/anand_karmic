@@ -232,7 +232,8 @@
 
                             <div class="product-item-stock in-stock mb-3">
                                 <span class="stock-label visually-hidden">Availability:</span>
-                                <span class="product-item-stock-in">{{ $productVariantColor->qty ?? '' }} In Stock</span>
+                                <span class="product-item-stock-in">{{$quantities}}In Stock</span>
+                                 
                             </div>
 
                             <form action="{{ route('cart.add', $products->id) }}" method="post" id="addToCartForm">
@@ -258,18 +259,22 @@
                             </form>
                         </div>
                         <div>
-                            @if (in_array($products->id, $wishlistProductIds))
-                                <a href="{{ route('wishlist.delete', $products->id) }}">
-                                    <i class="fa-solid fa-heart" filled></i>
-                                    <span>Added to wishlist</span>
-                                </a>
-                            @else
-                                <a href="#" class="product-item-wishlist-action mt-3"
-                                    data-product-id="{{ $products->id }}" data-action="add">
-                                    <i class="icon-rt-heart2"></i><span>Add to wishlist</span>
-                                </a>
-                            @endif
-                        </div>
+    @auth
+        @if (in_array($products->id, $wishlistProductIds))
+            <a href="{{ route('wishlist.delete', $products->id) }}">
+                <i class="fa-solid fa-heart" filled></i>
+                <span>Added to wishlist</span>
+            </a>
+        @else
+            <a href="#" class="product-item-wishlist-action mt-3"
+                data-product-id="{{ $products->id }}" data-action="add">
+                <i class="icon-rt-heart2"></i><span>Add to wishlist</span>
+            </a>
+        @endif
+    @else
+        <p>Please log in to add items to your wishlist.</p>
+    @endauth
+</div>
 
 
                         @if (!empty($product_sml_share))

@@ -120,15 +120,14 @@ class CartController extends Controller
 
     public function removeCart($id)
     {
-        $cartitem = json_decode(Cookie::get('cart', '[]'), true);
+        
         $cart = Cart::find($id);
 
-        $cart->delete();
+         $cart->delete();
 
-        Cookie::queue('cart', json_encode($cartitem), 60 * 24 * 30);
-
-        return redirect()->back()->with('success', 'Product removed from cart successfully!');
+        return response()->json(['success' => true, 'message' => 'Product removed from cart successfully!']);
     }
+
     public function updateCartForUnauthenticated(Request $request)
     {
         $sessionCart = session()->get('cart', []);

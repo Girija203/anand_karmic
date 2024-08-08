@@ -244,6 +244,10 @@ class HomeController extends Controller
         // Fetch product colors and related color data
         $productColors = ProductColor::where('product_id', $id)->with('color')->get();
 
+        $quantities = $productColors->pluck('qty');
+
+        // dd($quantities); 
+
         // Fetch product variant colors and their associated color data
         $productVariantColors = ProductVariantColor::where('main_product_id', $products->id)
             ->with('color')
@@ -273,7 +277,7 @@ class HomeController extends Controller
         $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
         $currencySymbol = session('currency_symbol', '₹');
 
-        return view('frontend.single_product', compact('products', 'specifications', 'relatedProducts', 'reviews', 'cart', 'product_sml_share', 'exchangeRate', 'currencySymbol', 'wishlistProductIds', 'productColors', 'productVariantColors'));
+        return view('frontend.single_product', compact('products', 'specifications', 'relatedProducts', 'reviews', 'cart', 'product_sml_share', 'exchangeRate', 'currencySymbol', 'wishlistProductIds', 'productColors', 'productVariantColors', 'quantities'));
     }
 
 
