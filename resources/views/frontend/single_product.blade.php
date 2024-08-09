@@ -189,9 +189,9 @@
                             </div>
 
                             <p class="product-item-details-description mt-2 fs-14" id="product-description">
-                                {{ Str::limit($products->short_description, 150) }} <!-- Initial short description -->
+                                {{ Str::limit($products->short_description, 50) }} 
                                 <span id="more-text"
-                                    style="display: none;">{{ substr($products->short_description, 150) }}</span>
+                                    style="display: none;">{{ substr($products->short_description, 50) }}</span>
                                 <br>
                                 <a href="javascript:void(0);" id="toggle-description" onclick="toggleDescription()">Show
                                     More</a>

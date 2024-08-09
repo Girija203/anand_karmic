@@ -186,8 +186,8 @@
                                 <nav aria-label="Page navigation">
                                     <ul class="pagination">
 
-
-                                         {{ $products->links() }}
+  {!! $products->withQueryString()->links('pagination::bootstrap-5') !!}
+                                         {{-- {{ $products->links() }} --}}
                                       
                                     </ul>
                                 </nav>
