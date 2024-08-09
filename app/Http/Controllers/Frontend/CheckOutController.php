@@ -21,6 +21,7 @@ use App\Models\ProductColor;
 use App\Notifications\OrderNotification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Services\DHLService;
 
 class CheckOutController extends Controller
 {
@@ -196,6 +197,25 @@ class CheckOutController extends Controller
             $payment->amount = $grandTotal;
             $payment->status = 0;
             $payment->save();
+
+  // Generate and store a random tracking number
+        $trackingNumber = Str::random(10);
+
+        // Create DHLService instance and get tracking info
+        $dhlService = new DHLService();
+        // dd($dhlService);
+        $trackingInfo = $dhlService->getShipmentStatus($trackingNumber);
+
+        dd($trackingInfo);
+
+        // Save tracking information
+        Tracking::create([
+            'order_id' => $order->id,
+            'tracking_number' => $trackingNumber,
+            'status' => $trackingInfo['status'] ?? 'Shipped',
+            'delivery_partner' => 'DHL', 
+        ]);
+
 
             // Send order confirmation email
             $exchangeRate = session('exchange_rate', 1);

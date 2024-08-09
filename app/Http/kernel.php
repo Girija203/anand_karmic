@@ -44,4 +44,16 @@ class Kernel extends HttpKernel
         
         
     ];
+
+
+    protected function schedule(Schedule $schedule)
+{
+    $schedule->call(function () {
+        $trackings = Tracking::where('status', '!=', 'Delivered')->get();
+        foreach ($trackings as $tracking) {
+            $this->trackOrder($tracking->tracking_number);
+        }
+    })->hourly();
+}
+
 }

@@ -55,6 +55,7 @@ use App\Http\Controllers\Frontend\CheckOutController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\LoginRegisterController;
 use App\Http\Controllers\Frontend\CartController;
+use App\Http\Controllers\Frontend\ShipmentController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 
@@ -649,3 +650,7 @@ Route::get('contactpage/index', [ContactPageController::class, 'index'])->name('
 
 
 Route::PUT('contactpage/store', [ContactPageController::class, 'store'])->name('contactpage.store');
+
+
+// Shipping Tracking
+Route::get('track', [ShipmentController::class, 'track'])->name('shipment.track');
