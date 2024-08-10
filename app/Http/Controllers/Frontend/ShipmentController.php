@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Frontend;
 use App\Services\DHLService;
 use App\Http\Controllers\Controller;
+use App\Models\Tracking;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class ShipmentController extends Controller
 {
@@ -16,7 +18,7 @@ class ShipmentController extends Controller
         $response = Http::get("https://api.deliverypartner.com/track", [
             'tracking_number' => $tracking->tracking_number,
             'api_key' => 'your-api-key',
-        ]);
+        ]); 
 
         if ($response->successful()) {
             $tracking->status = $response['status'];
@@ -28,10 +30,10 @@ class ShipmentController extends Controller
     return null;
 }
 
-public function trackOrder($trackingNumber)
-{
-    $tracking = $this->trackOrder($trackingNumber);
-    return view('Frontend.tracking', compact('tracking'));
-}
+// public function trackOrder($trackingNumber)
+// {
+//     $tracking = $this->trackOrder($trackingNumber);
+//     return view('Frontend.tracking', compact('tracking'));
+// }
 
 }

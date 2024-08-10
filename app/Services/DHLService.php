@@ -2,35 +2,30 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Http;
+use GuzzleHttp\Client;
 
 class DHLService
 {
-    protected $apiKey;
-    protected $username;
-    protected $password;
-    protected $endpoint;
+    protected $client;
 
     public function __construct()
     {
-        $this->apiKey = env('DHL_API_KEY');
-        $this->username = env('DHL_API_USERNAME');
-        $this->password = env('DHL_API_PASSWORD');
-        $this->endpoint = env('DHL_API_ENDPOINT');
+        $this->client = new Client([
+            'base_uri' => 'https://api.dhl.com/',
+            'headers' => [
+                'Authorization' => 'Bearer ' . env('DHL_API_KEY'),
+                'Content-Type' => 'application/json',
+            ],
+        ]);
     }
 
-    public function getShipmentStatus($trackingNumber)
+    public function trackOrder($trackingNumber)
     {
-        $response = Http::withHeaders([
-            'Authorization' => 'username ' . $this->apiKey,
-        ])->get($this->endpoint . 'track', [
-            'tracking_number' => $trackingNumber,
+        $response = $this->client->get('track/shipments', [
+            'query' => ['trackingnumber' => $trackingNumber],
         ]);
 
-        if ($response->failed()) {
-            throw new \Exception('DHL API request failed');
-        }
+        return json_decode($response->getBody(), true);
+    }
 
-        return $response->json();
-    }    // Add more methods for other DHL API endpoints as needed
 }
