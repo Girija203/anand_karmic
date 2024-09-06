@@ -116,9 +116,8 @@
                                                                         Select Multiple
                                                                         Image</label>
 
-                                                                    <input class="form-control" type="file"
-                                                                        name="multiple_images[]" id="multiple_images"
-                                                                        multiple value="{{ old('image') }}">
+                                                                    <input class="form-control" type="file" name="multiple_images[]" id="multiple_images" multiple>
+
 
                                                                     @error('multiple_images')
                                                                         <span class="error"
@@ -530,59 +529,85 @@
             reader.readAsDataURL(event.target.files[0]);
         });
 
-        document.getElementById('multiple_images').addEventListener('change', function() {
-            var preview = document.getElementById('image-preview');
-            preview.innerHTML = 'Multiple'; // Clear existing content except the title
+        // document.getElementById('multiple_images').addEventListener('change', function() {
+        //     var preview = document.getElementById('image-preview');
+        //     preview.innerHTML = 'Multiple'; // Clear existing content except the title
 
-            var files = Array.from(this.files);
-            var dataTransfer = new DataTransfer(); // To manage files to be uploaded
+        //     var files = Array.from(this.files);
+        //     var dataTransfer = new DataTransfer(); // To manage files to be uploaded
 
-            files.forEach((file, index) => {
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    var imgContainer = document.createElement('div');
-                    imgContainer.style.display = 'inline-block';
-                    imgContainer.style.position = 'relative';
-                    imgContainer.style.margin = '10px';
+        //     files.forEach((file, index) => {
+        //         var reader = new FileReader();
+        //         reader.onload = function(e) {
+        //             var imgContainer = document.createElement('div');
+        //             imgContainer.style.display = 'inline-block';
+        //             imgContainer.style.position = 'relative';
+        //             imgContainer.style.margin = '10px';
 
-                    var img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.style.width = '100px'; // Adjust the size as needed
+        //             var img = document.createElement('img');
+        //             img.src = e.target.result;
+        //             img.style.width = '100px'; // Adjust the size as needed
 
-                    var removeButton = document.createElement('button');
-                    removeButton.innerText = 'X';
-                    removeButton.style.position = 'absolute';
-                    removeButton.style.top = '-10px';
-                    removeButton.style.right = '-10px';
-                    removeButton.style.background = 'red';
-                    removeButton.style.color = 'white';
-                    removeButton.style.border = 'none';
-                    removeButton.style.cursor = 'pointer';
-                    removeButton.style.borderRadius = '50%';
+        //             var removeButton = document.createElement('button');
+        //             removeButton.innerText = 'X';
+        //             removeButton.style.position = 'absolute';
+        //             removeButton.style.top = '-10px';
+        //             removeButton.style.right = '-10px';
+        //             removeButton.style.background = 'red';
+        //             removeButton.style.color = 'white';
+        //             removeButton.style.border = 'none';
+        //             removeButton.style.cursor = 'pointer';
+        //             removeButton.style.borderRadius = '50%';
 
-                    removeButton.addEventListener('click', function() {
-                        imgContainer.remove();
-                        files.splice(index, 1); // Remove the file from the array
-                        updateInputFiles();
-                    });
+        //             removeButton.addEventListener('click', function() {
+        //                 imgContainer.remove();
+        //                 files.splice(index, 1); // Remove the file from the array
+        //                 updateInputFiles();
+        //             });
 
-                    imgContainer.appendChild(img);
-                    imgContainer.appendChild(removeButton);
-                    preview.appendChild(imgContainer);
+        //             imgContainer.appendChild(img);
+        //             imgContainer.appendChild(removeButton);
+        //             preview.appendChild(imgContainer);
 
-                    dataTransfer.items.add(file); // Add file to DataTransfer
-                }
+        //             dataTransfer.items.add(file); // Add file to DataTransfer
+        //         }
+        //         reader.readAsDataURL(file);
+        //     });
+
+        //     function updateInputFiles() {
+        //         dataTransfer.items.clear(); // Clear the current files in DataTransfer
+        //         files.forEach(file => dataTransfer.items.add(file)); // Re-add remaining files
+        //         document.getElementById('multiple_images').files = dataTransfer.files; // Update the input element
+        //     }
+
+        //     updateInputFiles();
+        // });
+
+        
+    document.addEventListener("DOMContentLoaded", function () {
+        const imageInput = document.getElementById("multiple_images");
+        const imagePreviewContainer = document.getElementById("image-preview");
+
+
+        imageInput.addEventListener("change", function (event) {
+            imagePreviewContainer.innerHTML = ""; // Clear previous previews
+
+            const files = event.target.files;
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    const imagePreview = document.createElement("img");
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.maxWidth = "100px"; // Adjust the image size as needed
+                    imagePreviewContainer.appendChild(imagePreview);
+                };
+
                 reader.readAsDataURL(file);
-            });
-
-            function updateInputFiles() {
-                dataTransfer.items.clear(); // Clear the current files in DataTransfer
-                files.forEach(file => dataTransfer.items.add(file)); // Re-add remaining files
-                document.getElementById('multiple_images').files = dataTransfer.files; // Update the input element
             }
-
-            updateInputFiles();
         });
+    });
 
         $(document).ready(function() {
             $('#category_id').change(function() {

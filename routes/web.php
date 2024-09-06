@@ -256,6 +256,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('product/edit/{id}', [ProductController::class, 'edit'])->name('product.edit');
     Route::get('product/add/{id}', [ProductController::class, 'add'])->name('product.add');
     Route::get('product/editproduct/{id}', [ProductController::class, 'editProduct'])->name('product.editproduct');
+    Route::delete('/variant-color/{id}', [ProductController::class, 'deleteVariantColor'])->name('variant-color.delete');
+
     Route::put('/products/updateproduct/{id}', [ProductController::class, 'updateProduct'])->name('products.update');
     Route::post('/product-variant-color/store', [ProductController::class, 'storeVariant'])->name('product-variant-color.store');
     Route::PUT('/product/update/{id}', [ProductController::class, 'update'])->name('product.update');

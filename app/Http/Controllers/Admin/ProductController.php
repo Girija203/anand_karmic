@@ -239,16 +239,17 @@ class ProductController extends Controller
         // Validate the incoming request
         $validatedData = $request->validate([
             'title' => 'required',
-            'main_image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'main_image' => 'image|mimes:jpeg,png,jpg,gif|max:2000000000',
             'short_description' => 'required',
             'price' => 'required|numeric',
+            'multiple_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:200000000', 
         ]);
-        // dd($request);
+
+      
         // Create and save the product
         $product = new Product();
-        $product->fill($validatedData); // Using mass assignment
+        $product->fill($validatedData);
         $product->slug = Str::slug($request->input('title'));
-        $product->brand_id = $request->input('brand_id') ?? null;
         $product->brand_id = $request->input('brand_id') ?? null;
         $product->category_id = $request->input('category_id') ?? null;
         $product->subcategory_id = $request->input('subcategory_id') ?? null;
@@ -278,6 +279,7 @@ class ProductController extends Controller
         if ($request->hasFile('multiple_images')) {
             foreach ($request->file('multiple_images') as $image) {
                 $imagePath = $image->store('Product Color Images', 'public');
+                // dd($imagePath);
                 ProductColorImage::create([
                     'product_color_id' => $productColor->id,
                     'multi_image' => $imagePath,
@@ -318,7 +320,9 @@ class ProductController extends Controller
 
     public function edit($id)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::with('colors')->find($id);
+        $productcolor = ProductColor::with('images')->where('product_id', $id)->first();
+        // dd($productcolor);
         $category = Category::all();
         $subcategory = SubCategory::where('status', 1)->get();
         $childcategory = ChildCategory::where('status', 1)->get();
@@ -330,9 +334,11 @@ class ProductController extends Controller
         $meta_key = MetaKey::all();
         $productmeta = ProductMeta::where('product_id', $id)->get();
 
+        $color = Color::all();
 
 
-        return view('Admin.product.edit', compact('product', 'category', 'brand', 'productspecificationkey', 'subcategory', 'childcategory', 'productSpecifications', 'meta_key', 'productmeta', 'meta_type'));
+
+        return view('Admin.product.edit', compact('product', 'category', 'brand', 'productspecificationkey', 'subcategory', 'childcategory', 'productSpecifications', 'meta_key', 'productmeta', 'meta_type', 'color', 'productcolor'));
     }
 
     public function add($id)
@@ -380,6 +386,20 @@ class ProductController extends Controller
         return redirect()->route('product.index')->with('success', 'Product updated successfully');
     }
 
+    public function deleteVariantColor(Request $request)
+    {
+        $variantId = $request->id;
+
+        // Find the variant by ID and delete it
+        $variantColor = ProductVariantColor::find($variantId);
+
+        if ($variantColor) {
+            $variantColor->delete();
+            return response()->json(['success' => true, 'message' => 'Variant color deleted successfully.']);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Variant color not found.']);
+    }
 
 
     public function storeVariant(Request $request)
@@ -401,25 +421,22 @@ class ProductController extends Controller
 
         return redirect()->route('product.index')->with('success', 'Product variant color saved.');
     }
-
     public function update(Request $request, $id)
     {
-
         $validatedData = $request->validate([
             'title' => 'required',
             'short_description' => 'required',
-            'slug' => 'required|string|unique:products,slug,' . $id . '|max:255', 
+            'slug' => 'required|string|unique:products,slug,' . $id . '|max:255',
+            'main_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', 
+            'multiple_images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', 
         ]);
-
 
         $product = Product::findOrFail($id);
 
-        if($request->input('action') == "save"){
-            $status = 1;
-        }else{
-            $status = 0;
-        }
+        // Determine product status based on action
+        $status = ($request->input('action') == "save") ? 1 : 0;
 
+        // Update product details
         $product->title = $request->input('title');
         $product->slug = Str::slug($request->input('slug'));
         $product->category_id = $request->input('category_id');
@@ -429,39 +446,48 @@ class ProductController extends Controller
         $product->short_description = $request->input('short_description');
         $product->long_description = $request->input('long_description');
         $product->status = $status;
- 
-
-        if ($request->hasFile('main_image')) {
-
-            $mainImagePath = $request->file('main_image')->store('Product Images/thumbnail', 'public');
-
-            $product->image = $mainImagePath;
-        }
-
         $product->save();
 
-        if ($request->hasFile('multiple_images')) {
+        // Update single image for the product color
+        if ($request->hasFile('main_image')) {
+            $singleImagePath = $request->file('main_image')->store('Product Colors/single', 'public');
 
-            ProductMultipleImage::where('product_id', $id)->delete();
+            $productColor = ProductColor::where('product_id', $id)->first();
+            if ($productColor) {
+                // Delete the old image if it exists
+                if ($productColor->single_image && Storage::exists('public/' . $productColor->single_image)) {
+                    Storage::delete('public/' . $productColor->single_image);
+                }
 
-
-            foreach ($request->file('multiple_images') as $image) {
-                $imagePath = $image->store('Product Images', 'public');
-                $productImage = new ProductMultipleImage();
-                $productImage->product_id = $id;
-                $productImage->image = $imagePath;
-                $productImage->save();
+                $productColor->single_image = $singleImagePath;
+                $productColor->save();
             }
         }
 
+        if ($request->hasFile('multiple_images')) {
+            // First, delete existing product images related to the product color
+            $productColor = ProductColor::where('product_id', $id)->first();
+            if ($productColor) {
+                // This will call the productColorImages method defined in the ProductColor model
+                $productColor->productColorImages()->delete();
+            }
+
+            // Add new product images
+            foreach ($request->file('multiple_images') as $image) {
+                $filenameimage = $image->store('Product/Multiple Images', 'public');
+                ProductColorImage::create([
+                    'product_color_id' => $productColor->id,
+                    'multi_image' => $filenameimage,
+                ]);
+            }
+        }
+
+
+        // Handle product specifications
         $productSpecificationKeys = $request->input('product_specification_key_id');
         $productSpecifications = $request->input('specification');
-
         if ($productSpecificationKeys && $productSpecifications) {
-
             ProductSpecification::where('product_id', $id)->delete();
-
-
             foreach ($productSpecificationKeys as $index => $specificationKeyId) {
                 ProductSpecification::create([
                     'product_id' => $id,
@@ -471,13 +497,11 @@ class ProductController extends Controller
             }
         }
 
-
+        // Handle product meta
         $productmetakey = $request->input('meta_keys_id');
         $productmeta = $request->input('content');
-
         if ($productmetakey && $productmeta) {
             ProductMeta::where('product_id', $id)->delete();
-
             foreach ($productmetakey as $index => $productmetakeyId) {
                 ProductMeta::create([
                     'product_id' => $id,
@@ -487,9 +511,9 @@ class ProductController extends Controller
             }
         }
 
-
         return redirect()->route('product.index')->with('success', 'Product updated successfully');
     }
+
 
     public function delete($id)
     {

@@ -145,7 +145,7 @@
                         $user = auth()->user();
                         $shippingAddresses = Addresses::where('user_id', $user->id)
                             ->where('type', 1) // Shipping address
-                            ->where('default_shipping', 1) // Default shipping address
+                            // ->where('default_shipping', 1) // Default shipping address
                             ->get();
                         $firstAddressId = $shippingAddresses->first()
                             ? $shippingAddresses->first()->id
@@ -171,6 +171,7 @@
                                                 {{ $address->name }}
                                             </h5>
                                         </label>
+                                        <input type="hidden" name="selected_shipping_address_id" value="{{ $firstAddressId }}">
                                     </div> 
 
                                     <p class="fs-15 pl-1em">
@@ -213,25 +214,7 @@
 
                                         <div class="col-lg-12">
                                             <div class="checkout-box-wrap mt-4">
-                                                <!-- @if (empty($shippingAddress))
-    -->
-                                                <!-- <label id="chekout-box-2" class="fs-16">
-        <input type="checkbox" value="1" id="ship-toggle" name="ship_different"
-           >
-        Ship to a different address?
-    </label> -->
-                                                <!--
-    @endif -->
-
-
-
-                                                <!-- tst starts -->
-                                                <!-- The div to be displayed on blur -->
-                                                <!-- <div id="address-details" style="display: none;">
-        <h4>Address Details</h4>
-        <p>Your address is: <span id="displayed-address"></span></p>
-    </div> -->
-                                                <!-- tst ends -->
+              
 
                                                 <div class="ship-box-info" id="shipping-address-form"
                                                     style="display: none;">
@@ -628,17 +611,17 @@
     <!-- JavaScript code -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-        $(document).ready(function() {
-            // When a radio button is clicked
-            $('input[name="shipping_address"]').click(function() {
-                // Get the value of the selected radio button (which is the ID of the shipping address)
-                var selectedShippingAddressId = $(this).val();
+    $(document).ready(function() {
+        // When a radio button is clicked
+        $('input[name="shipping_address"]').click(function() {
+            // Get the value of the selected radio button (which is the ID of the shipping address)
+            var selectedShippingAddressId = $(this).val();
 
-                // Assign the selected ID to the hidden input field
-                $('input[name="selected_shipping_address_id"]').val(selectedShippingAddressId);
-            });
+            // Assign the selected ID to the hidden input field
+            $('input[name="selected_shipping_address_id"]').val(selectedShippingAddressId);
         });
-    </script>
+    });
+</script>
 
     <!-- Product Modal End -->
     <script src="{{ asset('/frontend/assets/js/modernizr-3.11.7.min.js') }}"></script>

@@ -4,12 +4,12 @@
 @section('content')
     <div class="content-page">
         <div class="content">
-            <div class="container-flud">
+            {{-- <div class="container-flud">
                 <h4 class="page-title m-4">Welcome!</h4>
                 <p class="text-center"> The page is under processing...</p>
-            </div>
+            </div> --}}
             <!-- Start Content-->
-            {{-- <div class="container-fluid">
+            <div class="container-fluid">
 
                         <!-- start page title -->
                         <div class="row">
@@ -35,31 +35,15 @@
                                         <div class="float-end">
                                             <i class="ri-eye-line widget-icon"></i>
                                         </div>
-                                        <h6 class="text-uppercase mt-0" title="Customers">Daily Visits</h6>
-                                        <h2 class="my-2">8,652</h2>
-                                        <p class="mb-0">
-                                            <span class="badge bg-white bg-opacity-10 me-1">2.97%</span>
-                                            <span class="text-nowrap">Since last month</span>
-                                        </p>
+                                        <h6 class="text-uppercase mt-0" title="Customers"> Products</h6>
+                                        <h2 class="my-2">{{$productCount}}</h2>
+                                       
                                     </div>
                                 </div>
                             </div> <!-- end col-->
 
-                            <div class="col-xxl-3 col-sm-6">
-                                <div class="card widget-flat text-bg-purple">
-                                    <div class="card-body">
-                                        <div class="float-end">
-                                            <i class="ri-wallet-2-line widget-icon"></i>
-                                        </div>
-                                        <h6 class="text-uppercase mt-0" title="Customers">Revenue</h6>
-                                        <h2 class="my-2">$9,254.62</h2>
-                                        <p class="mb-0">
-                                            <span class="badge bg-white bg-opacity-10 me-1">18.25%</span>
-                                            <span class="text-nowrap">Since last month</span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div> <!-- end col-->
+                           
+                             <!-- end col-->
 
                             <div class="col-xxl-3 col-sm-6">
                                 <div class="card widget-flat text-bg-info">
@@ -68,11 +52,8 @@
                                             <i class="ri-shopping-basket-line widget-icon"></i>
                                         </div>
                                         <h6 class="text-uppercase mt-0" title="Customers">Orders</h6>
-                                        <h2 class="my-2">753</h2>
-                                        <p class="mb-0">
-                                            <span class="badge bg-white bg-opacity-25 me-1">-5.75%</span>
-                                            <span class="text-nowrap">Since last month</span>
-                                        </p>
+                                        <h2 class="my-2">{{$orderCount}}</h2>
+                                        
                                     </div>
                                 </div>
                             </div> <!-- end col-->
@@ -84,14 +65,25 @@
                                             <i class="ri-group-2-line widget-icon"></i>
                                         </div>
                                         <h6 class="text-uppercase mt-0" title="Customers">Users</h6>
-                                        <h2 class="my-2">63,154</h2>
-                                        <p class="mb-0">
-                                            <span class="badge bg-white bg-opacity-10 me-1">8.21%</span>
-                                            <span class="text-nowrap">Since last month</span>
-                                        </p>
+                                        <h2 class="my-2">{{$userCount}}</h2>
+                                      
                                     </div>
                                 </div>
-                            </div> <!-- end col-->
+                            </div>
+
+                            <div class="col-xxl-3 col-sm-6">
+                                <div class="card widget-flat text-bg-primary">
+                                    <div class="card-body">
+                                        <div class="float-end">
+                                            <i class="ri-group-2-line widget-icon"></i>
+                                        </div>
+                                        <h6 class="text-uppercase mt-0" title="Customers">Subscriber</h6>
+                                        <h2 class="my-2">{{$subscriberCount}}</h2>
+                                      
+                                    </div>
+                                </div>
+                            </div>
+                             <!-- end col-->
                         </div>
 
                         <div class="row">
@@ -174,7 +166,7 @@
                                     </div> <!-- end card-body-->
                                 </div> <!-- end card-->
 
-                                <div class="card">
+                                {{-- <div class="card">
                                     <div class="card-body">
                                         <div class="d-flex align-items-center">
                                             <div class="flex-grow-1 overflow-hidden">
@@ -186,13 +178,13 @@
                                             </div>
                                         </div>
                                     </div><!-- end card body -->
-                                </div> <!-- end card-->
+                                </div> <!-- end card--> --}}
                             </div> <!-- end col-->
 
                         </div>
                         <!-- end row -->
 
-                        <div class="row">
+                        {{-- <div class="row">
                             <div class="col-xl-4">
                                 <!-- Chat-->
                                 <div class="card">
@@ -291,7 +283,7 @@
                                 </div> <!-- end card-->
                             </div> <!-- end col-->
 
-                            <div class="col-xl-8">
+                            {{-- <div class="col-xl-8">
                                 <!-- Todo-->
                                 <div class="card">
                                     <div class="card-body p-0">
@@ -384,11 +376,11 @@
                                         </div>
                                     </div>                           
                                 </div> <!-- end card-->
-                            </div> <!-- end col-->
-                        </div>
+                            </div> <!-- end col--> --}}
+                        {{-- </div> --}}
                         <!-- end row -->
 
-                    </div> --}}
+                    </div>
             <!-- container -->
 
         </div>

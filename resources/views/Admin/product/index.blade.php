@@ -448,13 +448,12 @@ table = $('#product-table').DataTable({
 
         function editProduct(id) {
             console.log("inside");
-
             window.location.href = '/product/editproduct/' + id;
         }
 
         function deleteUsers(id) {
 
-            if (confirm('Are you sure you want to delete this category?')) {
+            if (confirm('Are you sure you want to delete this Product?')) {
                 $.ajax({
                     url: '/product/delete/' + id,
                     type: 'get',

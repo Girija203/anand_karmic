@@ -55,10 +55,12 @@
             @enderror
         </div>
     </div>
-    @foreach ($productVariantColors as $variant)
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <label for="variant_colors[{{ $variant->id }}][color_id]" class="col-form-label">Color</label>
+   @foreach ($productVariantColors as $variant)
+   <div class="row">
+    <div class="col-10">
+<div class="row border rounded p-2 mb-3">
+    <div class="col-8">
+        <label for="variant_colors[{{ $variant->id }}][color_id]" class="col-form-label">Color</label>
             <select class="form-control" name="variant_colors[{{ $variant->id }}][color_id]" id="variant_colors_{{ $variant->id }}_color_id">
                 <option value="">Select Color</option>
                 @foreach ($colors as $color)
@@ -68,10 +70,7 @@
             @error('variant_colors.{{ $variant->id }}.color_id')
                 <span class="error" style="color: red;">{{ $message }}</span>
             @enderror
-        </div>
-    </div>
-    <div class="row justify-content-center">
-        <div class="col-md-6">
+
             <label for="variant_colors[{{ $variant->id }}][product_id]" class="col-form-label">Product</label>
             <select id="variant_colors_{{ $variant->id }}_product_id" class="form-control" name="variant_colors[{{ $variant->id }}][product_id]">
                 <option value="">Select Product</option>
@@ -82,10 +81,18 @@
             @error('variant_colors.{{ $variant->id }}.product_id')
                 <span class="error" style="color: red;">{{ $message }}</span>
             @enderror
-        </div>
+        
     </div>
-    @endforeach
-    <div class="form-group">
+    <div class="col-4 d-flex align-content-center justify-content-center flex-wrap">
+    <button class="delete-variant-color btn btn-danger" data-id="{{ $variant->id }}">Delete</button>
+    </div>
+   </div>
+    </div>
+   </div>
+   
+    
+@endforeach    
+<div class="form-group m-2 pt-2">
         <div class="d-flex justify-content-evenly">
             <button type="submit" class="btn btn-primary waves-effect waves-light" name="action" value="save">
                 Save
@@ -131,8 +138,45 @@
 
     </div>
 
+<!-- Toastr CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
 
+<!-- Toastr JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.delete-variant-color').on('click', function(e) {
+            e.preventDefault();
+            var variantId = $(this).data('id');
+
+            if (confirm('Are you sure you want to delete this variant color?')) {
+                $.ajax({
+                    url: '/variant-color/' + variantId,
+                    type: 'DELETE',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            toastr.success(response.message);
+                            // Optionally, remove the deleted variant's row from the DOM
+                            setTimeout(function() {
+                                location.reload(); // Reload after a slight delay to show the success message
+                            }, 1000);
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    },
+                    error: function(xhr) {
+                        toastr.error('Something went wrong. Please try again.');
+                    }
+                });
+            }
+        });
+    });
+</script>
 
 
 @endsection

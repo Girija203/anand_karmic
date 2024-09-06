@@ -241,9 +241,11 @@ class HomeController extends Controller
         // Fetch the current product along with its images and specifications
         $products = Product::with('images', 'category')->findOrFail($id);
 
+        // dd($products);
+
         // Fetch product colors and related color data
         $productColors = ProductColor::where('product_id', $id)->with('color')->get();
-
+        //  dd($productColors);
         $quantities = $productColors->pluck('qty');
 
         // dd($quantities); 

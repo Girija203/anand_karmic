@@ -110,6 +110,235 @@
                                                                         @enderror
                                                                     </div>
                                                                 </div>
+
+                                                                <div class="row mt-4">
+                                                                <hr class="hr-text" data-content="PRODUCT VARIENT">
+                                                                <div class="col-md-6">
+                                                                    <label for="color_id"
+                                                                        class="col-form-label">Color</label>
+                                                                   <select id="color_id" class="form-control" name="color_id">
+    @foreach ($color as $item)
+        <option value="{{ $item->id }}"
+            {{ isset($productcolor) && $productcolor->color_id == $item->id ? 'selected' : '' }}>
+            {{ $item->name }}
+        </option>
+    @endforeach
+</select>
+
+                                                                    @error('color_id')
+                                                                        <span class="error"
+                                                                            style="color: red;">{{ $message }}</span>
+                                                                    @enderror
+
+                                                                    <label for="main_image" class="col-form-label">Thumbnail
+                                                                        Image</label>
+
+                                                                    <input class="form-control" type="file"
+                                                                        name="main_image" id="main_image"
+                                                                        value="{{ old('image') }}">
+
+                                                                    @error('main_image')
+                                                                        <span class="error"
+                                                                            style="color: red;">{{ $message }}</span>
+                                                                    @enderror
+
+                                                                    <label for="multiple_images" class="col-form-label">
+                                                                        Select Multiple
+                                                                        Image</label>
+
+                                                                    <input class="form-control" type="file"
+                                                                        name="multiple_images[]" id="multiple_images"
+                                                                        multiple value="{{ old('image') }}">
+
+                                                                    @error('multiple_images')
+                                                                        <span class="error"
+                                                                            style="color: red;">{{ $message }}</span>
+                                                                    @enderror
+                                                                </div>
+                                                                <div class="col-md-6">
+    <h5>Image Preview</h5>
+    <div class="row">
+        <div class="col-md-4">
+            Thumbnail
+            <img id="thumbnail" src="{{ asset('storage/' . $productcolor->single_image) }}" alt="Image Preview" style="width: 100px; height: auto;">
+        </div>
+        <div class="col-md-8" id="image-preview">
+            Multiple
+            <div id="multiple-images">
+                @foreach ($productcolor->images as $image)
+                    <img src="{{ asset('storage/' . $image->multi_image) }}" alt="Product Image" style="width: 100px; height: auto; margin-right: 5px;">
+                @endforeach
+            </div>
+        </div>
+    </div>
+</div>
+
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <label for="price"
+                                                                        class="col-form-label mandatory">Price (₹)</label>
+                                                                    <input type="text" class="form-control"
+                                                                        name="price" id="price"
+                                                                        value="{{$productcolor->price}}">
+                                                                    @error('price')
+                                                                        <span class="error"
+                                                                            style="color: red;">{{ $message }}</span>
+                                                                    @enderror
+                                                                </div>
+
+                                                                <div class="col-md-6">
+                                                                    <label for="offer_price" class="col-form-label">Offer
+                                                                        Price (₹)</label>
+                                                                    <input type="text" class="form-control"
+                                                                        name="offer_price"
+                                                                        value="{{$productcolor->offer_price}}">
+                                                                    @error('offer_price')
+                                                                        <span class="error"
+                                                                            style="color: red;">{{ $message }}</span>
+                                                                    @enderror
+                                                                </div>
+
+                                                                <div class="col-md-6">
+                                                                    <label for="sku"
+                                                                        class="col-form-label">SKU</label>
+                                                                    <input type="text" class="form-control"
+                                                                        name="sku"  value="{{$productcolor->sku}}">
+                                                                    @error('sku')
+                                                                        <span class="error"
+                                                                            style="color: red;">{{ $message }}</span>
+                                                                    @enderror
+                                                                </div>
+
+                                                                <div class="col-md-6">
+                                                                    <label class="col-form-label"> Quantity</label>
+                                                                    <input type="number" min="0"
+                                                                        class="form-control" name="qty"
+                                                                        value="{{$productcolor->qty }}">
+                                                                    @error('qty')
+                                                                        <span class="error"
+                                                                            style="color: red;">{{ $message }}</span>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row mt-4">
+                                                                <hr class="hr-text" data-content="ADVANCE SETTINGS">
+                                                                <div class="col-md-12">
+                                                                    <ul class="nav nav-tabs" id="myTab"
+                                                                        role="tablist">
+                                                                        <li class="nav-item" role="presentation">
+                                                                            <button class="nav-link active"
+                                                                                id="specification-key-tab"
+                                                                                data-bs-toggle="tab"
+                                                                                data-bs-target="#specification-key"
+                                                                                type="button" role="tab"
+                                                                                aria-controls="specification-key"
+                                                                                aria-selected="true">Specification
+                                                                                Keys</button>
+                                                                        </li>
+                                                                        <li class="nav-item" role="presentation">
+                                                                            <button class="nav-link" id="seo-tab"
+                                                                                data-bs-toggle="tab" data-bs-target="#seo"
+                                                                                type="button" role="tab"
+                                                                                aria-controls="seo"
+                                                                                aria-selected="false">SEO</button>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="tab-content" id="myTabContent">
+                                                                <div class="tab-pane fade show active"
+                                                                    id="specification-key" role="tabpanel"
+                                                                    aria-labelledby="specification-key-tab">
+                                                                    <div id="meta-fields-container">
+                                                                        <div class="form-group row meta-fields">
+                                                                            @foreach ($productSpecifications as $specification)
+    <div class="row mb-4">
+        <div class="col-sm-4 mb-4">
+            <label class="col-form-label">Key</label>
+            <select class="form-control select2" name="product_specification_key_id[]">
+                <option value="">Select Key</option>
+                @foreach ($productspecificationkey as $item)
+                    <option value="{{ $item->id }}" {{ $item->id == $specification->product_specification_key_id ? 'selected' : '' }}>
+                        {{ $item->name }}
+                    </option>
+                @endforeach
+            </select>
+            @error('product_specification_key_id')
+                <span class="error" style="color: red;">{{ $message }}</span>
+            @enderror
+        </div>
+        <div class="col-sm-4 mb-4">
+            <label class="col-form-label">Specification</label>
+            <input type="text" class="form-control" name="specification[]" value="{{ $specification->specification }}">
+            @error('specification')
+                <span class="error" style="color: red;">{{ $message }}</span>
+            @enderror
+        </div>
+    </div>
+@endforeach
+
+                                                                            <div
+                                                                                class="col-sm-1 mb-4 d-flex align-items-end">
+                                                                                <button type="button"
+                                                                                    class="btn btn-primary add-meta-fields">+</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="tab-pane fade" id="seo" role="tabpanel"
+                                                                    aria-labelledby="seo-tab">
+                                                                    <div id="meta-fields">
+                                                                        <div class="form-group row meta-fields">
+                                                                            <div class="col-sm-2 mb-2">
+                                                                                <label class="col-form-label">Meta
+                                                                                    Type</label>
+                                                                                <select class="form-control select2"
+                                                                                    name="meta_types_id[]" id="meta_type">
+                                                                                    <option value="">Select meta type
+                                                                                    </option>
+                                                                                    @foreach ($meta_type as $item)
+                                                                                        <option
+                                                                                            value="{{ $item->id }}">
+                                                                                            {{ $item->name }}</option>
+                                                                                    @endforeach
+                                                                                </select>
+                                                                            </div>
+                                                                           <div class="col-sm-4 mb-4">
+    <label class="col-form-label">Meta Key</label>
+    <select class="form-control select2 meta_keys" id="metakey" name="meta_keys_id[]">
+        <option value="">Select Meta Key</option>
+        @foreach ($meta_key as $key)
+            <option value="{{ $key->id }}" 
+                @if (in_array($key->id, old('meta_keys_id', $productmeta->pluck('meta_keys_id')->toArray())))
+                    selected
+                @endif>
+                {{ $key->name }}
+            </option>
+        @endforeach
+    </select>
+</div>
+<div class="col-sm-4 mb-4">
+    <label class="col-form-label">Content</label>
+    @foreach ($productmeta as $meta)
+        <input type="text" class="form-control" name="content[]" value="{{ $meta->content }}">
+    @endforeach
+    @error('content')
+        <span class="error" style="color: red;">{{ $message }}</span>
+    @enderror
+</div>
+
+                                                                            <div
+                                                                                class="col-sm-1 mb-4 d-flex align-items-end">
+                                                                                <button type="button"
+                                                                                    class="btn btn-primary add-meta-fields">+</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3 ">
