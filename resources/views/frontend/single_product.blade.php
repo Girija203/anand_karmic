@@ -87,7 +87,7 @@
 
         .quantity__input {
             /* width: 32px;
-                                                                            height: 19px; */
+                                                                                                                            height: 19px; */
             width: 70px;
             height: 35px;
             margin: 0;
@@ -177,25 +177,35 @@
                                     <span
                                         class="product-card-regular-price">{{ $currencySymbol }}{{ number_format($offerPrice, 2) }}</span>
                                 </div>
-                                <div class="product-item-details-rating d-flex align-items-center gap-2 text-black">
-                                    <div class="product-item-details-rating-list d-flex">
-                                        <i class="icon-rt-star-solid"></i>
-                                        <i class="icon-rt-star-solid"></i>
-                                        <i class="icon-rt-star-solid"></i>
-                                        <i class="icon-rt-star-solid"></i>
-                                        <i class="icon-rt-star-solid"></i>
+                                @if ($averageRating)
+                                    <div class="product-item-details-rating d-flex align-items-center gap-2 text-black">
+                                        <div class="product-item-details-rating-list d-flex">
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                @if ($i <= $averageRating)
+                                                    <i class="icon-rt-star-solid"></i> <!-- Filled star -->
+                                                @else
+                                                    <i class="icon-rt-star-empty"></i> <!-- Empty star -->
+                                                @endif
+                                            @endfor
+                                        </div>
+                                        <span>{{ number_format($averageRating, 1) }} / 5</span>
                                     </div>
-                                </div>
+                                @else
+                                    <p>No ratings yet.</p>
+                                @endif
+
                             </div>
 
                             <p class="product-item-details-description mt-2 fs-14" id="product-description">
-                                {{ Str::limit($products->short_description, 50) }} 
-                                <span id="more-text"
-                                    style="display: none;">{{ substr($products->short_description, 50) }}</span>
+                                {{ Str::limit($products->short_description, 100, '') }}
+                                <span id="more-text" style="display: none;">
+                                    {{ substr($products->short_description, 100) }}
+                                </span>
                                 <br>
                                 <a href="javascript:void(0);" id="toggle-description" onclick="toggleDescription()">Show
                                     More</a>
                             </p>
+
                             {{-- <form class="product-color-radio-form" id="productColorForm">
                                 <fieldset class="product-color-radio-wrap">
                                     <h6 class="mb-0 title">Color</h6>
@@ -214,26 +224,26 @@
                             </form> --}}
                             <fieldset class="product-color-radio-wrap">
                                 <h6 class="mb-0 title">Color</h6>
-                                <div class="product-color-radio-buttons">   
+                                <div class="product-color-radio-buttons">
                                     <div class="colors">
-                                    @foreach ($productVariantColors as $productVariantColor)
-                                        <a href="{{ route('single.product', ['id' => $productVariantColor->product_id]) }}">
-                                            <div class="color-swatch"
-                                                style="background-color: {{ $productVariantColor->color->code }};">
-                                            </div><div class=""></div>
-                                        </a>
-                                    @endforeach
+                                        @foreach ($productVariantColors as $productVariantColor)
+                                            <a
+                                                href="{{ route('single.product', ['slug' => $productVariantColor->product->slug]) }}">
+                                                <div class="color-swatch"
+                                                    style="background-color: {{ $productVariantColor->color->code }};">
+                                                </div>
+                                            </a>
+                                        @endforeach
+
                                     </div>
                                 </div>
                             </fieldset>
 
 
-
-
                             <div class="product-item-stock in-stock mb-3">
                                 <span class="stock-label visually-hidden">Availability:</span>
-                                <span class="product-item-stock-in">{{$quantities}}In Stock</span>
-                                 
+                                <span class="product-item-stock-in">{{ $quantities }}In Stock</span>
+
                             </div>
 
                             <form action="{{ route('cart.add', $products->id) }}" method="post" id="addToCartForm">
@@ -259,63 +269,137 @@
                             </form>
                         </div>
                         <div>
-    @auth
-        @if (in_array($products->id, $wishlistProductIds))
-            <a href="{{ route('wishlist.delete', $products->id) }}">
-                <i class="fa-solid fa-heart" filled></i>
-                <span>Added to wishlist</span>
-            </a>
-        @else
-            <a href="#" class="product-item-wishlist-action mt-3"
-                data-product-id="{{ $products->id }}" data-action="add">
-                <i class="icon-rt-heart2"></i><span>Add to wishlist</span>
-            </a>
-        @endif
-    @else
-        <p>Please log in to add items to your wishlist.</p>
-    @endauth
-</div>
+                            @auth
+                                @if (in_array($products->id, $wishlistProductIds))
+                                    <a href="{{ route('wishlist.delete', $products->id) }}">
+                                        <i class="fa-solid fa-heart" filled></i>
+                                        <span>Added to wishlist</span>
+                                    </a>
+                                @else
+                                    <a href="#" class="product-item-wishlist-action mt-3"
+                                        data-product-id="{{ $products->id }}" data-action="add">
+                                        <i class="icon-rt-heart2"></i><span>Add to wishlist</span>
+                                    </a>
+                                @endif
+                            @else
+                                <p>Please log in to add items to your wishlist.</p>
+                            @endauth
+                        </div>
 
 
-                        @if (!empty($product_sml_share))
-                            <div class="social-share-wrap d-flex gap-1 mt-3">
 
-                                <div class="social-share social-share-in-color d-flex gap-2">
-                                    <p>Share:</p>
-                                    @foreach ($product_sml_share as $items)
-                                        <a class="social-share-link facebook" href="{{ $items->link }}" target="_blank"
-                                            aria-label="facebook">
-                                            <i class="{{ $items->icon }}"></i>
-                                        </a>
-                                    @endforeach
-                                </div>
+                        <div class="social-share-wrap d-flex gap-1 mt-3">
+                            <div class="social-share social-share-in-color d-flex gap-2">
+                                <p>Share:</p>
 
+                                <!-- Facebook Share -->
+                                <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode($productUrl) }}"
+                                    target="_blank">
+                                    <i class="fab fa-facebook"></i>
+                                </a>
+
+                                <!-- Twitter Share -->
+                                <a href="https://twitter.com/intent/tweet?url={{ urlencode($productUrl) }}&text={{ $products->name }}"
+                                    target="_blank">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+
+                                <!-- LinkedIn Share -->
+                                <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode($productUrl) }}"
+                                    target="_blank">
+                                    <i class="fab fa-linkedin"></i>
+                                </a>
+
+                                <!-- WhatsApp Share -->
+                                <a href="https://api.whatsapp.com/send?text={{ urlencode($productUrl) }}" target="_blank">
+                                    <i class="fab fa-whatsapp"></i>
+                                </a>
+
+                                <!-- Add more platforms as needed -->
                             </div>
+                        </div>
 
+                        {{-- 
                             <a class="social-share-link copy-link" href="javascript:void(0);" onclick="copyToClipboard()"
                                 aria-label="copy link">
                                 <i class="fas fa-copy"></i>
-                            </a>
-                        @endif
+                            </a> --}}
+
 
                     </div>
                     <div class="col-md-12 col-lg-5">
                         <div class="swiper product-details-lg-active">
+
                             <div class="swiper-wrapper">
-                                @if ($products->colors->first()->images)
+                                @if ($products->colors && $products->colors->isNotEmpty())
+                                    {{-- @php
+                                            dd($products->colors->first());
+                                        @endphp --}}
                                     @foreach ($products->colors->first()->images as $image)
-                                        <div class="swiper-slide">
-                                            <img class="w-75" src="{{ asset('storage/' . $image->multi_image) }}"
-                                                alt="{{ $products->title }} Image" />
-                                        </div>
+                                        @php
+                                            $imagePath = 'storage/' . $image->multi_image;
+                                        @endphp
+
+                                        @if (file_exists(public_path($imagePath)) && $image->multi_image)
+                                            {{-- @php
+                                                dd('in');
+                                            @endphp --}}
+                                            <div class="swiper-slide">
+                                                <img class="w-75" src="{{ asset($imagePath) }}"
+                                                    alt="{{ $products->title }} Image" />
+                                            </div>
+                                        @else
+                                            {{-- @php
+                                                dd('out');
+                                            @endphp --}}
+                                            <div class="swiper-slide">
+                                                <img class="w-75"
+                                                    src="{{ asset('assets/admin/images/product_image_not_found.png') }}"
+                                                    alt="{{ $products->title }} Image" />
+                                            </div>
+                                        @endif
                                     @endforeach
                                 @else
+                                    {{-- @php
+                                        dd('out   out');
+                                    @endphp --}}
                                     <div class="swiper-slide">
-                                        <img class="w-75" src="{{ asset('images/products/default-image.jpg') }}"
+                                        <img class="w-75"
+                                            src="{{ asset('assets/admin/images/product_image_not_found.png') }}"
                                             alt="Default Product Image" />
                                     </div>
                                 @endif
                             </div>
+
+
+                            {{-- <div class="swiper-wrapper">
+                                @if ($products->colors && $products->colors->isNotEmpty())
+                                    @php
+                                        $imagePath = 'storage/' . $products->colors->first()->single_image;
+                                    @endphp
+
+                                    @if (file_exists(public_path($imagePath)) && !empty($products->colors->first()->single_image))
+                                        <div class="swiper-slide">
+                                            <img class="w-75" src="{{ asset($imagePath) }}" alt="Product Image"
+                                                width="100%">
+                                        </div>
+                                    @else
+                                        <div class="swiper-slide">
+                                            <img class="w-75"
+                                                src="{{ asset('assets/admin/images/product_image_not_found.png') }}"
+                                                alt="Default image" width="100%">
+                                        </div>
+                                    @endif
+                                @else
+                                        <div class="swiper-slide">
+
+                                    <img class="w-75"
+                                        src="{{ asset('assets/admin/images/product_image_not_found.png') }}"
+                                        alt="Default image" width="100%">
+                                        </div>
+                                @endif
+
+                            </div> --}}
 
                             <div class="product-details-button-next product-details-navigation-next">
                                 <i class="icon-rt-arrow-right"></i>
@@ -327,11 +411,21 @@
                         <div class="swiper product-details-sm-thum-active mt-2">
                             <div class="swiper-wrapper">
                                 @foreach ($products->colors->first()->images as $image)
-                                    <div class="swiper-slide">
-
-                                        <img src="{{ asset('storage/' . $image->multi_image) }}"
-                                            alt="{{ $products->title }} Image" />
-                                    </div>
+                                    @php
+                                        $imagePath = 'storage/' . $image->multi_image;
+                                    @endphp
+                                    @if (file_exists(public_path($imagePath)) && $image->multi_image)
+                                        <div class="swiper-slide">
+                                            <img class="w-75" src="{{ asset($imagePath) }}"
+                                                alt="{{ $products->title }} Image" />
+                                        </div>
+                                    @else
+                                        <div class="swiper-slide">
+                                            <img class="w-75"
+                                                src="{{ asset('assets/admin/images/product_image_not_found.png') }}"
+                                                alt="{{ $products->title }} Image" />
+                                        </div>
+                                    @endif
                                 @endforeach
                             </div>
                         </div>
@@ -507,14 +601,30 @@
                     @foreach ($relatedProducts as $relatedProduct)
                         <div class="col-md-3">
                             <div class="card position-relative box-shad">
-                                <div class="position-absolute r-0 card_icon">
+                                {{-- <div class="position-absolute r-0 card_icon">
                                     <i class="fa-solid fa-lock fs-15"></i>
-                                </div>
+                                </div> --}}
                                 <div class="p-2">
                                     @if ($relatedProduct->colors->isNotEmpty() && $relatedProduct->colors->first()->single_image)
-                                        <img class="card-img-top object-fit-cover"
+                                        @php
+                                            $imagePath = 'storage/' . $relatedProduct->colors->first()->single_image;
+                                            // dd($relatedProduct);
+                                        @endphp
+                                        @if (file_exists(public_path($imagePath)) )
+                                            <div class="swiper-slide">
+                                                <img class="w-75" src="{{ asset($imagePath) }}"
+                                                    alt="{{ $products->title }} Image" />
+                                            </div>
+                                        @else
+                                            <div class="swiper-slide">
+                                                <img class="w-75"
+                                                    src="{{ asset('assets/admin/images/product_image_not_found.png') }}"
+                                                    alt="{{ $products->title }} Image" />
+                                            </div>
+                                        @endif
+                                        {{-- <img class="card-img-top object-fit-cover"
                                             src="{{ asset('storage/' . $relatedProduct->colors->first()->single_image) }}"
-                                            alt="Card image cap" width="100%">
+                                            alt="Card image cap" width="100%"> --}}
                                     @else
                                         <img class="card-img-top object-fit-cover"
                                             src="{{ asset('assets/admin/images/product_image_not_found.png') }}"
@@ -525,9 +635,10 @@
                                     <h6 class="card-title">{{ $relatedProduct->title }}</h6>
                                     <span>{{ $relatedProduct->color_count }} colors</span>
                                     <div class="d-flex justify-content-between align-items-center my-2">
-                                        <a href="{{ route('single.product', $relatedProduct->id) }}">
+                                        <a href="{{ route('single.product', ['slug' => $relatedProduct->slug]) }}">
                                             <button class="btn btn-black">Shop Now</button>
                                         </a>
+
                                         <span
                                             class="product-card-old-price"><del>{{ $currencySymbol }}{{ number_format($relatedProduct->getPriceInSelectedCurrency(), 2) }}</del></span>
                                         <span

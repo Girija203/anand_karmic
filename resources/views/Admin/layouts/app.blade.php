@@ -205,7 +205,7 @@
                             <span class="account-user-avatar">
                                 @if (auth()->check() && auth()->user()->image)
                                     <img src="{{ asset('storage/' . auth()->user()->image) }}" class="user-img"
-                                        alt="user-image" width="32" class="rounded-circle" />
+                                        alt="user-image" width="32" class="rounded-circle"/>
                                 @else
                                     <img src="{{ asset('assets/admin/images/users/avatar-1.jpg') }}" alt="user-image"
                                         width="32" class="rounded-circle">
@@ -351,7 +351,7 @@
                                     <a href="{{ route('review.index') }}">Product Review</a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('report.index') }}">Product Report </a>
+                                    <a href="{{ route('product_sml_shares.index') }}">Product SML </a>
                                 </li>
                                 <li>
                                     <a href="{{ route('product_show_cases.index') }}">Product Show Case </a>

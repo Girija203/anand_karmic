@@ -11,11 +11,13 @@
                                 <h5 class="shop-sidebar-widget-title">Karmics Categories</h5>
                                 <ul class="shop-sidebar-widget-list">
                                     @foreach ($categories as $category)
-                                        <li class="shop-sidebar-widget-list-item">
-                                            <a href="{{ route('shop.category', $category->id) }}"
-                                                class="shop-sidebar-widget-list-link">{{ $category->name }}</a>
-                                        </li>
-                                    @endforeach
+    <li class="shop-sidebar-widget-list-item">
+        <a href="{{ route('shop.category', $category->id) }}"
+            class="shop-sidebar-widget-list-link">
+            {{ $category->id == 1 ? 'Bags' : $category->name }}
+        </a>
+    </li>
+@endforeach
 
 
 
@@ -24,7 +26,7 @@
                             <div class="shop-sidebar-widget">
                                 <h5 class="shop-sidebar-widget-title">Filter By Price</h5>
                                 <div class="sidebar-widget-item__filter price-range-filter">
-                                    <form action="{{ route('products.filter') }}" method="GET">
+                                    <form action="{{ route('price.filter') }}" method="GET">
                                         <div class="filter-slider">
                                             <div class="filter-progress"></div>
                                         </div>
@@ -48,8 +50,10 @@
                                         </p>
                                         <button type="submit" class="filter-price-btn">Filter</button>
                                     </form>
+
                                 </div>
                             </div>
+
                             <div class="shop-sidebar-widget">
                                 <h5 class="shop-sidebar-widget-title">Size</h5>
                                 <form action="{{ route('filter.bySpecifications') }}" method="GET">
@@ -91,10 +95,10 @@
                                             <i class="icon-rt-apps-outline"></i>
                                             <span class="visually-hidden">Grid View</span>
                                         </button>
-                                        <button class="shop-display" data-display="list">
+                                        {{-- <button class="shop-display" data-display="list">
                                             <i class="icon-rt-list-solid"></i>
                                             <span class="visually-hidden">List View</span>
-                                        </button>
+                                        </button> --}}
                                     </div>
                                     <p class="shop-products-result-count">
                                         Showing {{ $products->firstItem() }}–{{ $products->lastItem() }} of
@@ -106,8 +110,7 @@
                                         <select name="orderby" id="orderby" class="shop-selector-orderby"
                                             aria-label="Shop order" onchange="this.form.submit()">
                                             <option value="menu_order">Default sorting</option>
-                                            <option value="popularity">Sort by popularity</option>
-                                            <option value="rating">Sort by average rating</option>
+
                                             <option value="date">Sort by latest</option>
                                             <option value="price-asc">Sort by price: low to high</option>
                                             <option value="price-desc">Sort by price: high to low</option>
@@ -125,32 +128,49 @@
                                         <!-- Product Card Start -->
                                         <div class="card position-relative box-shad h-100 mb-4">
                                             <div class="p-2">
-                                                <a href="{{ route('single.product', $product->id) }}"
-                                                    class="card_height">
+                                                <a href="{{ route('single.product', ['slug' => $product->slug]) }}" class="card_height">
 
-                                                    @if ($product->colors->isNotEmpty() && $product->colors->first()->single_image)
-                                                        <img class="card-img-top object-fit-cover"
-                                                            src="{{ asset('storage/' . $product->colors->first()->single_image) }}"
-                                                            alt="Card image cap" width="100%">
-                                                    @else
-                                                        <img class="card-img-top object-fit-cover"
-                                                            src="{{ asset('assets/admin/images/product_image_not_found.png') }}"
-                                                            alt="Default image" width="100%">
-                                                    @endif
-                                                </a>
+    @if ($product->colors && $product->colors->isNotEmpty())
+        @php
+            $imagePath = 'storage/' . $product->colors->first()->single_image;
+        @endphp
+
+        {{-- Check if the image file exists in the storage --}}
+        @if (file_exists(public_path($imagePath)))
+            <img class="card-img-top object-fit-cover" 
+                src="{{ asset($imagePath) }}" 
+                alt="Product Image" width="100%">
+        @else
+            {{-- If image not found, fallback to default image --}}
+            <img class="card-img-top object-fit-cover" 
+                src="{{ asset('assets/admin/images/product_image_not_found.png') }}" 
+                alt="Default image" width="100%">
+        @endif
+    @else
+        {{-- Fallback if no colors or images available --}}
+        <img class="card-img-top object-fit-cover" 
+            src="{{ asset('assets/admin/images/product_image_not_found.png') }}" 
+            alt="Default image" width="100%">
+    @endif
+
+</a>
+
                                             </div>
-                                            
+
 
 
                                             <div class="card-body">
                                                 <h6 class="card-title">{{ $product->title }}</h6>
-                                                <span>{{ $product->colors->count() }} colors</span>
+                                                <span>{{ $product->colors ? $product->colors->count() : 0 }} colors</span>
+
                                                 <div class="d-flex justify-content-between align-items-center my-2">
-                                                   <form action="{{ route('buy.now', $product->id) }}" method="POST">
-    @csrf
-    <input type="hidden" name="product_color_id" value="{{ $product->colors->first()->id }}">
-    <button class="btn btn-black">Buy Now</button>
-</form>
+                                                    <form action="{{ route('buy.now', $product->id) }}" method="POST">
+                                                        @csrf
+                                                        <input type="hidden" name="product_color_id"
+                                                            value="{{ $product->colors->isNotEmpty() ? $product->colors->first()->id : '' }}">
+
+                                                        <button class="btn btn-black">Buy Now</button>
+                                                    </form>
 
                                                     <div class="d-flex flex-column">
                                                         @php
@@ -186,9 +206,9 @@
                                 <nav aria-label="Page navigation">
                                     <ul class="pagination">
 
-  {!! $products->withQueryString()->links('pagination::bootstrap-5') !!}
-                                         {{-- {{ $products->links() }} --}}
-                                      
+                                        {!! $products->withQueryString()->links('pagination::bootstrap-5') !!}
+                                        {{-- {{ $products->links() }} --}}
+
                                     </ul>
                                 </nav>
                             </div>

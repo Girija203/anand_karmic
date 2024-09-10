@@ -404,16 +404,27 @@ class ProductController extends Controller
 
     public function storeVariant(Request $request)
     {
-        // dd($request);
         $request->validate([
             'main_product_id' => 'required|exists:products,id',
             'color_id' => 'required|exists:colors,id',
             'product_id' => 'required|exists:products,id',
         ]);
 
-        $data = $request->only(['main_product_id', 'color_id', 'product_id']);
-
+        // $data = $request->only(['main_product_id', 'color_id', 'product_id']);
+        $data = [
+            'main_product_id' => $request->input('main_product_id'),
+            'color_id' => $request->input('color_id'),
+            'product_id' => $request->input('product_id'),
+        ];
         ProductVariantColor::create($data);
+        $second_color_id = ProductColor::where('product_id', $request->input('main_product_id'))->first();
+
+        $second_data = [
+            'main_product_id' => $request->input('product_id'),
+            'color_id' => $second_color_id->color_id,
+            'product_id' => $request->input('main_product_id'),
+        ];
+        ProductVariantColor::create($second_data);
 
         if ($request->action === 'save_and_new') {
             return redirect()->back()->with('success', 'Product variant color saved. Add another one.');

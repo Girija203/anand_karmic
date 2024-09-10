@@ -38,7 +38,7 @@ class FooterLinkController extends Controller
         $firstColumn = new FooterLink;
          $firstColumn->title = $request->input('title');
          $firstColumn->link = $request->input('link');
-          $firstColumn->column = 1;
+          $firstColumn->column = 'first_column';
      
         $firstColumn->save();
 
@@ -64,7 +64,7 @@ class FooterLinkController extends Controller
         $firstColumn = FooterLink::find($id);
          $firstColumn->title = $request->input('title');
          $firstColumn->link = $request->input('link');
-          $firstColumn->column = 1;
+          $firstColumn->column = 'first_column';
      
         $firstColumn->save();
 
@@ -117,7 +117,7 @@ class FooterLinkController extends Controller
         $secondColumn = new FooterLink;
          $secondColumn->title = $request->input('title');
          $secondColumn->link = $request->input('link');
-          $secondColumn->column = 2;
+          $secondColumn->column = 'second_column';
      
         $secondColumn->save();
 
@@ -143,7 +143,7 @@ class FooterLinkController extends Controller
         $secondColumn = FooterLink::find($id);
          $secondColumn->title = $request->input('title');
          $secondColumn->link = $request->input('link');
-          $secondColumn->column = 2;
+          $secondColumn->column = 'second_column';
      
         $secondColumn->save();
 
@@ -197,7 +197,7 @@ class FooterLinkController extends Controller
         $thirdColumn = new FooterLink;
          $thirdColumn->title = $request->input('title');
          $thirdColumn->link = $request->input('link');
-          $thirdColumn->column = 3;
+          $thirdColumn->column = 'third_column';
      
         $thirdColumn->save();
 
@@ -223,7 +223,7 @@ class FooterLinkController extends Controller
         $thirdColumn = FooterLink::find($id);
          $thirdColumn->title = $request->input('title');
          $thirdColumn->link = $request->input('link');
-          $thirdColumn->column = 3;
+          $thirdColumn->column = 'third_column';
      
         $thirdColumn->save();
 

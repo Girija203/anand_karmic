@@ -56,21 +56,28 @@
                                                     <tr>
                                                         <th>ID</th>
 
-                                                        {{-- <th>slug</th> --}}
                                                         <th>category </th>
                                                         <th>SubCategory</th>
                                                         <th>ChildCategory</th>
-
                                                         <th>Brand</th>
                                                         <th>Product Name</th>
                                                         <th>Image</th>
-                                                        <th>Type</th>
+                                                       
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <tr>
 
+                                                         <td></td>
+                                                         <td></td>
+                                                         <td></td>
+                                                         <td></td>
+
+                                                         <td></td>
+                                                         <td></td>
+                                                         <td></td>
+                                                         <td></td>
                                                     </tr>
                                             </table>
                                         </div>
@@ -110,99 +117,42 @@
     <script>
         var table;
 
-
-        $(document).ready(function() {
-
-            table = $('#outofstock-table').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: '{{ route('products.outOfStockData') }}',
-                columns: [{
-                        data: 'id',
-                        name: 'id'
-                    },
-
-
-                    // {
-                    //     data: 'slug',
-                    //     name: 'slug'
-                    // },
-                    {
-                        data: 'category_name',
-                        name: 'category_name'
-                    },
-                    {
-                        data: 'subcategory_name',
-                        name: 'subcategory_name'
-                    },
-
-                    {
-                        data: 'childcategory_name',
-                        name: 'childcategory_name'
-                    },
-
-                    {
-                        data: 'brand',
-                        name: 'brand'
-                    },
-
-                    {
-                        data: 'title',
-                        name: 'title'
-                    },
-
-                    {
-                        data: 'image',
-                        name: 'image',
-                        render: function(data, type, row) {
-                            return `<img src="{{ url('storage') }}/${data}" width="50" height="50"/>`;
-                        }
-
-                    },
-                    {
-                        data: 'labels',
-                        name: 'labels',
-                        orderable: false,
-                        searchable: false
-                    },
-
-
-                    // {
-                    //     data: 'status',
-                    //     name: 'status'
-
-                    // },
-
-
-
-                    {
-                        data: null,
-                        orderable: false,
-                        searchable: false,
-
-                        render: function(data, type, row) {
-                            return `
-                           <button class="btn py-0 px-0" onclick="editUsers(${row.id})"><i class="ri-edit-box-line text_danger_blue " style="font-size: 20px;"></i></button>
-                           <button  class="btn py-0" onclick="deleteUsers(${row.id})"><i class="mdi mdi-delete text_danger_red" style="font-size: 20px;"></i></button>
-
-                       `;
-                        }
-
-                    },
-                ],
-                order: [
-                    [0, 'asc']
-                ],
-                select: true,
-                dom: 'lBfrtip',
-                buttons: [
-                    'excel', 'print'
-                ],
-                pageLength: 8
-            });
-
-
-        });
+$(document).ready(function() {
+    table = $('#outofstock-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: '{{ route('products.outOfStockData') }}',
+        columns: [
+            { data: 'id', name: 'id' },
+            { data: 'category_name', name: 'category_name' },
+            { data: 'subcategory_name', name: 'subcategory_name' },
+            { data: 'childcategory_name', name: 'childcategory_name' },
+            { data: 'brand', name: 'brand' },
+            { data: 'product_name', name: 'product_name' },
+            {
+                data: 'image',
+                name: 'image',
+                render: function(data, type, row) {
+                    return `<img src="${data}" width="50" height="50"/>`;
+                }
+            },
+    
+            {
+                data: null,
+                orderable: false,
+                searchable: false,
+                render: function(data, type, row) {
+                    return `
+                       <button class="btn py-0 px-0" onclick="editUsers(${row.id})"><i class="ri-edit-box-line text_danger_blue " style="font-size: 20px;"></i></button>
+                       <button class="btn py-0" onclick="deleteUsers(${row.id})"><i class="mdi mdi-delete text_danger_red" style="font-size: 20px;"></i></button>
+                    `;
+                }
+            }
+        ],
+        order: [[0, 'asc']],
+        pageLength: 8
+    });
+});
 
         function editUsers(id) {
             console.log("inside");

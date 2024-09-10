@@ -82,6 +82,7 @@ class ShowCaseProductController extends Controller
         
          $ShowCaseproducts = ShowCaseProduct::find($id);
          $ShowCaseproducts->product_id  = $request->input('product_id');
+        $ShowCaseproducts->status  = $request->input('status');
          $ShowCaseproducts->product_show_cases_id  = $request->input('product_show_cases_id');
      
          $ShowCaseproducts->save();

@@ -58,7 +58,6 @@
                                                         <th>Product Name</th>
                                                         <th>SKU </th>
                                                         <th>Stock</th>
-                                                        <th>Sold</th>
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>
@@ -105,80 +104,37 @@
         var table;
 
 
-        $(document).ready(function() {
+$(document).ready(function() {
+    table = $('#inventory-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: '{{ route('inventory.data') }}',
+        columns: [
+            { data: 'id', name: 'id' },
+            { data: 'title', name: 'title' },
+            { data: 'sku', name: 'sku' }, // SKU from product_colors
+            { data: 'qty', name: 'qty' }, // Stock (qty) from product_colors
 
-            table = $('#inventory-table').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: '{{ route('inventory.data') }}',
-                columns: [{
-                        data: 'id',
-                        name: 'id'
-                    },
-
-
-                    // {
-                    //     data: 'slug',
-                    //     name: 'slug'
-                    // },
-                    {
-                        data: 'title',
-                        name: 'title'
-                    },
-                    {
-                        data: 'sku',
-                        name: 'sku'
-                    },
-
-                    {
-                        data: 'qty',
-                        name: 'qty'
-                    },
-
-                    {
-                        data: 'is_sold',
-                        name: 'is_sold'
-                    },
-
-
-
-
-                    // {
-                    //     data: 'status',
-                    //     name: 'status'
-
-                    // },
-
-
-
-                    {
-                        data: null,
-                        orderable: false,
-                        searchable: false,
-
-                        render: function(data, type, row) {
-                            return `
-                           <button class="btn py-0 px-0" onclick="editUsers(${row.id})"><i class="mdi mdi-eye text-success" style="font-size: 20px;"></i></button>
-                         
-
-                       `;
-                        }
-
-                    },
-                ],
-                order: [
-                    [0, 'asc']
-                ],
-                select: true,
-                dom: 'lBfrtip',
-                buttons: [
-                    'excel', 'print'
-                ],
-                pageLength: 8
-            });
-
-
-        });
+            {
+                data: null,
+                orderable: false,
+                searchable: false,
+                render: function(data, type, row) {
+                    return `
+                       <button class="btn py-0 px-0" onclick="editUsers(${row.id})">
+                           <i class="mdi mdi-eye text-success" style="font-size: 20px;"></i>
+                       </button>
+                   `;
+                }
+            },
+        ],
+        order: [[0, 'asc']],
+        select: true,
+        dom: 'lBfrtip',
+        buttons: ['excel', 'print'],
+        pageLength: 8
+    });
+});
 
         // function editUsers() {
         //     console.log("inside");

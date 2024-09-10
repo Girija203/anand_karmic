@@ -29,6 +29,7 @@ use App\Models\Coupon;
 use App\Models\Notification;
 use App\Models\OrderItem;
 use App\Models\ProductColor;
+use App\Models\ProductReview;
 use App\Models\ProductShowCase;
 use App\Models\ProductVariantColor;
 use App\Models\ShowCaseProduct;
@@ -47,8 +48,10 @@ class HomeController extends Controller
 
         $products = Product::all();
         $cart = Cart::get();
-        $showCaseProducts = ShowCaseProduct::with(['product', 'productShowCase'])->get();
-        $ProductShowCases = ProductShowCase::first();
+        $showCaseProducts = ShowCaseProduct::with(['product', 'productShowCase'])
+        ->where('status', '!=', 0)
+            ->get();
+        $ProductShowCases = ProductShowCase::where('status', '!=', 0)->first();
         $exchangeRate = session('exchange_rate', 1);
         $currencySymbol = session('currency_symbol', '$');
         // dd( $showCaseProducts);
@@ -102,7 +105,7 @@ class HomeController extends Controller
 
         $cart = Cart::get();
         $categories = Category::all();
-        $specifications = ProductSpecification::where('product_specification_key_id', 2)->get();
+        $specifications = ProductSpecification::where('product_specification_key_id', 1)->get();
 
         $cartItems = Cart::with(['product.colors'])->get();
         $cart = $cartItems->map(function ($item) {
@@ -142,58 +145,107 @@ class HomeController extends Controller
         $orderBy = $request->input('orderby');
         $perPage = 12;
 
-        $products = Product::query();
+        // Start querying from the Product model
+        $products = Product::query()->with(['colors', 'category']); // Eager load relations like colors and category
 
+        // Apply sorting based on user input
         switch ($orderBy) {
             case 'price-asc':
-                $products->orderBy('price', 'asc');
+                $products->orderBy(ProductColor::select('offer_price')
+                ->whereColumn('product_colors.product_id', 'products.id'), 'asc');
                 break;
             case 'price-desc':
-                $products->orderBy('price', 'desc');
+                $products->orderBy(ProductColor::select('offer_price')
+                ->whereColumn('product_colors.product_id', 'products.id'), 'desc');
                 break;
             case 'date':
-                $products->latest(); // Assuming there's a 'created_at' timestamp field in your products table
+                $products->latest(); // Sort by the latest products
                 break;
             default:
-                // Default sorting or any other handling you want to implement
+                // Default sorting can be defined here, e.g., by name or relevance
                 break;
         }
 
+        // Paginate the products
         $products = $products->paginate($perPage);
+
+        // Fetch necessary data
         $totalProducts = Product::count();
         $categories = Category::all();
-        $specifications = ProductSpecification::where('product_specification_key_id', 2)->get();
-
+        $specifications = ProductSpecification::where('product_specification_key_id', 1)->get();
         $cart = Cart::all();
 
+        // Currency and exchange rate from session
         $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
-        $currencySymbol = session('currency_symbol', '$');
+        $currencySymbol = session('currency_symbol', '₹');
 
+        // Return the frontend.shop view with all required data
         return view('frontend.shop', compact('products', 'categories', 'specifications', 'cart', 'exchangeRate', 'currencySymbol', 'totalProducts'));
     }
 
 
 
 
-
-    public function filterByPrice(Request $request)
+    public function priceRange(Request $request)
     {
-        $minPrice = $request->input('min_price', 0);
-        $maxPrice = $request->input('max_price', 10000);
-        $perPage = 12;
+        $query = ProductColor::query();
 
-        $products = Product::whereBetween('offer_price', [$minPrice, $maxPrice])->paginate($perPage);
-        $totalProducts = Product::count();
+        // Check if min_price and max_price are set in the request
+        if ($request->has('min_price') && $request->has('max_price')) {
+            $minPrice = $request->input('min_price', 0);
+            $maxPrice = $request->input('max_price', 10000);
+
+            // Apply the price range filter
+            $query->whereBetween('offer_price', [$minPrice, $maxPrice]);
+        }
+
+        // Paginate the filtered products
+        $perPage = 12; // Define the number of items per page
+        $products = Product::with('colors')->paginate($perPage);
+
+
+
+        // Count total products in the filtered range
+        $totalProducts = $query->count();
+
+        // Fetch additional data
         $categories = Category::all();
-        $specifications = ProductSpecification::where('product_specification_key_id', 2)->get();
-
+        $specifications = ProductSpecification::where('product_specification_key_id', 1)->get();
         $cart = Cart::all();
 
         $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
-        $currencySymbol = session('currency_symbol', '$');
+        $currencySymbol = session('currency_symbol', '₹');
 
-        return view('frontend.shop', compact('products', 'categories', 'specifications', 'cart', 'exchangeRate', 'currencySymbol', 'totalProducts'));
+        return view('Frontend.shop', compact('products', 'categories', 'specifications', 'cart', 'exchangeRate', 'currencySymbol', 'totalProducts'));
     }
+
+
+
+    // public function filterByPrice(Request $request)
+    // {
+    //     dd($request);
+    //     $minPrice = $request->input('min_price', 0);
+    //     $maxPrice = $request->input('max_price', 10000);
+    //     $perPage = 12;
+
+    //     // Filter products based on the offer_price within the specified range
+    //     $productColors = ProductColor::whereBetween('offer_price', [$minPrice, $maxPrice])
+    //         ->with(['product', 'color', 'images'])
+    //         ->paginate($perPage);
+    //         // dd($productColors);
+
+    //     $totalProducts = ProductColor::whereBetween('offer_price', [$minPrice, $maxPrice])->count();
+    //     $categories = Category::all();
+    //     $specifications = ProductSpecification::where('product_specification_key_id', 1)->get();
+    //     $cart = Cart::all();
+
+    //     $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
+    //     $currencySymbol = session('currency_symbol', '₹');
+
+    //     return view('frontend.shop', compact('productColors', 'categories', 'specifications', 'cart', 'exchangeRate', 'currencySymbol', 'totalProducts'));
+    // }
+
+
 
     public function filterByCategory($id)
     {
@@ -202,19 +254,20 @@ class HomeController extends Controller
         $categories = Category::all();
         $products = Product::where('category_id', $id)->paginate($perPage);
         $totalProducts = Product::count();
-        $specifications = ProductSpecification::where('product_specification_key_id', 2)->get();
+        $specifications = ProductSpecification::where('product_specification_key_id', 1)->get();
 
         $cart = Cart::all();
 
 
         $exchangeRate = session('exchange_rate', 1);
-        $currencySymbol = session('currency_symbol', '$');
+        $currencySymbol = session('currency_symbol', '₹');
 
         return view('frontend.shop', compact('categories', 'products', 'specifications', 'cart', 'totalProducts', 'exchangeRate', 'currencySymbol'));
     }
 
     public function filterBySpecifications(Request $request)
     {
+        // dd($request);
         $selectedSpecs = $request->input('specifications', []);
         $perPage = 12;
 
@@ -226,61 +279,67 @@ class HomeController extends Controller
             $products = Product::paginate($perPage);
         }
 
-        $specifications = ProductSpecification::where('product_specification_key_id', 2)->get();
+        $specifications = ProductSpecification::where('product_specification_key_id', 1)->get();
         $categories = Category::all();
         $totalProducts = Product::count();
         $cart = Cart::all();
         $exchangeRate = session('exchange_rate', 1);
-        $currencySymbol = session('currency_symbol', '$');
+        $currencySymbol = session('currency_symbol', '₹');
 
         return view('frontend.shop', compact('products', 'specifications', 'categories', 'cart', 'totalProducts', 'exchangeRate', 'currencySymbol'));
     }
 
-    public function singleProduct($id)
-    {
-        // Fetch the current product along with its images and specifications
-        $products = Product::with('images', 'category')->findOrFail($id);
+public function singleProduct($slug)
+{
+    // Fetch the current product along with its images and specifications using the slug
+    $products = Product::where('slug', $slug)->with('images', 'category')->firstOrFail();
 
-        // dd($products);
+    // Fetch product colors and related color data
+    $productColors = ProductColor::where('product_id', $products->id)->with('color')->get();
+    $quantities = $productColors->pluck('qty');
 
-        // Fetch product colors and related color data
-        $productColors = ProductColor::where('product_id', $id)->with('color')->get();
-        //  dd($productColors);
-        $quantities = $productColors->pluck('qty');
+    // Fetch product variant colors and their associated color data
+    $productVariantColors = ProductVariantColor::where('main_product_id', $products->id)
+            ->with('product', 'color')
+        ->get();
 
-        // dd($quantities); 
+    $specifications = ProductSpecification::where('product_id', $products->id)->with('key')->get();
 
-        // Fetch product variant colors and their associated color data
-        $productVariantColors = ProductVariantColor::where('main_product_id', $products->id)
-            ->with('color')
+    // Fetch related products from the same category
+    $relatedProducts = Product::where('category_id', $products->category_id)
+        ->where('id', '!=', $products->id)
+        ->with('images')
+        ->take(4)
+        ->get();
+
+    $reviews = $products->reviews()->where('status', 1)->get();
+
+        $review = ProductReview::where('product_id', $products->id)
+        ->where('status', 1)
             ->get();
 
-        $specifications = ProductSpecification::where('product_id', $id)->with('key')->get();
+        // Calculate the average rating for the product
+        $averageRating = ProductReview::where('product_id', $products->id)
+        ->where('status', 1)
+        ->avg('rating');
 
-        // Fetch related products from the same category
-        $relatedProducts = Product::where('category_id', $products->category_id)
-            ->where('id', '!=', $products->id)
-            ->with('images')
-            ->take(4)
-            ->get();
+    $cart = Cart::where('product_id', $products->id)->get();
 
-        $reviews = $products->reviews()->where('status', 1)->get();
+    $product_sml_share = [];
 
-        $cart = Cart::where('product_id', $id)->get();
-
-        $product_sml_share = [];
-
-        // Check if the product is shareable
-        if ($products->is_shareable) {
-            $product_sml_share = ProductSMLShare::all();
-        }
-
-        $wishlistProductIds = Wishlist::pluck('product_id')->toArray();
-        $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
-        $currencySymbol = session('currency_symbol', '₹');
-
-        return view('frontend.single_product', compact('products', 'specifications', 'relatedProducts', 'reviews', 'cart', 'product_sml_share', 'exchangeRate', 'currencySymbol', 'wishlistProductIds', 'productColors', 'productVariantColors', 'quantities'));
+    // Check if the product is shareable
+    if ($products->is_shareable) {
+        $product_sml_share = ProductSMLShare::all();
     }
+
+    $wishlistProductIds = Wishlist::pluck('product_id')->toArray();
+    $exchangeRate = session('exchange_rate', 1); 
+    $currencySymbol = session('currency_symbol', '₹');
+    $productUrl = url()->current();
+
+    return view('frontend.single_product', compact('products', 'specifications', 'relatedProducts', 'reviews', 'cart', 'product_sml_share', 'exchangeRate', 'currencySymbol', 'wishlistProductIds', 'productColors', 'productVariantColors', 'quantities', 'productUrl', 'review', 'averageRating'));
+}
+
 
 
 

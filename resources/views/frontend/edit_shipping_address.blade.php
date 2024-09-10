@@ -8,10 +8,10 @@
              
                 <!-- checkout-details-wrapper start -->
                 <div class="checkout-details-wrapper">
-                    <div class="row gy-8 gx-lg-10">
-                        <div class="col-lg-8 col-md-8 mx-auto">
+                    <div class="row gy-8 gx-lg-10 justify-content-center">
+                        <div class="col-lg-8 col-md-8">
                             <!-- billing-details-wrap start -->
-                            <div class="billing-details-wrap">
+                            <div class="billing-details-wrap" style="border: 1px solid #ddd; padding: 20px; border-radius: 10px;">
                                <form action="{{ route('update.shipping.address', $shippingAddress->id) }}" method="POST">
         @csrf
                                     <h4 class="shoping-checkboxt-title">EDIT SHIPPING DETAILS</h4>
@@ -69,7 +69,9 @@
                                        
                                     </div>
                                     <br>
-                                    <button type="submit">Submit</button>
+                                    <div class="text-center">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
                                 </form>
                             </div>
                             <!-- billing-details-wrap end -->

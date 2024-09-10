@@ -14,7 +14,7 @@
                 @else
                 <img src="" class="picture-src rounded-circle" id="wizardPicturePreview" title="" style="display: none;">
                 @endif
-                <input type="file" name="image" id="wizard-picture" class="">
+                <input type="file" class="form-control" name="image" id="wizard-picture" class="">
              </div>
              <h6 class=""style="margin-left:52% !important;">Choose Picture</h6>
              <p style="color: red;margin-left:52% !important;">500x500</p>

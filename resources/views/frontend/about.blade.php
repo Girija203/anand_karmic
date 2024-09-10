@@ -334,42 +334,6 @@
 
 
 
-        <section class="new-letter my-4">
-            <div class="container">
-                <h2>Sign up with News Letter</h2>
-                <p>Get our latest product arrival, offers and news through your mail, enter your email and join our karmic
-                    family!
-                    Signup now and get 10% off.</p>
-                <p class="fs-14">
-                    Follow our journey and connect with us on social media to get a closer look at how your bags are made
-                    and the stories of the women who make them.
-                    </span></p>
-
-
-                <!-- input newletter -->
-
-                <!-- <h6 class="fs-15 fw-600">Email Signup *</h6> -->
-                <form action="{{ route('subscriber.store') }}" method="POST">
-                    @csrf
-
-                    <div class="input-container new col-md-5">
-                        <div class="input-container">
-                            <input type="email" id="input" required="" name="email"
-                                placeholder="Enter mail">
-                            <!-- <label for="email" class="label"></label> -->
-                            <div class="underline"></div>
-                        </div>
-
-
-                        <button class="btn btn-black">Subscribe</button>
-                    </div>
-
-                </form>
-
-            </div>
-        </section>
-
-
 
 
 

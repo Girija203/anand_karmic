@@ -243,80 +243,108 @@
       <!-- About end -->
 
       @if (!empty($ProductShowCases))
-    <!-- product start -->
-    <section class="product-section section-space-ptb">
-        <div class="container">
+          <!-- product start -->
+          <section class="product-section section-space-ptb">
+              <div class="container">
 
-            <!-- Section Title Area Start -->
-            <div class="section-title-area text-center">
-                <h2 class="section-title">{{ $ProductShowCases->title ?? '' }}</h2>
-                <p>{{ $ProductShowCases->description ?? '' }}</p>
-            </div>
-            <!-- Section Title Area End -->
+                  <!-- Section Title Area Start -->
+                  <div class="section-title-area text-center">
+                      @if ($ProductShowCases)
+                          <h2 class="section-title">{{ $ProductShowCases->title }}</h2>
+                          <p>{{ $ProductShowCases->description }}</p>
+                      @else
+                          <p>No showcase available.</p>
+                      @endif
+                  </div>
+                  <!-- Section Title Area End -->
 
-            <div class="row">
-                @foreach ($showCaseProducts as $showCaseProduct)
-                    <div class="col-lg-4 col-md-6 mb-15">
-                        <div class="card position-relative box-shad" style="overflow: hidden">
-                            <div class="position-absolute display-none vedio_back" style="display: none">
-                                <img class="img-hov position-relative" src="" alt="" srcset="">
-                                <div class="position-absolute bottom-footer" style="display: none;">
-                                    <div class="bottom-foot">
-                                        <button class="btn btn-black">Shop Now</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="p-2">
-                                <div>
-                                    @if (
-                                        $showCaseProduct->product &&
-                                        $showCaseProduct->product->colors->isNotEmpty() &&
-                                        $showCaseProduct->product->colors->first()->single_image
-                                    )
-                                        <img class="card-img-top object-fit-cover"
-                                             src="{{ asset('storage/' . $showCaseProduct->product->colors->first()->single_image) }}"
-                                             alt="Card image cap" width="100%">
-                                    @else
-                                        <img class="card-img-top object-fit-cover"
-                                             src="{{ asset('assets/admin/images/product_image_not_found.png') }}"
-                                             alt="Default image" width="100%">
-                                    @endif
-                                </div>
-                            </div>
+                  <div class="row">
+                      @foreach ($showCaseProducts as $showCaseProduct)
+                          <div class="col-lg-4 col-md-6 mb-15">
+                              <a href="{{ route('single.product', ['slug' => $showCaseProduct->product->slug]) }}"
+                                  class="card_height">
+                                  <div class="card position-relative box-shad" style="overflow: hidden">
+                                      <div class="position-absolute display-none vedio_back" style="display: none">
+                                          <img class="img-hov position-relative" src="" alt=""
+                                              srcset="">
+                                          <div class="position-absolute bottom-footer" style="display: none;">
+                                              <div class="bottom-foot">
+                                                  <button class="btn btn-black">Shop Now</button>
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <div class="p-2">
+                                          <div>
+                                              @if (
+                                                  $showCaseProduct->product &&
+                                                      $showCaseProduct->product->colors->isNotEmpty() &&
+                                                      $showCaseProduct->product->colors->first()->single_image)
+                                                  @php
+                                                      $imagePath =
+                                                          'storage/' . $showCaseProduct->product->colors->first()->single_image;
+                                                      // dd($relatedProduct);
+                                                  @endphp
+                                                  @if (file_exists(public_path($imagePath)))
+                                                      <div class="swiper-slide">
+                                                          <img class="w-75" src="{{ asset($imagePath) }}"
+                                                              alt=" Image" />
+                                                      </div>
+                                                  @else
+                                                      <div class="swiper-slide">
+                                                          <img class="w-75"
+                                                              src="{{ asset('assets/admin/images/product_image_not_found.png') }}"
+                                                              alt=" Image" />
+                                                      </div>
+                                                  @endif
 
-                            <div class="card-body">
-                                <h6 class="card-title">{{ $showCaseProduct->product->title ?? '' }}</h6>
-                                <div class="d-flex justify-content-between align-items-center my-2">
-                                    @if ($showCaseProduct->product && $showCaseProduct->product->colors->isNotEmpty())
-                                        <form action="{{ route('buy.now', $showCaseProduct->product->id) }}" method="POST">
-                                            @csrf
-                                            <input type="hidden" name="product_color_id"
-                                                   value="{{ $showCaseProduct->product->colors->first()->id }}">
-                                            <button class="btn btn-black">Buy Now</button>
-                                        </form>
-                                    @else
-                                        <button class="btn btn-black" disabled>Buy Now</button>
-                                    @endif
-                                </div>
-                                <div class="d-flex flex-column align-items-end">
-                                    @if ($showCaseProduct->product && $showCaseProduct->product->colors->isNotEmpty())
-                                        <span class="product-card-old-price fw-600">
-                                            <del>{{ $currencySymbol }}{{ number_format($showCaseProduct->product->colors->first()->price * $exchangeRate, 2) }}</del>
-                                        </span>
-                                        <span>{{ $currencySymbol }}{{ number_format($showCaseProduct->product->colors->first()->offer_price * $exchangeRate, 2) }}</span>
-                                    @else
-                                        <span class="text-muted">Price Not Available</span>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    </section>
-    <!-- product end -->
-@endif
+{{-- 
+                                                  <img class="card-img-top object-fit-cover"
+                                                      src="{{ asset('storage/' . $showCaseProduct->product->colors->first()->single_image) }}"
+                                                      alt="Card image cap" width="100%"> --}}
+                                              @else
+                                                  <img class="card-img-top object-fit-cover"
+                                                      src="{{ asset('assets/admin/images/product_image_not_found.png') }}"
+                                                      alt="Default image" width="100%">
+                                              @endif
+                                          </div>
+                                      </div>
+
+                                      <div class="card-body">
+                                          <h6 class="card-title">{{ $showCaseProduct->product->title ?? '' }}</h6>
+                                          <div class="d-flex justify-content-between align-items-center my-2">
+                                              @if ($showCaseProduct->product && $showCaseProduct->product->colors->isNotEmpty())
+                                                  <form action="{{ route('buy.now', $showCaseProduct->product->id) }}"
+                                                      method="POST">
+                                                      @csrf
+                                                      <input type="hidden" name="product_color_id"
+                                                          value="{{ $showCaseProduct->product->colors->first()->id }}">
+                                                      <button class="btn btn-black">Buy Now</button>
+                                                  </form>
+                                              @else
+                                                  <button class="btn btn-black" disabled>Buy Now</button>
+                                              @endif
+                                          </div>
+                                          <div class="d-flex flex-column align-items-end">
+                                              @if ($showCaseProduct->product && $showCaseProduct->product->colors->isNotEmpty())
+                                                  <span class="product-card-old-price fw-600">
+                                                      <del>{{ $currencySymbol }}{{ number_format($showCaseProduct->product->colors->first()->price * $exchangeRate, 2) }}</del>
+                                                  </span>
+                                                  <span>{{ $currencySymbol }}{{ number_format($showCaseProduct->product->colors->first()->offer_price * $exchangeRate, 2) }}</span>
+                                              @else
+                                                  <span class="text-muted">Price Not Available</span>
+                                              @endif
+                                          </div>
+                                      </div>
+                                  </div>
+                              </a>
+                          </div>
+                      @endforeach
+                  </div>
+
+              </div>
+          </section>
+          <!-- product end -->
+      @endif
 
 
       <!-- product start -->

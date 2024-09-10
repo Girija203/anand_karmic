@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Inventory;
 use App\Models\Product;
+use App\Models\ProductColor;
 use Yajra\DataTables\DataTables;
 use Illuminate\Http\Request;
 
@@ -23,29 +24,33 @@ class AddStockController extends Controller
     }
 
     public function store(Request $request)
-{
-    
-    $request->validate([
-        'product_id' => 'required|exists:products,id',
-        'stock_in' => 'required|integer|min:1',
-    ]);
+    {
+        // Validate input
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'stock_in' => 'required|integer|min:1',
+        ]);
 
+        // Find the ProductColor entry
+        $productColor = ProductColor::where('product_id', $request->input('product_id'))
+        ->first();
 
-    $product = Product::find($request->input('product_id'));
+      
 
-   
-    $product->qty += $request->input('stock_in');
-    $product->save();
+        // Update the quantity
+        $productColor->qty += $request->input('stock_in');
+        $productColor->save();
 
-    
-    Inventory::create([
-        'product_id' => $product->id,
-        'stock_in' => $request->input('stock_in'),
-    ]);
+        // Log the inventory update (assuming you have an Inventory model)
+        Inventory::create([
+            'product_id' => $productColor->product_id,
+            'stock_in' => $request->input('stock_in'),
+        ]);
 
-    
-    return redirect()->route('inventory.index')->with('success', 'Stock added successfully');
-}
+        // Redirect with success message
+        return redirect()->route('inventory.index')->with('success', 'Stock added successfully');
+    }
+
     public function delete($id){
 
         $stock=Inventory::findorfail($id);

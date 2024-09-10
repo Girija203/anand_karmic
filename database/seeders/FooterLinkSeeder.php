@@ -15,20 +15,20 @@ class FooterLinkSeeder extends Seeder
     {
         // Example data for first column
         FooterLink::create([
-            'column' => 1,
+            'column' => 'first_column',
             'title' => 'About Us',
             'link' => '/about'
         ]);
 
         FooterLink::create([
-            'column' => 1,
+            'column' => 'first_column',
             'title' => 'Contact Us',
             'link' => '/contact'
         ]);
 
         // Example data for second column
         FooterLink::create([
-            'column' => 2,
+            'column' => 'second_clumn',
             'title' => 'Team & Conditions',
             'link' => '/terms_condition'
         ]);
@@ -36,7 +36,7 @@ class FooterLinkSeeder extends Seeder
       
         // Example data for third column
         FooterLink::create([
-            'column' => 3,
+            'column' => 'third_column',
             'title' => 'Privacy policy',
             'link' => '/privacy_policy'
         ]);

@@ -565,11 +565,13 @@ Route::get('/search', [HomeController::class, 'search'])->name('search');
 
 
 Route::get('/shop/filter',  [HomeController::class, 'filter'])->name('shop.filter');
-Route::get('/products/filter', [HomeController::class, 'filterByPrice'])->name('products.filter');
+Route::get('/price/range', [HomeController::class, 'priceRange'])->name('price.filter');
 Route::get('/shop/category/{id}', [HomeController::class, 'filterByCategory'])->name('shop.category');
 Route::get('/filter', [HomeController::class, 'filterBySpecifications'])->name('filter.bySpecifications');
 
-Route::get('product/{id}', [HomeController::class, 'singleProduct'])->name('single.product');
+Route::get('product/{slug}', [HomeController::class, 'singleProduct'])->name('single.product');
+
+
 Route::get('/products/color/{colorId}', [ProductController::class, 'productsByColor'])->name('products.by.color');
 Route::get('wishlist', [HomeController::class, 'wishlist'])->name('wishlist');
 Route::post('/wishlist/add-to-cart', [HomeController::class, 'addToCart'])->name('wishlist.addToCart');
