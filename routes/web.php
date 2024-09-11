@@ -75,6 +75,11 @@ Route::get('/storage-link', function () {
     return '<h1>Storage linked</h1>';
 });
 
+Route::get('/optimize', function () {
+    $exitCode = Artisan::call('optimize');
+    return '<h1>Reoptimized class loader</h1>';
+});
+
 
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

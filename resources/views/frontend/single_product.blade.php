@@ -134,6 +134,19 @@
             text-shadow: 0 0 2px black;
             transition: transform 0.2s;
         }
+        .swatch-active {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            text-shadow: 0 0 2px black;
+            transition: transform 0.2s;
+            border:1px solid #575b71;
+        }
 
         .color-swatch:hover {
             transform: scale(1.1);
@@ -223,9 +236,12 @@
                                 </fieldset>
                             </form> --}}
                             <fieldset class="product-color-radio-wrap">
-                                <h6 class="mb-0 title">Color</h6>
+                                <h6 class="mb-0 title">Color </h6>
                                 <div class="product-color-radio-buttons">
                                     <div class="colors">
+                                                <div class="swatch-active"
+                                                    style="background-color: {{ $products->colors[0]->color->code }};">
+                                                </div>
                                         @foreach ($productVariantColors as $productVariantColor)
                                             <a
                                                 href="{{ route('single.product', ['slug' => $productVariantColor->product->slug]) }}">
