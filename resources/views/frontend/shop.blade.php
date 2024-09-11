@@ -11,13 +11,13 @@
                                 <h5 class="shop-sidebar-widget-title">Karmics Categories</h5>
                                 <ul class="shop-sidebar-widget-list">
                                     @foreach ($categories as $category)
-    <li class="shop-sidebar-widget-list-item">
-        <a href="{{ route('shop.category', $category->id) }}"
-            class="shop-sidebar-widget-list-link">
-            {{ $category->id == 1 ? 'Bags' : $category->name }}
-        </a>
-    </li>
-@endforeach
+                                        <li class="shop-sidebar-widget-list-item">
+                                            <a href="{{ route('shop.category', $category->id) }}"
+                                                class="shop-sidebar-widget-list-link">
+                                                {{ $category->id == 1 ? 'Bags' : $category->name }}
+                                            </a>
+                                        </li>
+                                    @endforeach
 
 
 
@@ -128,32 +128,34 @@
                                         <!-- Product Card Start -->
                                         <div class="card position-relative box-shad h-100 mb-4">
                                             <div class="p-2">
-                                                <a href="{{ route('single.product', ['slug' => $product->slug]) }}" class="card_height">
+                                                <a href="{{ route('single.product', ['slug' => $product->slug]) }}"
+                                                    class="card_height">
 
-    @if ($product->colors && $product->colors->isNotEmpty())
-        @php
-            $imagePath = 'storage/' . $product->colors->first()->single_image;
-        @endphp
+                                                    @if ($product->colors && $product->colors->isNotEmpty())
+                                                        @php
+                                                            $imagePath =
+                                                                'storage/' . $product->colors->first()->single_image;
+                                                        @endphp
 
-        {{-- Check if the image file exists in the storage --}}
-        @if (file_exists(public_path($imagePath)))
-            <img class="card-img-top object-fit-cover" 
-                src="{{ asset($imagePath) }}" 
-                alt="Product Image" width="100%">
-        @else
-            {{-- If image not found, fallback to default image --}}
-            <img class="card-img-top object-fit-cover" 
-                src="{{ asset('assets/admin/images/product_image_not_found.png') }}" 
-                alt="Default image" width="100%">
-        @endif
-    @else
-        {{-- Fallback if no colors or images available --}}
-        <img class="card-img-top object-fit-cover" 
-            src="{{ asset('assets/admin/images/product_image_not_found.png') }}" 
-            alt="Default image" width="100%">
-    @endif
+                                                        {{-- Check if the image file exists in the storage --}}
+                                                        @if (file_exists(public_path($imagePath)))
+                                                            <img class="card-img-top object-fit-cover"
+                                                                src="{{ asset($imagePath) }}" alt="Product Image"
+                                                                width="100%">
+                                                        @else
+                                                            {{-- If image not found, fallback to default image --}}
+                                                            <img class="card-img-top object-fit-cover"
+                                                                src="{{ asset('assets/admin/images/product_image_not_found.png') }}"
+                                                                alt="Default image" width="100%">
+                                                        @endif
+                                                    @else
+                                                        {{-- Fallback if no colors or images available --}}
+                                                        <img class="card-img-top object-fit-cover"
+                                                            src="{{ asset('assets/admin/images/product_image_not_found.png') }}"
+                                                            alt="Default image" width="100%">
+                                                    @endif
 
-</a>
+                                                </a>
 
                                             </div>
 
