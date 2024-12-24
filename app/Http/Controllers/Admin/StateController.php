@@ -40,13 +40,16 @@ class StateController extends Controller
         
         //   dd($request);
         $request->validate([
-            'name' => 'required',
+          'name' => 'required',
+         'country_id' => 'required',
+         'code' => 'required',
             
         ]);
         
         $state = new State;
          $state->country_id = $request->input('country_id');
         $state->name = $request->input('name');
+       $state->code = $request->input('code');
      
         $state->save();
 
@@ -74,6 +77,7 @@ class StateController extends Controller
         $state =  State::find($id);
          $state->country_id = $request->input('country_id');
         $state->name = $request->input('name');
+        $state->code = $request->input('code');
         $state->status = $request->input('status');
      
         $state->save();

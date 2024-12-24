@@ -39,6 +39,7 @@ class CountryController extends Controller
         //   dd($request);
         $request->validate([
             'name' => 'required',
+            'code' => 'required',
             
         ]);
         

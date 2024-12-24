@@ -71,7 +71,7 @@
                                                             @enderror
                                                         </div>
                                                         <label for="wages_product"
-                                                            class="col-sm-2 col-form-label mandatory">Excerpt</label>
+                                                            class="col-sm-2 col-form-label ">Excerpt</label>
                                                         <div class="col-sm-4 mb-4">
                                                             <input class="form-control" type="text" name="excerpt"
                                                                 id="">
@@ -107,12 +107,12 @@
                                                             @enderror
                                                         </div>
                                                         <label for="wages_product"
-                                                            class="col-sm-2 col-form-label mandatory">Draft</label>
+                                                            class="col-sm-2 col-form-label mandatory">Status</label>
                                                         <div class="col-sm-4 mb-4">
                                                             <select class="form-control select2" name="is_draft">
-                                                                <option value="">Select Draft</option>
-                                                                <option value="1">Yes</option>
-                                                                <option value="0">No</option>
+                                                                <option value="">Select Status</option>
+                                                                <option value="1">Active</option>
+                                                                <option value="0">Inactive</option>
                                                             </select>
                                                             @error('is_draft')
                                                                 <span class="error"
@@ -159,7 +159,7 @@
                                                             </div>
                                                             <div class="col-sm-3 mb-4">
                                                                 <label for="meta_content"
-                                                                    class="col-form-label mandatory">Meta Content</label>
+                                                                    class="col-form-label ">Meta Content</label>
                                                                 <input class="form-control" type="text"
                                                                     name="meta_content[]" id="">
                                                                 @error('meta_content')

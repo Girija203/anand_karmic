@@ -14,8 +14,8 @@ class CitySeeder extends Seeder
   public function run()
     {
         $cities = [
-            ['country_id' => 1, 'state_id' => 1, 'name' => 'Undefined'],
-            ['country_id' => 2, 'state_id' => 2, 'name' => 'Cuddalore'],
+            ['country_id' => 1, 'state_id' => 1, 'name' => 'Undefined','code'=>'UD'],
+            ['country_id' => 2, 'state_id' => 2, 'name' => 'Cuddalore','code'=>'CUD'],
         
             // Add more cities as needed
         ];

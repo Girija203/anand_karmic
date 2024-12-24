@@ -10,75 +10,76 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class SocialMediaLinkController extends Controller
 {
-     public function index()
-     {
-        return view('Admin.social_mdeia_link.index');
-     }
-      public function indexData()
+   public function index()
    {
-       
-    $social_mdeia_link = SocialMediaLink::get();
-       
-       return DataTables::of($social_mdeia_link)->make(true);
+      return view('Admin.social_mdeia_link.index');
    }
-     public function create()
-     {
-        return view('Admin.social_mdeia_link.create');
-     }
-      public function store(Request $request)
-     {
-        
-        //   dd($request);
-        $request->validate([
-            'link' => 'required',
-            
-        ]);
-        
-        $social_mdeia_link = new SocialMediaLink;
-         $social_mdeia_link->link = $request->input('link');
-         $social_mdeia_link->icon = $request->input('icon');
-       
-     
-        $social_mdeia_link->save();
+   public function indexData()
+   {
 
-        return redirect()->route('social_media_links.index')->with('success', 'Social Mdeia Link added successfully!');
-     }
+      $social_mdeia_link = SocialMediaLink::get();
 
-      public function edit($id)
-     {
-        $social_media_link = SocialMediaLink::find($id);
-        return view('Admin.social_mdeia_link.edit',compact('social_media_link'));
-     }
+      return DataTables::of($social_mdeia_link)->make(true);
+   }
+   public function create()
+   {
+      return view('Admin.social_mdeia_link.create');
+   }
+   public function store(Request $request)
+   {
 
-     public function update(Request $request,$id)
-     {
-        
-        //   dd($request);
-        $request->validate([
-            'link' => 'required',
-            
-        ]);
-        
-        $social_mdeia_link = SocialMediaLink::find($id);
-         $social_mdeia_link->link = $request->input('link');
-         $social_mdeia_link->icon = $request->input('icon');
-       
-     
-        $social_mdeia_link->save();
+      //   dd($request);
+      $request->validate([
+         'link' => 'required',
+         'icon' => 'required',
 
-        return redirect()->route('social_media_links.index')->with('success', 'Social Mdeia Link updated successfully!');
-     }
+      ]);
 
-        public function delete($id)
-     {
-        
-    
-        $social_mdeia_link = SocialMediaLink::find($id);
+      $social_mdeia_link = new SocialMediaLink;
+      $social_mdeia_link->link = $request->input('link');
+      $social_mdeia_link->icon = $request->input('icon');
 
-        $social_mdeia_link->delete();
-        $result = "Social media link deleted successfully";
-        return $result;
 
-        return redirect()->route('social_media_links.index')->with('success', 'Social Mdeia Link Delete successfully!');
-     }
+      $social_mdeia_link->save();
+
+      return redirect()->route('social_media_links.index')->with('success', 'Social Mdeia Link added successfully!');
+   }
+
+   public function edit($id)
+   {
+      $social_media_link = SocialMediaLink::find($id);
+      return view('Admin.social_mdeia_link.edit', compact('social_media_link'));
+   }
+
+   public function update(Request $request, $id)
+   {
+
+      //   dd($request);
+      $request->validate([
+         'link' => 'required',
+
+      ]);
+
+      $social_mdeia_link = SocialMediaLink::find($id);
+      $social_mdeia_link->link = $request->input('link');
+      $social_mdeia_link->icon = $request->input('icon');
+
+
+      $social_mdeia_link->save();
+
+      return redirect()->route('social_media_links.index')->with('success', 'Social Mdeia Link updated successfully!');
+   }
+
+   public function delete($id)
+   {
+
+
+      $social_mdeia_link = SocialMediaLink::find($id);
+
+      $social_mdeia_link->delete();
+      $result = "Social media link deleted successfully";
+      return $result;
+
+      return redirect()->route('social_media_links.index')->with('success', 'Social Mdeia Link Delete successfully!');
+   }
 }

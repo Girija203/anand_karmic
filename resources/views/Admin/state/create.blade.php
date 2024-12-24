@@ -72,8 +72,21 @@
                                                             @enderror
                                                         </div>
 
+                                                        <label for="name"
+                                                            class="col-sm-2 col-form-label mandatory">Code</label>
+                                                        <div class="col-sm-4 mb-4">
+                                                            <input class="form-control" type="text" name="code"
+                                                                id="code">
+                                                            @error('code')
+                                                                <span class="error"
+                                                                    style="color: red;">{{ $message }}</span>
+                                                            @enderror
+                                                        </div>
+
+
 
                                                     </div>
+                                                    
 
                                                     <div class="form-group">
                                                         <div class="d-flex justify-content-evenly">

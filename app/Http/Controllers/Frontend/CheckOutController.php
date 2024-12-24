@@ -230,7 +230,7 @@ use App\Services\DHLService;
                 DB::commit();
 
                 if (auth()->check()) {
-                    return redirect()->route('myaccount')->with('success', 'Your order has been placed successfully. You are now logged in.');
+                    return redirect()->route('myaccount')->with('success', 'Your order has been placed successfully.');
                 } else {
                     return redirect()->route('normaluser.register')->with('success', 'Your order has been placed successfully. Please login to continue.');
                 }

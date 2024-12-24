@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Crypt;
 
 
 
@@ -77,20 +78,32 @@ class LoginRegisterController extends Controller
 
     public function userLogin(Request $request)
     {
-        $credentials = [
-            "email" => $request['email'],
-            "password" => $request['password'],
-        ];
+        $credentials = $request->only('email', 'password');
 
-        $remember = true;
-        if (Auth::attempt($credentials, $remember)) {
-            $user = auth()->user();
+        // Check if the remember_me checkbox is selected
+        $remember_me = $request->has('remember_me') ? true : false;
+
+        if (Auth::attempt($credentials, $remember_me)) {
+            // If remember_me is checked, set cookies for email and encrypted password
+            if ($remember_me) {
+                // Set cookies for 7 days (you can modify the duration as needed)
+                $cookie_time = 60 * 24 * 7; // 7 days in minutes
+                Cookie::queue('email', $request->email, $cookie_time);
+                Cookie::queue('password', Crypt::encryptString($request->password), $cookie_time);
+            } else {
+                // Forget the cookies if remember_me is not checked
+                Cookie::queue(Cookie::forget('email'));
+                Cookie::queue(Cookie::forget('password'));
+            }
 
             return redirect()->route('myaccount')->with('success', 'You have successfully logged in');
         } else {
-            return redirect()->back()->with('error', 'wrong credential');
+            return redirect()->back()->with('error', 'Wrong credentials');
         }
     }
+
+
+
 
     public function forgotpassword()
     {
@@ -168,7 +181,8 @@ class LoginRegisterController extends Controller
         Session::flush();
         Auth::logout();
 
-        Cookie::queue(Cookie::forget('remember_web'));
+        // Cookie::queue(Cookie::forget('remember_web'));
+        
 
         return redirect()->to(route('normaluser.register'));
     }

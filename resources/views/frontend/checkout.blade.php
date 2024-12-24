@@ -128,93 +128,103 @@
                                             @enderror
                                             <span class="text-danger" id="error_pincode"></span>
                                         </div>
-                                      @php
-    use App\Models\Addresses; // Move the 'use' statement here
-@endphp
+                                        @php
+                                            use App\Models\Addresses; // Move the 'use' statement here
+                                        @endphp
 
-@if (!empty($shippingAddress) && $shippingAddress->count() > 0)
-    <!-- Shipping Address Starts -->
-    <!-- shipping Address Starts -->
+                                        @if (!empty($shippingAddress) && $shippingAddress->count() > 0)
+                                            <!-- Shipping Address Starts -->
+                                            <!-- shipping Address Starts -->
 
-    <section class="cart-page-section border-bottom-1 mt-3">
-        <h4>Shipping Address</h4>
-        <div class="">
-            <div class="row gy-8">
-                <div class="col-lg-12">
-                    @php
-                        $user = auth()->user();
-                        $shippingAddresses = Addresses::where('user_id', $user->id)
-                            ->where('type', 1) // Shipping address
-                            // ->where('default_shipping', 1) // Default shipping address
-                            ->get();
-                        $firstAddressId = $shippingAddresses->first()
-                            ? $shippingAddresses->first()->id
-                            : null;
-                    @endphp
+                                            <section class="cart-page-section border-bottom-1 mt-3">
+                                                <h4>Shipping Address</h4>
+                                                <div class="">
+                                                    <div class="row gy-8">
+                                                        <div class="col-lg-12">
+                                                            @php
+                                                                $user = auth()->user();
+                                                                $shippingAddresses = Addresses::where(
+                                                                    'user_id',
+                                                                    $user->id,
+                                                                )
+                                                                    ->where('type', 1) // Shipping address
+                                                                    // ->where('default_shipping', 1) // Default shipping address
+                                                                    ->get();
+                                                                $firstAddressId = $shippingAddresses->first()
+                                                                    ? $shippingAddresses->first()->id
+                                                                    : null;
+                                                            @endphp
 
-                    @foreach ($shippingAddresses as $address)
-                        <div class="row my-3">
-                            <div class="col-md-9">
+                                                            @foreach ($shippingAddresses as $address)
+                                                                <div class="row my-3">
+                                                                    <div class="col-md-9">
 
-                                <div class="customer-detailaddress d-flex flex-column text-black">
-                                    <div class="form-check">
-                                        <input
-                                            class="form-check-input"
-                                            type="radio"
-                                            name="shipping_address"
-                                            id="flexRadioDefault{{ $address->id }}"
-                                            value="{{ $address->id }}"
-                                            {{ $address->id === $firstAddressId ? 'checked' : '' }}
-                                        />
-                                        <label class="form-check-label" for="flexRadioDefault{{ $address->id }}">
-                                            <h5 class="fs-20 fw-500">
-                                                {{ $address->name }}
-                                            </h5>
-                                        </label>
-                                        <input type="hidden" name="selected_shipping_address_id" value="{{ $firstAddressId }}">
-                                    </div> 
+                                                                        <div
+                                                                            class="customer-detailaddress d-flex flex-column text-black">
+                                                                            <div class="form-check">
+                                                                                <input class="form-check-input"
+                                                                                    type="radio" name="shipping_address"
+                                                                                    id="flexRadioDefault{{ $address->id }}"
+                                                                                    value="{{ $address->id }}"
+                                                                                    {{ $address->id === $firstAddressId ? 'checked' : '' }} />
+                                                                                <label class="form-check-label"
+                                                                                    for="flexRadioDefault{{ $address->id }}">
+                                                                                    <h5 class="fs-20 fw-500">
+                                                                                        {{ $address->name }}
+                                                                                    </h5>
+                                                                                </label>
+                                                                                <input type="hidden"
+                                                                                    name="selected_shipping_address_id"
+                                                                                    value="{{ $firstAddressId }}">
+                                                                            </div>
 
-                                    <p class="fs-15 pl-1em">
-                                        {{ $address->address }}
-                                    </p>
-                                    <p class="fs-16 pl-1em">Contact -(+91)
-                                        {{ $address->mobile }}
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="d-flex justify-content-between">
-                                    <a href="{{ route('edit.shipping.address', $address->id) }}">
-                                        <span class="fs-16 fw-500 text-black">Edit</span>
-                                    </a>
-                                    <a href="{{ route('remove.shipping.address', $address->id) }}">
-                                        <span class="fs-16 fw-500 text-danger">Remove</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                    <div class="p-3 my-3" style="border-top: 1px solid rgba(186, 186, 186, 0.444)">
-                        <a href="{{ route('add.shipping.address') }}">
-                            <p class="fs-6 text-success px-5">Add Address</p>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- shipping Address Ends -->
-@else
-    <label id="chekout-box-2" class="fs-16 mt-3">
-        <input type="checkbox" value="1" id="ship-toggle" name="ship_different">
-        Ship to a different address?
-    </label>
-@endif
-                                    
+                                                                            <p class="fs-15 pl-1em">
+                                                                                {{ $address->address }}
+                                                                            </p>
+                                                                            <p class="fs-16 pl-1em">Contact -(+91)
+                                                                                {{ $address->mobile }}
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        <div class="d-flex justify-content-between">
+                                                                            <a
+                                                                                href="{{ route('edit.shipping.address', $address->id) }}">
+                                                                                <span
+                                                                                    class="fs-16 fw-500 text-black">Edit</span>
+                                                                            </a>
+                                                                            <a
+                                                                                href="{{ route('remove.shipping.address', $address->id) }}">
+                                                                                <span
+                                                                                    class="fs-16 fw-500 text-danger">Remove</span>
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            @endforeach
+                                                            <div class="p-3 my-3"
+                                                                style="border-top: 1px solid rgba(186, 186, 186, 0.444)">
+                                                                <a href="{{ route('add.shipping.address') }}">
+                                                                    <p class="fs-6 text-success px-5">Add Address</p>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </section>
+                                            <!-- shipping Address Ends -->
+                                        @else
+                                            <label id="chekout-box-2" class="fs-16 mt-3">
+                                                <input type="checkbox" value="1" id="ship-toggle"
+                                                    name="ship_different">
+                                                Ship to a different address?
+                                            </label>
+                                        @endif
+
 
                                         <div class="col-lg-12">
                                             <div class="checkout-box-wrap mt-4">
-              
+
 
                                                 <div class="ship-box-info" id="shipping-address-form"
                                                     style="display: none;">
@@ -293,88 +303,99 @@
                             </div>
                             <!-- billing-details-wrap end -->
                         </div>
-                      <div class="col-lg-6 col-md-6">
-    @php
-        $totalAmount = 0;
-        $cartItems = $cart;
-    @endphp
+                        <div class="col-lg-6 col-md-6">
+                            @php
+                                $totalAmount = 0;
+                                $cartItems = $cart;
+                            @endphp
 
-    @foreach ($cartItems as $item)
-        @php
-            $offerPrice = \App\Models\ProductColor::where('product_id', $item->product_id)->min('offer_price') ?: $item->product->offer_price;
-            $totalAmount += $item->quantity * $offerPrice;
-        @endphp
-    @endforeach
+                            @foreach ($cartItems as $item)
+                                @php
+                                    $offerPrice =
+                                        \App\Models\ProductColor::where('product_id', $item->product_id)->min(
+                                            'offer_price',
+                                        ) ?:
+                                        $item->product->offer_price;
+                                    $totalAmount += $item->quantity * $offerPrice;
+                                @endphp
+                            @endforeach
 
-    @php
-         $shippingFee = session('shippingFee', 0);
-        $res_coupon = session('res_coupon', 0);
-        $finalTotalAmount = $totalAmount + $shippingFee;
-        $finalAmountToPay = $finalTotalAmount - $res_coupon;
+                            @php
+                                $shippingFee = session('shippingFee', 0);
+                                $res_coupon = session('res_coupon', 0);
+                                $finalTotalAmount = $totalAmount + $shippingFee;
+                                $finalAmountToPay = $finalTotalAmount - $res_coupon;
 
-      
+                                $exchangeRate = session('exchange_rate', 1);
+                                $currencySymbol = session('currency_symbol', '₹');
 
-        $exchangeRate = session('exchange_rate', 1);
-        $currencySymbol = session('currency_symbol', '₹');
+                                $totalAmount *= $exchangeRate;
+                                $shippingFee *= $exchangeRate;
+                                $finalTotalAmount *= $exchangeRate;
+                                $finalAmountToPay *= $exchangeRate;
 
-        $totalAmount *= $exchangeRate;
-        $shippingFee *= $exchangeRate;
-        $finalTotalAmount *= $exchangeRate;
-        $finalAmountToPay *= $exchangeRate;
-
-        foreach ($cartItems as $item) {
-            $item->price *= $exchangeRate;
-        }
-    @endphp
-                                    <!-- Order Summary-wrapper start -->
-                                    <div class="order-summary">
-                                        <h4 class="shoping-checkboxt-title mb-4 text-center">
-                                            YOUR ORDER
-                                        </h4>
-                                        <!-- your-order-wrap start-->
-                                        <div class="order-summary-wrap">
-                                            <!-- order-summary-table start -->
-                                            <div class="order-summary-table table-responsive">
-                                                <table class="table">
-                                                    <thead>
-                                                        <tr>
-                                                            <th class="product-name">Product</th>
-                                                            <th class="product-total">Total</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach ($cartItems as $item)
-                                                            <tr class="cart_item">
-                                                                <td class="product-name">
-                                                                    {{ $item->product->title }}
-                                                                    <strong class="product-quantity"> × {{ $item->quantity }}</strong>
-                                                                </td>
-                                                                <td class="product-total">
-                                                                    {{ $currencySymbol }}<span class="amount">{{ number_format($item->quantity * $item->price, 2) }}</span>
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                    <tfoot>
-                                                        <tr class="cart-subtotal">
-                                                            <th>Cart Subtotal</th>
-                                                            <td>{{ $currencySymbol }}<span class="amount">{{ number_format($totalAmount, 2) }}</span></td>
-                                                        </tr>
-                                                        <tr class="shipping">
-                                                            <th>Shipping Cost</th>
-                                                            <td>{{ $currencySymbol }}<span class="amount">{{ number_format($shippingFee, 2) }}</span></td>
-                                                        </tr>
-                                                        <tr class="cart-subtotal">
-                                                            <th>Coupon Discount</th>
-                                                            <td>{{ $currencySymbol }}<span class="amount">{{ number_format($res_coupon, 2) }}</span></td>
-                                                        </tr>
-                                                        <tr class="order-total">
-                                                            <th>Order Total</th>
-                                                            <td><strong>{{ $currencySymbol }}<span class="amount">{{ number_format($finalAmountToPay, 2) }}</span></strong></td>
-                                                        </tr>
-                                                    </tfoot>
-                                                </table>
-                                            </div>
+                                foreach ($cartItems as $item) {
+                                    $item->price *= $exchangeRate;
+                                }
+                            @endphp
+                            <!-- Order Summary-wrapper start -->
+                            <div class="order-summary">
+                                <h4 class="shoping-checkboxt-title mb-4 text-center">
+                                    YOUR ORDER
+                                </h4>
+                                <!-- your-order-wrap start-->
+                                <div class="order-summary-wrap">
+                                    <!-- order-summary-table start -->
+                                    <div class="order-summary-table table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th class="product-name">Product</th>
+                                                    <th class="product-total">Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($cartItems as $item)
+                                                    <tr class="cart_item">
+                                                        <td class="product-name">
+                                                            {{ $item->product->title }}
+                                                            <strong class="product-quantity"> ×
+                                                                {{ $item->quantity }}</strong>
+                                                        </td>
+                                                        <td class="product-total">
+                                                            {{ $currencySymbol }}<span
+                                                                class="amount">{{ number_format($item->quantity * $item->price, 2) }}</span>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                            <tfoot>
+                                                <tr class="cart-subtotal">
+                                                    <th>Cart Subtotal</th>
+                                                    <td>{{ $currencySymbol }}<span
+                                                            class="amount">{{ number_format($totalAmount, 2) }}</span>
+                                                    </td>
+                                                </tr>
+                                                <tr class="shipping">
+                                                    <th>Shipping Cost</th>
+                                                    <td>{{ $currencySymbol }}<span
+                                                            class="amount">{{ number_format($shippingFee, 2) }}</span>
+                                                    </td>
+                                                </tr>
+                                                <tr class="cart-subtotal">
+                                                    <th>Coupon Discount</th>
+                                                    <td>{{ $currencySymbol }}<span
+                                                            class="amount">{{ number_format($res_coupon, 2) }}</span></td>
+                                                </tr>
+                                                <tr class="order-total">
+                                                    <th>Order Total</th>
+                                                    <td><strong>{{ $currencySymbol }}<span
+                                                                class="amount">{{ number_format($finalAmountToPay, 2) }}</span></strong>
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
                                     <!-- your-order-table end -->
 
                                     <!-- your-order-wrap end -->
@@ -411,9 +432,9 @@
                                     </div>
 
                                     <!-- <div id="razorpay-form" style="display: none;">
-          <button id="razorpay-button" type="button">Pay with Razorpay</button>
-          <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id">
-      </div> -->
+              <button id="razorpay-button" type="button">Pay with Razorpay</button>
+              <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id">
+          </div> -->
 
                                     <input type="hidden" name="shipping_fee" value="{{ $shippingFee }}">
                                     <input type="hidden" name="coupon_discount" value="{{ $res_coupon }}">
@@ -422,6 +443,7 @@
                                         <button type="button" class="btn btn-primary btn-full btn-md"
                                             onclick="validateForm()">Place Order</button>
                                     </div>
+                                    <div class="text-danger" id="error_order_total"></div>
                                     <!-- your-order-wrapper start -->
                                 </div>
                             </div>
@@ -466,10 +488,11 @@
     <script>
         var stripe = Stripe(
             'pk_test_51P8d5PSGxcIrVgVcJoxGtRjnHbUTsAbYQEUn6McgRqIqPaaQkaIhBx5ecPc1IDhuo7IIYG49cC4J5zeSxnf7XCay00B3fbQZJq'
-            ); // Replace with your Stripe publishable key
+        ); // Replace with your Stripe publishable key
         var elements = stripe.elements();
         var card = elements.create('card');
         card.mount('#card-element');
+
 
         function validateForm() {
             var name = $('#name').val().trim();
@@ -523,6 +546,20 @@
                 $('#error_payment_method').text('Payment method is required');
                 isValid = false;
             }
+            if (isValid) {
+                // Disable the button
+                var placeOrderButton = $('.btn.btn-primary.btn-full.btn-md');
+                placeOrderButton.prop('disabled', true);
+
+                // Set a timeout to re-enable the button after 10 seconds
+                setTimeout(function() {
+                    placeOrderButton.prop('disabled', false);
+                }, 10000);
+            }
+            if (finalAmountToPay === 0) {
+        $('#error_order_total').text('Order total cannot be zero. Please add items to your cart.');
+        isValid = false;
+    }
 
             if (isValid) {
                 if (paymentMethod === 'cod') {
@@ -611,17 +648,19 @@
     <!-- JavaScript code -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-    $(document).ready(function() {
-        // When a radio button is clicked
-        $('input[name="shipping_address"]').click(function() {
-            // Get the value of the selected radio button (which is the ID of the shipping address)
-            var selectedShippingAddressId = $(this).val();
+        $(document).ready(function() {
+            // When a radio button is clicked
+            $('input[name="shipping_address"]').click(function() {
+                // Get the value of the selected radio button (which is the ID of the shipping address)
+                var selectedShippingAddressId = $(this).val();
 
-            // Assign the selected ID to the hidden input field
-            $('input[name="selected_shipping_address_id"]').val(selectedShippingAddressId);
+                // Assign the selected ID to the hidden input field
+                $('input[name="selected_shipping_address_id"]').val(selectedShippingAddressId);
+            });
         });
-    });
-</script>
+    </script>
+
+
 
     <!-- Product Modal End -->
     <script src="{{ asset('/frontend/assets/js/modernizr-3.11.7.min.js') }}"></script>

@@ -6,7 +6,7 @@ use GuzzleHttp\Client;
 
 class DHLService
 {
-    protected $client;
+    protected $client;  
 
     public function __construct()
     {

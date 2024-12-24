@@ -216,13 +216,22 @@ class ProductController extends Controller
 
     public function getSubcategories($categoryId)
     {
-        $subcategories = SubCategory::where('category_id', $categoryId)->get();
+        // Only retrieve subcategories where status = 1
+        $subcategories = SubCategory::where('category_id', $categoryId)
+            ->where('status', 1)
+            ->get();
+
         return response()->json(['subcategories' => $subcategories]);
     }
 
+
     public function getChildcategories($subcategoryId)
     {
-        $childcategories = ChildCategory::where('subcategory_id', $subcategoryId)->get();
+        // Only retrieve child categories where status = 1
+        $childcategories = ChildCategory::where('subcategory_id', $subcategoryId)
+            ->where('status', 1)
+            ->get();
+
         return response()->json(['childcategories' => $childcategories]);
     }
 
@@ -259,6 +268,12 @@ class ProductController extends Controller
         $product->new_product = $request->has('new_product') ? 1 : 0;
         $product->is_best = $request->has('is_best') ? 1 : 0;
         $product->is_featured = $request->has('is_featured') ? 1 : 0;
+
+        if ($request->input('action') == 'save_and_new') {
+            $product->status = 0; // Save as draft
+        } elseif ($request->input('action') == 'save') {
+            $product->status = 1; // Publish the product
+        }
         $product->save();
 
         // Create and save the product color
@@ -434,12 +449,17 @@ class ProductController extends Controller
     }
     public function update(Request $request, $id)
     {
+        // Validate incoming request
         $validatedData = $request->validate([
             'title' => 'required',
             'short_description' => 'required',
             'slug' => 'required|string|unique:products,slug,' . $id . '|max:255',
-            'main_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', 
-            'multiple_images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', 
+            'main_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'multiple_images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'price' => 'required|numeric',  // Add validation for price
+            'offer_price' => 'nullable|numeric',  // Add validation for offer_price
+            'sku' => 'required|string|max:255',  // Add validation for sku
+            'qty' => 'required|integer',  // Add validation for quantity
         ]);
 
         $product = Product::findOrFail($id);
@@ -475,9 +495,18 @@ class ProductController extends Controller
             }
         }
 
+        // Update price, offer_price, qty, and sku for the product color
+        $productColor = ProductColor::where('product_id', $id)->first();
+        if ($productColor) {
+            $productColor->price = $request->input('price');
+            $productColor->offer_price = $request->input('offer_price');
+            $productColor->qty = $request->input('qty');
+            $productColor->sku = $request->input('sku');
+            $productColor->save();
+        }
+
         if ($request->hasFile('multiple_images')) {
             // First, delete existing product images related to the product color
-            $productColor = ProductColor::where('product_id', $id)->first();
             if ($productColor) {
                 // This will call the productColorImages method defined in the ProductColor model
                 $productColor->productColorImages()->delete();
@@ -492,7 +521,6 @@ class ProductController extends Controller
                 ]);
             }
         }
-
 
         // Handle product specifications
         $productSpecificationKeys = $request->input('product_specification_key_id');
@@ -524,6 +552,7 @@ class ProductController extends Controller
 
         return redirect()->route('product.index')->with('success', 'Product updated successfully');
     }
+
 
 
     public function delete($id)

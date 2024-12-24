@@ -14,8 +14,8 @@ class StateSeeder extends Seeder
      public function run()
     {
         $states = [
-            ['country_id' => 1, 'name' => 'Undefined'],
-            ['country_id' => 2, 'name' => 'Tamil Nadu'],
+            ['country_id' => 1, 'name' => 'Undefined','code'=>'UD'],
+            ['country_id' => 2, 'name' => 'Tamil Nadu','code'=>'TN'],
         
             // Add more states as needed
         ];

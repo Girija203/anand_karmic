@@ -13,7 +13,7 @@
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
                                     <li class="breadcrumb-item"><a href="#">Order</a></li>
-                                    <li class="breadcrumb-item active">Declined</li>
+                                    <li class="breadcrumb-item active">Cancel</li>
                                 </ol>
                             </div>
                             <h4 class="page-title">Order</h4>
@@ -25,7 +25,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="header-title">Order Declined</h4>
+                                <h4 class="header-title">Order Cancel</h4>
                             </div>
                             <!-- <div class="alert alert-success alert-dismissible fade show" role="alert"
                                     style="display:none;">
@@ -105,7 +105,7 @@
                                             enctype="multipart/form-data">
                                             @csrf
                                             <div class="row">
-                                                <input type="text" class="order_id" name="order_id" value=""
+                                                <input type="hidden" class="order_id" name="order_id" value=""
                                                     id="order_id">
 
                                                 <label for="employee_status"
@@ -116,9 +116,9 @@
                                                         <option value="">Select</option>
                                                         <option value="0">Pending</option>
                                                         <option value="1">In Progress</option>
-                                                        <option value="2">Delivered</option>
-                                                        <option value="3">Completed</option>
-                                                        <option value="4">Declined</option>
+                                                        <option value="2">Shipped</option>
+                                                        <option value="3">Delivered</option>
+                                                        <option value="4">Cancel</option>
                                                     </select>
                                                 </div>
 
@@ -177,7 +177,7 @@
             table = $('#users-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{{ route('orders.declined_data') }}',
+                ajax: '{{ route('orders.cancel_data') }}',
                 columns: [{
                         data: 'id',
                         name: 'id'

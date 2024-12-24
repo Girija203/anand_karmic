@@ -350,9 +350,9 @@
                                 <li>
                                     <a href="{{ route('review.index') }}">Product Review</a>
                                 </li>
-                                <li>
+                                {{-- <li>
                                     <a href="{{ route('product_sml_shares.index') }}">Product SML </a>
-                                </li>
+                                </li> --}}
                                 <li>
                                     <a href="{{ route('product_show_cases.index') }}">Product Show Case </a>
                                 </li>
@@ -383,16 +383,20 @@
                                     <a href="{{ route('orders.progress') }}">Progress Order</a>
                                 </li>
                                 <li>
+                                    <a href="{{ route('orders.shipped') }}">Shipped Orders</a>
+                                </li>
+                                <li>
                                     <a href="{{ route('orders.delivered') }}">Delivered Orders</a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('orders.completed') }}">Completed Orders</a>
+                                    <a href="{{ route('orders.cancel') }}">Cancel Orders</a>
                                 </li>
-                                <li>
-                                    <a href="{{ route('orders.declined') }}">Declined Orders</a>
-                                </li>
+                                
                                 <li>
                                     <a href="{{ route('orders.cashONDelivery') }}">Cash On Delivery</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('order.cancel.request.list') }}">Order Cancel Request</a>
                                 </li>
                             </ul>
                         </div>

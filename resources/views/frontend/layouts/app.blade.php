@@ -562,7 +562,7 @@
       <div class="offcanvas-header">
       <!-- Logo Start -->
       <div class="logo text-center text-lg-start">
-      <a href="index.html">
+      <a href="{{route('home')}}">
       <img src="{{ asset('/frontend/assets/images/logo/karmic.png') }}" height="40" width="140" alt="logo" />
       </a>
       </div>
@@ -573,20 +573,20 @@
       <nav class="navbar-mobile-menu">
       <ul class="mobile-menu">
       <li class="mobile-menu-item">
-      <a href="index.html" class="mobile-menu-link">Home</a>
+      <a href="{{route('home')}}" class="mobile-menu-link">Home</a>
       </li>
       <li class="mobile-menu-item">
-      <a href="about-us.html" class="mobile-menu-link">About</a>
+      <a href="{{route('about')}}" class="mobile-menu-link">About</a>
       </li>
       <li class="mobile-menu-item">
-      <a href="shop.html" class="mobile-menu-link">shop</a>
+      <a href="{{route('shop')}}" class="mobile-menu-link">shop</a>
       </li>
       <li class="mobile-menu-item">
       <a href="{{ url('shop/filter?orderby=date') }}" class="mobile-menu-link">New
       Arrivals</a>
       </li>
       <li class="mobile-menu-item">
-      <a href="contact-us.html" class="mobile-menu-link">Contact Us</a>
+      <a href="{{route('contact')}}" class="mobile-menu-link">Contact Us</a>
       </li>
       </ul>
       </nav>

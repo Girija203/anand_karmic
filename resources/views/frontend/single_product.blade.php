@@ -204,20 +204,35 @@
                                         <span>{{ number_format($averageRating, 1) }} / 5</span>
                                     </div>
                                 @else
-                                    <p>No ratings yet.</p>
+
+                                
+                                     <div class="d-flex align-items-center">
+                                     <i class="far fa-star"></i>
+                                      <i class="far fa-star"></i>
+                                       <i class="far fa-star"></i>
+                                        <i class="far fa-star"></i>
+                                         <i class="far fa-star"></i>
+                                        {{-- <span class="mx-2">0 / 5</span> --}}
+
+                                     </div>
+
+                                
                                 @endif
 
                             </div>
 
                             <p class="product-item-details-description mt-2 fs-14" id="product-description">
-                                {{ Str::limit($products->short_description, 100, '') }}
-                                <span id="more-text" style="display: none;">
-                                    {{ substr($products->short_description, 100) }}
-                                </span>
-                                <br>
-                                <a href="javascript:void(0);" id="toggle-description" onclick="toggleDescription()">Show
-                                    More</a>
-                            </p>
+    {{ Str::limit($products->short_description, 100, '') }}
+    
+    <!-- Check if the description length is more than 100 characters -->
+    @if (strlen($products->short_description) > 100)
+        <span id="more-text" style="display: none;">
+            {{ substr($products->short_description, 100) }}
+        </span>
+        <br>
+        <a href="javascript:void(0);" id="toggle-description" onclick="toggleDescription()">Show More</a>
+    @endif
+</p>
 
                             {{-- <form class="product-color-radio-form" id="productColorForm">
                                 <fieldset class="product-color-radio-wrap">

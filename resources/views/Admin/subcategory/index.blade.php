@@ -50,11 +50,13 @@
                                                         <th>Category Name</th>
                                                         <th>SubcategoryName</th>
                                                         <th>Slug</th>
+                                                        <th>Status</th>
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <tr>
+                                                        <td></td>
                                                         <td></td>
                                                         <td></td>
                                                         <td></td>
@@ -124,6 +126,13 @@
                     {
                         data: 'slug',
                         name: 'slug'
+                    },
+                    {
+                        data: 'status',
+                        name: 'status',
+                        render: function(data, type, row) {
+                return data === 1 ? 'Active' : 'Inactive';
+            }
                     },
                     {
                         data: null,

@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('meta_details', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('blog_posts_id');
-            $table->unsignedBigInteger('meta_keys_id');
-            $table->string('content');
+            $table->unsignedBigInteger('meta_keys_id')->nullable();
+            $table->string('content')->nullable();
             $table->timestamps();
              $table->foreign('blog_posts_id')->references('id')->on('blog_posts')->onDelete('cascade');
              $table->foreign('meta_keys_id')->references('id')->on('meta_keys')->onDelete('cascade');

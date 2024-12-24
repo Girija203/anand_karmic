@@ -116,9 +116,9 @@
                                                         <option value="">Select</option>
                                                         <option value="0">Pending</option>
                                                         <option value="1">In Progress</option>
-                                                        <option value="2">Delivered</option>
-                                                        <option value="3">Completed</option>
-                                                        <option value="4">Declined</option>
+                                                        <option value="2">Shipped</option>
+                                                        <option value="3">Delivered</option>
+                                                        <option value="4">Cancel</option>
                                                     </select>
                                                 </div>
 

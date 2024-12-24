@@ -57,12 +57,14 @@
                                                         <th>Country</th>
                                                         <th>State</th>
                                                         <th>Name</th>
+                                                        <th>Code</th>
                                                         <th>Status</th>
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <tr>
+                                                        <td></td>
                                                         <td></td>
                                                         <td></td>
                                                         <td></td>
@@ -128,6 +130,10 @@
                     {
                         data: 'name',
                         name: 'name'
+                    },
+                     {
+                        data: 'code',
+                        name: 'code'
                     },
                     {
                         data: 'status',

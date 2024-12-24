@@ -33,6 +33,7 @@ class Kernel extends HttpKernel
    protected $routeMiddleware = [
     // Other middlewares
     'set.currency' => \App\Http\Middleware\SetCurrency::class,
+    'check.session' => \App\Http\Middleware\CheckSession::class,
   
 ];
   protected $middlewareAliases = [
@@ -45,6 +46,7 @@ class Kernel extends HttpKernel
         
     ];
 
+    
 
     protected function schedule(Schedule $schedule)
 {

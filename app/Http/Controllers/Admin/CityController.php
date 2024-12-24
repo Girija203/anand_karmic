@@ -43,6 +43,9 @@ class CityController extends Controller
         //   dd($request);
         $request->validate([
             'name' => 'required',
+            'code' => 'required',
+            'state_id' => 'required',
+            'country_id' => 'required',
             
         ]);
         
@@ -50,6 +53,7 @@ class CityController extends Controller
          $city->country_id = $request->input('country_id');
          $city->state_id = $request->input('state_id');
          $city->name = $request->input('name');
+         $city->code = $request->input('code');
      
         $city->save();
 
@@ -79,6 +83,7 @@ class CityController extends Controller
          $city->country_id = $request->input('country_id');
         $city->state_id = $request->input('state_id');
         $city->name = $request->input('name');
+        $city->code = $request->input('code');
         $city->status = $request->input('status');
      
         $city->save();

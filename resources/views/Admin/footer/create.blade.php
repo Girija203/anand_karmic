@@ -47,7 +47,7 @@
                                                     @csrf
                                                     <div class="form-group row">
                                                         <label for="name"
-                                                            class="col-sm-2 col-form-label mandatory">About us</label>
+                                                            class="col-sm-2 col-form-label">About us</label>
                                                         <div class="col-sm-4 mb-4">
                                                             <input type="text" class="form-control" name="about_us"
                                                                 id="">
@@ -77,7 +77,7 @@
                                                             @enderror
                                                         </div>
                                                         <label for="name"
-                                                            class="col-sm-2 col-form-label mandatory">Address</label>
+                                                            class="col-sm-2 col-form-label ">Address</label>
                                                         <div class="col-sm-4 mb-4">
                                                             <input type="text" class="form-control" name="address"
                                                                 id="">

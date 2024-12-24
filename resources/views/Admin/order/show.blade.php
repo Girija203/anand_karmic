@@ -176,13 +176,13 @@
                                                                                     In Progress</option>
                                                                                 <option value="2"
                                                                                     {{ $order->order_status == 2 ? 'selected' : '' }}>
-                                                                                    Delivered</option>
+                                                                                    Shipped</option>
                                                                                 <option value="3"
                                                                                     {{ $order->order_status == 3 ? 'selected' : '' }}>
-                                                                                    Completed</option>
+                                                                                    Delivered</option>
                                                                                 <option value="4"
                                                                                     {{ $order->order_status == 4 ? 'selected' : '' }}>
-                                                                                    Declined</option>
+                                                                                    Cancel</option>
                                                                             </select>
                                                                         </div>
 

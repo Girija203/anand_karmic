@@ -13,7 +13,7 @@
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
                                     <li class="breadcrumb-item"><a href="#">Order</a></li>
-                                    <li class="breadcrumb-item active">Completed</li>
+                                    <li class="breadcrumb-item active">Shipped</li>
                                 </ol>
                             </div>
                             <h4 class="page-title">Order</h4>
@@ -25,7 +25,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="header-title">Order Completed</h4>
+                                <h4 class="header-title">Order Shipped</h4>
                             </div>
                             <!-- <div class="alert alert-success alert-dismissible fade show" role="alert"
                                     style="display:none;">
@@ -105,7 +105,7 @@
                                             enctype="multipart/form-data">
                                             @csrf
                                             <div class="row">
-                                                <input type="text" class="order_id" name="order_id" value=""
+                                                <input type="hidden" class="order_id" name="order_id" value=""
                                                     id="order_id">
 
                                                 <label for="employee_status"
@@ -113,12 +113,12 @@
                                                     Status</label>
                                                 <div class="col-sm-12 mb-4">
                                                     <select id="order_status" class="form-control" name="order_status">
-                                                        <option value="">Select</option>
+                                                      <option value="">Select</option>
                                                         <option value="0">Pending</option>
                                                         <option value="1">In Progress</option>
-                                                        <option value="2">Delivered</option>
-                                                        <option value="3">Completed</option>
-                                                        <option value="4">Declined</option>
+                                                        <option value="2">Shipped</option>
+                                                        <option value="3">Delivered</option>
+                                                        <option value="4">Cancel</option>
                                                     </select>
                                                 </div>
 
@@ -177,7 +177,7 @@
             table = $('#users-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{{ route('orders.completed_data') }}',
+                ajax: '{{ route('orders.shipped_data') }}',
                 columns: [{
                         data: 'id',
                         name: 'id'
@@ -218,7 +218,7 @@
                         searchable: false,
                         render: function(data, type, row) {
                             return `
-                                                                                <button onclick="openResignModal(${row.id})" class="icon-button custom-color">
+                                                    <button onclick="openResignModal(${row.id})" class="icon-button custom-color">
     <i class="ri-edit-box-line" style="font-size: 18px;"></i>
 </button>
 <button onclick="showOrders(${row.id})" class="icon-link common-color">Show</button>
@@ -254,7 +254,6 @@
                 }
             });
         }
-
 
         function showOrders(id) {
             console.log("inside");

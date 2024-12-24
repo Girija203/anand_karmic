@@ -56,6 +56,7 @@ use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\LoginRegisterController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\ShipmentController;
+use App\Http\Controllers\OrderCancelController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 
@@ -467,22 +468,25 @@ Route::middleware(['auth'])->group(function () {
     Route::get('order-edit/{id}', [CouponController::class, 'edit'])->name('order.edit');
     Route::get('order/pending_data', [OrderController::class, 'pendingData'])->name('orders.pending_data');
     Route::get('order/progress_data', [OrderController::class, 'progressData'])->name('orders.progress_data');
+    Route::get('order/shipped_data', [OrderController::class, 'shippedData'])->name('orders.shipped_data');
     Route::get('order/delivered_data', [OrderController::class, 'deliveredData'])->name('orders.delivered_data');
-    Route::get('order/completed_data', [OrderController::class, 'completedData'])->name('orders.completed_data');
-    Route::get('order/declined_data', [OrderController::class, 'declinedData'])->name('orders.declined_data');
+    Route::get('order/cancel_data', [OrderController::class, 'cancelData'])->name('orders.cancel_data');
     Route::get('order/cash_data', [OrderController::class, 'cashData'])->name('orders.cash_data');
     Route::get('order-pending', [OrderController::class, 'pending'])->name('orders.pending');
     Route::get('order-progress', [OrderController::class, 'progress'])->name('orders.progress');
+    Route::get('order-shipped', [OrderController::class, 'shipped'])->name('orders.shipped');
     Route::get('order-delivered', [OrderController::class, 'delivered'])->name('orders.delivered');
-    Route::get('order-completed', [OrderController::class, 'completed'])->name('orders.completed');
-    Route::get('order-declined', [OrderController::class, 'declined'])->name('orders.declined');
+    Route::get('order-cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
     Route::get('order-cash_on_delivery', [OrderController::class, 'cashONDelivery'])->name('orders.cashONDelivery');
     Route::get('order-show/{id}', [OrderController::class, 'show'])->name('orders.show');
     Route::get('order_message_read_one/{id}', [OrderController::class, 'read_one'])->name('order_messages.read.one');
     Route::post('order_message_read_all', [OrderController::class, 'read_all'])->name('order_messages.read.all');
 
 
-
+    Route::get('/order_cancel_request_list', [OrderController::class, 'orderCancelRequest'])->name('order.cancel.request.list');
+    Route::get('/order_cancel_request_data', [OrderController::class, 'orderCancelRequestData'])->name('order.cancel.request.data');
+    Route::get('/order_cancel_handel_list', [OrderController::class, 'orderCancelHandel'])->name('order.cancel.handel.list');
+    Route::get('/order_cancel_handel_data', [OrderController::class, 'orderCancelHandelData'])->name('order.cancel.handel.data');
 
     Route::get('stock/delete/{id}', [AddStockController::class, 'delete'])->name('stock.delete');
 
@@ -559,22 +563,21 @@ Route::post('subscriber/store', [SubscriberController::class, 'store'])->name('s
 
 Route::get('myaccount', [HomeController::class, 'myaccount'])->name('myaccount');
 
-Route::get('/', [HomeController::class, 'home'])->name('home');
 Route::get('about', [HomeController::class, 'about'])->name('about');
 Route::get('contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('terms_condition', [HomeController::class, 'termsCondition'])->name('terms.condition');
 Route::get('privacy_policy', [HomeController::class, 'privacyPolicy'])->name('privacy.policy');
-Route::get('shop', [HomeController::class, 'shop'])->name('shop');
+    Route::get('shop', [HomeController::class, 'shop'])->name('shop');
 
-Route::get('/search', [HomeController::class, 'search'])->name('search');
+    Route::get('/search', [HomeController::class, 'search'])->name('search');
 
 
-Route::get('/shop/filter',  [HomeController::class, 'filter'])->name('shop.filter');
-Route::get('/price/range', [HomeController::class, 'priceRange'])->name('price.filter');
-Route::get('/shop/category/{id}', [HomeController::class, 'filterByCategory'])->name('shop.category');
-Route::get('/filter', [HomeController::class, 'filterBySpecifications'])->name('filter.bySpecifications');
+    Route::get('/shop/filter',  [HomeController::class, 'filter'])->name('shop.filter');
+    Route::get('/price/range', [HomeController::class, 'priceRange'])->name('price.filter');
+    Route::get('/shop/category/{id}', [HomeController::class, 'filterByCategory'])->name('shop.category');
+    Route::get('/filter', [HomeController::class, 'filterBySpecifications'])->name('filter.bySpecifications');
 
-Route::get('product/{slug}', [HomeController::class, 'singleProduct'])->name('single.product');
+    Route::get('product/{slug}', [HomeController::class, 'singleProduct'])->name('single.product');
 
 
 Route::get('/products/color/{colorId}', [ProductController::class, 'productsByColor'])->name('products.by.color');
@@ -646,9 +649,9 @@ Route::get('remove-shipping-address/{id}', [CheckOutController::class, 'delete']
 
 Route::post('review/store', [ReviewController::class, 'store'])->name('reviews.store');
 
-//subscriber
+// Order Cancel 
 
-
+Route::post('/store-cancel-request', [OrderCancelController::class, 'cancelRequest'])->name('store.cancel.request');
 //frontend subscription
 
 

@@ -32,6 +32,11 @@ class FooterController extends Controller
         //   dd($request);
         $request->validate([
             'first_column' => 'required',
+         'second_column' => 'required',
+         'third_column' => 'required',
+         'copyright' => 'required',
+         'email' => 'required',
+         'phone' => 'required',
             
         ]);
         

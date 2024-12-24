@@ -99,13 +99,22 @@ class HomeController extends Controller
         // Define how many products you want per page
         $perPage = 10;
 
-        // Fetch all products with pagination
-        $products = Product::where('status', 1)->paginate($perPage);
+        // Fetch all products with their associated colors
+        $products = Product::with(['colors.color'])
+        ->where('status', 1) // Only show active products
+            ->paginate($perPage);
         $totalProducts = Product::count();
 
+        // Fetch cart and other necessary data
         $cart = Cart::get();
         $categories = Category::all();
         $specifications = ProductSpecification::where('product_specification_key_id', 1)->get();
+        $smallCount = ProductSpecification::where('product_specification_key_id', 1)
+        ->where('specification', 'small')
+        ->count();
+        $largeCount = ProductSpecification::where('product_specification_key_id', 1)
+        ->where('specification', 'large')
+        ->count();
 
         $cartItems = Cart::with(['product.colors'])->get();
         $cart = $cartItems->map(function ($item) {
@@ -113,7 +122,6 @@ class HomeController extends Controller
             $productColor = $product->colors->first(); // Assuming you want the first color, adjust as necessary
 
             $discount = 0;
-
             if ($productColor && $productColor->offer_price && $productColor->price > $productColor->offer_price) {
                 $discount = $productColor->price - $productColor->offer_price;
             }
@@ -134,10 +142,11 @@ class HomeController extends Controller
         }
 
         $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
-        $currencySymbol = session('currency_symbol', '₹'); // Default to $ if not set
-        // dd($products[1]->colors[0]->single_image);
-        return view('frontend.shop', compact('products', 'categories', 'specifications', 'cart', 'cartItems', 'exchangeRate', 'currencySymbol', 'totalProducts'));
+        $currencySymbol = session('currency_symbol', '₹'); // Default to ₹ if not set
+
+        return view('frontend.shop', compact('totalProducts', 'categories', 'specifications', 'cart', 'cartItems', 'exchangeRate', 'currencySymbol', 'products', 'smallCount', 'largeCount'));
     }
+
 
 
     public function filter(Request $request)
@@ -174,13 +183,19 @@ class HomeController extends Controller
         $categories = Category::all();
         $specifications = ProductSpecification::where('product_specification_key_id', 1)->get();
         $cart = Cart::all();
+        $smallCount = ProductSpecification::where('product_specification_key_id', 1)
+        ->where('specification', 'small')
+        ->count();
 
+        $largeCount = ProductSpecification::where('product_specification_key_id', 1)
+        ->where('specification', 'large')
+        ->count();
         // Currency and exchange rate from session
         $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
         $currencySymbol = session('currency_symbol', '₹');
 
         // Return the frontend.shop view with all required data
-        return view('frontend.shop', compact('products', 'categories', 'specifications', 'cart', 'exchangeRate', 'currencySymbol', 'totalProducts'));
+        return view('frontend.shop', compact('products', 'categories', 'specifications', 'cart', 'exchangeRate', 'currencySymbol', 'totalProducts', 'smallCount','largeCount'));
     }
 
 
@@ -188,48 +203,69 @@ class HomeController extends Controller
 
     public function priceRange(Request $request)
     {
-        $query = ProductColor::query();
+        $perPage = 12;
 
-        // Check if min_price and max_price are set in the request
+        // Query to fetch products with associated colors, category, and brand
+        $productQuery = Product::with(['colors', 'category', 'brand']);
+
+        // Handle price range filtering from ProductColor's offer_price
         if ($request->has('min_price') && $request->has('max_price')) {
             $minPrice = $request->input('min_price', 0);
             $maxPrice = $request->input('max_price', 10000);
 
-            // Apply the price range filter
-            $query->whereBetween('offer_price', [$minPrice, $maxPrice]);
+            // Join with product_color table and filter based on offer_price
+            $productQuery->whereHas('colors', function ($query) use ($minPrice, $maxPrice) {
+                $query->whereBetween('offer_price', [$minPrice, $maxPrice]);
+            });
         }
 
         // Paginate the filtered products
-        $perPage = 12; // Define the number of items per page
-        $products = Product::with('colors')->paginate($perPage);
+        $products = $productQuery->paginate($perPage);
 
-
-
-        // Count total products in the filtered range
-        $totalProducts = $query->count();
-
-        // Fetch additional data
+        // Fetch additional data for the view
         $categories = Category::all();
         $specifications = ProductSpecification::where('product_specification_key_id', 1)->get();
         $cart = Cart::all();
 
-        $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
+        // Count product specifications
+        $smallCount = ProductSpecification::where('product_specification_key_id', 1)
+        ->where('specification', 'small')
+        ->count();
+        $largeCount = ProductSpecification::where('product_specification_key_id', 1)
+        ->where('specification', 'large')
+        ->count();
+        $totalProducts = Product::count();
+
+        // Fetch exchange rate and currency symbol from the session
+        $exchangeRate = session('exchange_rate', 1);
         $currencySymbol = session('currency_symbol', '₹');
 
-        return view('Frontend.shop', compact('products', 'categories', 'specifications', 'cart', 'exchangeRate', 'currencySymbol', 'totalProducts'));
+        // Return the view with the necessary data
+        return view('frontend.shop', compact(
+            'categories',
+            'specifications',
+            'cart',
+            'exchangeRate',
+            'currencySymbol',
+            'products',
+            'totalProducts',
+            'smallCount',
+            'largeCount'
+        ));
     }
+
 
 
 
     // public function filterByPrice(Request $request)
     // {
-    //     dd($request);
+    //     // dd($request);
     //     $minPrice = $request->input('min_price', 0);
     //     $maxPrice = $request->input('max_price', 10000);
     //     $perPage = 12;
 
     //     // Filter products based on the offer_price within the specified range
-    //     $productColors = ProductColor::whereBetween('offer_price', [$minPrice, $maxPrice])
+    //     $products = ProductColor::whereBetween('offer_price', [$minPrice, $maxPrice])
     //         ->with(['product', 'color', 'images'])
     //         ->paginate($perPage);
     //         // dd($productColors);
@@ -238,11 +274,18 @@ class HomeController extends Controller
     //     $categories = Category::all();
     //     $specifications = ProductSpecification::where('product_specification_key_id', 1)->get();
     //     $cart = Cart::all();
+    //     $smallCount = ProductSpecification::where('product_specification_key_id', 1)
+    //     ->where('specification', 'small')
+    //     ->count();
+
+    //     $largeCount = ProductSpecification::where('product_specification_key_id', 1)
+    //     ->where('specification', 'large')
+    //     ->count();
 
     //     $exchangeRate = session('exchange_rate', 1); // Default to 1 if not set
     //     $currencySymbol = session('currency_symbol', '₹');
 
-    //     return view('frontend.shop', compact('productColors', 'categories', 'specifications', 'cart', 'exchangeRate', 'currencySymbol', 'totalProducts'));
+    //     return view('frontend.shop', compact('products', 'categories', 'specifications', 'cart', 'exchangeRate', 'currencySymbol', 'totalProducts', 'smallCount', 'largeCount'));
     // }
 
 
@@ -257,17 +300,22 @@ class HomeController extends Controller
         $specifications = ProductSpecification::where('product_specification_key_id', 1)->get();
 
         $cart = Cart::all();
+        $smallCount = ProductSpecification::where('product_specification_key_id', 1)
+        ->where('specification', 'small')
+        ->count();
 
+        $largeCount = ProductSpecification::where('product_specification_key_id', 1)
+        ->where('specification', 'large')
+        ->count();
 
         $exchangeRate = session('exchange_rate', 1);
         $currencySymbol = session('currency_symbol', '₹');
 
-        return view('frontend.shop', compact('categories', 'products', 'specifications', 'cart', 'totalProducts', 'exchangeRate', 'currencySymbol'));
+        return view('frontend.shop', compact('categories', 'products', 'specifications', 'cart', 'totalProducts', 'exchangeRate', 'currencySymbol', 'smallCount','largeCount'));
     }
 
     public function filterBySpecifications(Request $request)
     {
-        // dd($request);
         $selectedSpecs = $request->input('specifications', []);
         $perPage = 12;
 
@@ -279,6 +327,15 @@ class HomeController extends Controller
             $products = Product::paginate($perPage);
         }
 
+        // Fetch specifications and count for 'small' and 'large'
+        $smallCount = ProductSpecification::where('product_specification_key_id', 1)
+        ->where('specification', 'small')
+        ->count();
+
+        $largeCount = ProductSpecification::where('product_specification_key_id', 1)
+        ->where('specification', 'large')
+        ->count();
+
         $specifications = ProductSpecification::where('product_specification_key_id', 1)->get();
         $categories = Category::all();
         $totalProducts = Product::count();
@@ -286,8 +343,19 @@ class HomeController extends Controller
         $exchangeRate = session('exchange_rate', 1);
         $currencySymbol = session('currency_symbol', '₹');
 
-        return view('frontend.shop', compact('products', 'specifications', 'categories', 'cart', 'totalProducts', 'exchangeRate', 'currencySymbol'));
+        return view('frontend.shop', compact(
+            'products',
+            'specifications',
+            'categories',
+            'cart',
+            'totalProducts',
+            'exchangeRate',
+            'currencySymbol',
+            'smallCount',
+            'largeCount'
+        ));
     }
+
 
 public function singleProduct($slug)
 {
@@ -449,16 +517,23 @@ public function singleProduct($slug)
 
     public function addToWishlist(Request $request)
     {
+        // Retrieve the product ID and authenticated user ID
         $productId = $request->input('product_id');
+        $userId = Auth::id();
 
+        if (!$userId) {
+            return response()->json(['message' => 'You need to be logged in to add to wishlist'], 401);
+        }
 
-        // Check if the product is already in the wishlist
+        // Check if the product is already in the wishlist for the user
         $wishlistItem = Wishlist::where('product_id', $productId)
+            ->where('user_id', $userId)
             ->first();
 
         if (!$wishlistItem) {
             Wishlist::create([
                 'product_id' => $productId,
+                'user_id' => $userId, // Store the user ID
             ]);
 
             return response()->json(['message' => 'Product added to wishlist'], 200);

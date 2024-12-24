@@ -105,7 +105,7 @@
                                             enctype="multipart/form-data">
                                             @csrf
                                             <div class="row">
-                                                <input type="text" class="order_id" name="order_id" value=""
+                                                <input type="hidden" class="order_id" name="order_id" value=""
                                                     id="order_id">
 
                                                 <label for="employee_status"
@@ -116,9 +116,9 @@
                                                         <option value="">Select</option>
                                                         <option value="0">Pending</option>
                                                         <option value="1">In Progress</option>
-                                                        <option value="2">Delivered</option>
-                                                        <option value="3">Completed</option>
-                                                        <option value="4">Declined</option>
+                                                        <option value="2">Shipped</option>
+                                                        <option value="3">Delivered</option>
+                                                        <option value="4">Cancel</option>
                                                     </select>
                                                 </div>
 
@@ -218,7 +218,7 @@
                         searchable: false,
                         render: function(data, type, row) {
                             return `
-                                                    <button onclick="openResignModal(${row.id})" class="icon-button custom-color">
+                                                                                <button onclick="openResignModal(${row.id})" class="icon-button custom-color">
     <i class="ri-edit-box-line" style="font-size: 18px;"></i>
 </button>
 <button onclick="showOrders(${row.id})" class="icon-link common-color">Show</button>
@@ -254,6 +254,7 @@
                 }
             });
         }
+
 
         function showOrders(id) {
             console.log("inside");

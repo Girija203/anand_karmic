@@ -7,6 +7,7 @@ use App\Models\Addresses;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Models\Order;
+use App\Models\OrderCancelRequest;
 use Carbon\Carbon;
 use Yajra\DataTables\DataTables;
 use Maatwebsite\Excel\Facades\Excel;
@@ -33,11 +34,11 @@ class OrderController extends Controller
                     case 1:
                         return 'In Progress';
                     case 2:
-                        return 'Delivered';
+                        return 'Shipped';
                     case 3:
-                        return 'Completed';
+                        return 'Delivered';
                     case 4:
-                        return 'Declined';
+                        return 'Cancel';
                     default:
                         return 'Unknown';
                 }
@@ -87,11 +88,11 @@ class OrderController extends Controller
                     case 1:
                         return 'In Progress';
                     case 2:
-                        return 'Delivered';
+                        return 'Shipped';
                     case 3:
-                        return 'Completed';
+                        return 'Delivered';
                     case 4:
-                        return 'Declined';
+                        return 'Cancel';
                     default:
                         return 'Unknown';
                 }
@@ -120,11 +121,11 @@ class OrderController extends Controller
                     case 1:
                         return 'In Progress';
                     case 2:
-                        return 'Delivered';
+                        return 'Shipped';
                     case 3:
-                        return 'Completed';
+                        return 'Delivered';
                     case 4:
-                        return 'Declined';
+                        return 'Cancel';
                     default:
                         return 'Unknown';
                 }
@@ -136,7 +137,7 @@ class OrderController extends Controller
     {
         return view('Admin.order.progress');
     }
-    public function deliveredData()
+    public function shippedData()
     {
 
         $orders = Order::where('order_status', 2)->get();
@@ -152,22 +153,22 @@ class OrderController extends Controller
                     case 1:
                         return 'In Progress';
                     case 2:
-                        return 'Delivered';
+                        return 'Shipped';
                     case 3:
-                        return 'Completed';
+                        return 'Delivered';
                     case 4:
-                        return 'Declined';
+                        return 'Cancel';
                     default:
                         return 'Unknown';
                 }
             })
             ->make(true);
     }
-    public function delivered()
+    public function shipped()
     {
-        return view('Admin.order.delivered');
+        return view('Admin.order.shipped');
     }
-    public function completedData()
+    public function deliveredData()
     {
 
         $orders = Order::where('order_status', 3)->get();
@@ -183,22 +184,22 @@ class OrderController extends Controller
                     case 1:
                         return 'In Progress';
                     case 2:
-                        return 'Delivered';
+                        return 'Shipped';
                     case 3:
-                        return 'Completed';
+                        return 'Delivered';
                     case 4:
-                        return 'Declined';
+                        return 'Cancel';
                     default:
                         return 'Unknown';
                 }
             })
             ->make(true);
     }
-    public function completed()
+    public function delivered()
     {
-        return view('Admin.order.completed');
+        return view('Admin.order.delivered');
     }
-    public function declinedData()
+    public function cancelData()
     {
 
         $orders = Order::where('order_status', 4)->get();
@@ -214,20 +215,20 @@ class OrderController extends Controller
                     case 1:
                         return 'In Progress';
                     case 2:
-                        return 'Delivered';
+                        return 'Shipped';
                     case 3:
-                        return 'Completed';
+                        return 'Delivered';
                     case 4:
-                        return 'Declined';
+                        return 'Cancel';
                     default:
                         return 'Unknown';
                 }
             })
             ->make(true);
     }
-    public function declined()
+    public function cancel()
     {
-        return view('Admin.order.declined');
+        return view('Admin.order.cancel');
     }
     public function cashData()
     {
@@ -294,5 +295,22 @@ class OrderController extends Controller
         });
         $order_Notification->markAsRead();
         return redirect()->back();
+    }
+
+    public function orderCancelRequest()
+    {
+        
+
+       return view('Admin.order.order_cancel_request');
+    }
+
+    public function orderCancelRequestData()
+    {
+
+        $order_cancel_request = OrderCancelRequest::all();
+        // dd($orders[0]->user->name);
+        return DataTables::of($order_cancel_request)
+        
+            ->make(true);
     }
 }

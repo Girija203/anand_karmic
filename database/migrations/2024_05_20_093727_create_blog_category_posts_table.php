@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('blog_post_id');
             $table->unsignedBigInteger('blog_category_id');
             $table->foreign('blog_post_id')->references('id')->on('blog_posts')->onDelete('cascade');
-            $table->foreign('blog_category_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('blog_category_id')->references('id')->on('blog_categories')->onDelete('cascade');
             $table->timestamps();
         });
     }

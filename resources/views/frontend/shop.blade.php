@@ -10,14 +10,15 @@
                             <div class="shop-sidebar-widget">
                                 <h5 class="shop-sidebar-widget-title">Karmics Categories</h5>
                                 <ul class="shop-sidebar-widget-list">
-                                    @foreach ($categories as $category)
-                                        <li class="shop-sidebar-widget-list-item">
-                                            <a href="{{ route('shop.category', $category->id) }}"
-                                                class="shop-sidebar-widget-list-link">
-                                                {{ $category->id == 1 ? 'Bags' : $category->name }}
-                                            </a>
-                                        </li>
-                                    @endforeach
+                                   @foreach ($categories as $category)
+        @if ($category->status == 1) <!-- Only show categories with status = 1 -->
+            <li class="shop-sidebar-widget-list-item">
+                <a href="{{ route('shop.category', $category->id) }}" class="shop-sidebar-widget-list-link">
+                    {{ $category->id == 1 ? 'Bags' : $category->name }}
+                </a>
+            </li>
+        @endif
+    @endforeach
 
 
 
@@ -56,33 +57,26 @@
 
                             <div class="shop-sidebar-widget">
                                 <h5 class="shop-sidebar-widget-title">Size</h5>
-                                <form action="{{ route('filter.bySpecifications') }}" method="GET">
+                                                         <form action="{{ route('filter.bySpecifications') }}" method="GET">
                                     <ul class="shop-sidebar-widget-list shop-sidebar-widget-list-size">
-                                        @foreach ($specifications as $item)
-                                            <li class="shop-sidebar-widget-list-item">
-                                                <input type="checkbox" id="spec_{{ $item->id }}"
-                                                    name="specifications[]" value="{{ $item->specification }}" />
-                                                <label for="spec_{{ $item->id }}">{{ $item->specification }}
-                                                    ({{ $item->product()->count() }})
-                                                </label>
-                                            </li>
-                                        @endforeach
+                                    <ul>
+        <li>
+            <input type="checkbox" id="spec_small" name="specifications[]" value="small"
+                {{ in_array('small', request()->input('specifications', [])) ? 'checked' : '' }} />
+            <label for="spec_small">Small ({{ $smallCount }})</label>
+        </li>
+        <li>
+            <input type="checkbox" id="spec_large" name="specifications[]" value="large"
+                {{ in_array('large', request()->input('specifications', [])) ? 'checked' : '' }} />
+            <label for="spec_large">Large ({{ $largeCount }})</label>
+        </li>
+    </ul>
                                     </ul>
                                     <button type="submit" class="filter-price-btn">Filter</button>
                                 </form>
                             </div>
 
-                            <div class="shop-sidebar-widget">
-                                <h5 class="shop-sidebar-widget-title">Product tags</h5>
-                                <div class="shop-sidebar-widget-list shop-sidebar-widget-list-tags">
-                                    <a href="shop.html" class="shop-sidebar-widget-list-link">Accessories</a>
-                                    <a href="shop.html" class="shop-sidebar-widget-list-link">Collection</a>
-                                    <a href="shop.html" class="shop-sidebar-widget-list-link">Clothing</a>
-                                    <a href="shop.html" class="shop-sidebar-widget-list-link">Bags</a>
-                                    <a href="shop.html" class="shop-sidebar-widget-list-link">New In Shop</a>
-
-                                </div>
-                            </div>
+                            
                         </aside>
                     </div>
 
